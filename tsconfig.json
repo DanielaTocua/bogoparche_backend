@@ -17,7 +17,8 @@
     "typeRoots": ["@types", "./node_modules/@types"],
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "resolveJsonModule": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
