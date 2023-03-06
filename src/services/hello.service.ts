@@ -1,6 +1,6 @@
 class HelloService {
 	async hello(): Promise<string> {
-		return "hola";
+		return "Hello World!";
 	}
 }
 
