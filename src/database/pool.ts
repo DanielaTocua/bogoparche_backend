@@ -10,3 +10,7 @@ const pool = new Pool({
 	password: process.env.PG_PASSWORD,
 	port: parseInt(process.env.PG_PORT || "3000"),
 });
+
+export default {
+	query: (text: string, params?: any) => pool.query(text, params),
+  };
