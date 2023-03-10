@@ -1,10 +1,14 @@
 import express from "express";
+import passport from "passport";
 
 import helloController from "../controllers/hello.controller";
-import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 
 const router = express.Router();
 
-router.get("/", asyncErrorMiddleware(helloController.hello));
+router.get(
+	"/",
+	passport.authenticate("jwt", { session: false }),
+	helloController.hello,
+);
 
 export default router;

@@ -7,7 +7,6 @@ class HelloController {
 	async hello(req: Request, res: Response, next: NextFunction): Promise<void> {
 		res.json(await helloFacade.hello()).status(STATUS_CODES.OK);
 	}
-
 }
 
 export default new HelloController();
