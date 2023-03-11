@@ -12,15 +12,15 @@ class LoginController {
 		next: NextFunction,
 	): Promise<void> {
 		passport.authenticate("login", async (err: Error, user: UserModel) => {
-				if (err || !user) {
-					const error = new Error("An error occurred.");
-					return next(error);
-				}
-				req.login(user, { session: false }, async (error) => {
-					if (error) return next(error);
-					return res.json(await loginService.loginUser(user));
-				});
-		})(req,res,next);
+			if (err || !user) {
+				const error = new Error("An error occurred.");
+				return next(error);
+			}
+			req.login(user, { session: false }, async (error) => {
+				if (error) return next(error);
+				return res.json(await loginService.loginUser(user));
+			});
+		})(req, res, next);
 	}
 }
 
