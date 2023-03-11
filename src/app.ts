@@ -22,9 +22,9 @@ export class App {
 		this._app.use(helmet());
 		this._app.use(express.json());
 		this._app.use(express.urlencoded({ extended: true }));
-		this._app.use("/", authRoutes);
 		this._app.use(passport.initialize());
-		this._app.use("/", helloRoutes);
+		this._app.use("/api", authRoutes);
+		this._app.use("/api", helloRoutes);
 		this._app.use(errorMiddleware);
 	}
 
