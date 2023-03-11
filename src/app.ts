@@ -1,5 +1,4 @@
 import "./config/passportConfig";
-
 import cors from "cors";
 import express, { Application } from "express";
 import helmet from "helmet";
@@ -8,6 +7,7 @@ import passport from "passport";
 import errorMiddleware from "./middlewares/error.middleware";
 import authRoutes from "./routes/auth.routes";
 import helloRoutes from "./routes/hello.routes";
+import activitiesRoutes from "./routes/activities.router"
 
 export class App {
 	private readonly _app: Application;
@@ -24,6 +24,7 @@ export class App {
 		this._app.use(express.urlencoded({ extended: true }));
 		this._app.use("/", authRoutes);
 		this._app.use(passport.initialize());
+		this._app.use("/", activitiesRoutes);
 		this._app.use("/", helloRoutes);
 		this._app.use(errorMiddleware);
 	}
