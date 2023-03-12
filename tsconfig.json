@@ -20,6 +20,6 @@
     },
     "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/controllers/login.controller.ts"],
   "exclude": ["node_modules"]
 }
