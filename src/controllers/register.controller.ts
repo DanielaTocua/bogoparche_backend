@@ -9,7 +9,6 @@ class RegisterController {
 		res: Response,
 		next: NextFunction,
 	): Promise<void> {
-		console.log("controller");
 		const { username, email, password } = req.body;
 		res
 			.json(await registerFacade.registerUser(username, email, password))

@@ -6,7 +6,7 @@ class LoginService {
 		const body = { id: user.id, email: user.email };
 		const token = jwt.sign({ user: body }, "Random string");
 		const username = user.username;
-		
+
 		return { username, token };
 	}
 }

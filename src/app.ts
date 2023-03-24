@@ -1,13 +1,14 @@
 import "./config/passportConfig";
+
 import cors from "cors";
 import express, { Application } from "express";
 import helmet from "helmet";
 import passport from "passport";
 
 import errorMiddleware from "./middlewares/error.middleware";
+import activitiesRoutes from "./routes/activities.router";
 import authRoutes from "./routes/auth.routes";
 import helloRoutes from "./routes/hello.routes";
-import activitiesRoutes from "./routes/activities.router"
 
 export class App {
 	private readonly _app: Application;
