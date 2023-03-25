@@ -17,39 +17,17 @@ class ActivityController {
         const search: string[] = req.query.search ? (req.query.search as string).split(' ') : []
         const rangePrices: string[] = req.query.range_prices ? (req.query.range_prices as string).split(',') : [];
         const categories: string[] = req.query.categories ? (req.query.categories as string).split(',') : [];
-        let filteredByPrice: any[] = []
+        
         let filteredByCateg: any[] = [] 
 
         // Filter by Price    
-        if (rangePrices.length != 0){
-            for (let i=0;i<rangePrices.length;i++){
-                let filteredPriceI = filtered.filter(activity => activity.rango_precio == rangePrices[i])
-                for (let n=0;n<filteredPriceI.length;n++){
-                    filteredByPrice.push(filteredPriceI[n])
-                }
-            }
-            filtered = filteredByPrice
-        }
+        filtered = activityServices.filterByPrices(rangePrices,filtered)
         
         // Filter by Categories
-        if (categories.length != 0){
-            for (let i=0;i<categories.length;i++){
-                const id_categoria = await activityUtils.parseCategoria(categories[i])
-                let filteredCategI = filtered.filter((activity) => activity.id_categoria === id_categoria)
-                for (let n=0;n<filteredCategI.length;n++){
-                    filteredByCateg.push(filteredCategI[n])
-                }
-            }
-            filtered = filteredByCateg  
-        }
+        filtered = await activityServices.filterByCategory(categories,filtered)
         
         // Search
-        if (search.length != 0) {
-            for (let i=0;i<search.length;i++){
-                filtered = filtered.filter(activity => String(activity.titulo_actividad).toLowerCase().includes(String(search[i]).toLowerCase()) || String(activity.description).toLowerCase().includes(String(search[i]).toLowerCase()))
-                console.log(filtered)
-            }
-        }
+        filtered = activityServices.searchByWords(search,filtered)
         res.send(filtered)
     }
 }

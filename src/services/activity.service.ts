@@ -1,3 +1,4 @@
+import * as activityUtils from '../utils/activity.utils'
 import { QueryResult } from 'pg'
 import pool from '../database/pool'
 
@@ -23,4 +24,42 @@ export const findCategory = async (nombre_categoria:string) => {
     }
     return result
     
+}
+
+export const filterByPrices = (rangePrices: string[], filtered: any[]) => {
+    let filteredByPrice: any[] = []
+    if (rangePrices.length != 0){
+        for (let i=0;i<rangePrices.length;i++){
+            let filteredPriceI = filtered.filter(activity => activity.rango_precio == rangePrices[i])
+            for (let n=0;n<filteredPriceI.length;n++){
+                filteredByPrice.push(filteredPriceI[n])
+            }
+        }
+        filtered = filteredByPrice
+    }
+    return filtered
+}
+
+export const filterByCategory = async (categories: string[], filtered: any[]) => {
+    let filteredByCateg: any[] = [] 
+    if (categories.length != 0){
+        for (let i=0;i<categories.length;i++){
+            const id_categoria = await activityUtils.parseCategoria(categories[i])
+            let filteredCategI = filtered.filter((activity) => activity.id_categoria === id_categoria)
+            for (let n=0;n<filteredCategI.length;n++){
+                filteredByCateg.push(filteredCategI[n])
+            }
+        }
+        filtered = filteredByCateg  
+    }
+    return filtered
+}
+
+export const searchByWords = (search: string[], filtered: any[]) => {
+    if (search.length != 0) {
+        for (let i=0;i<search.length;i++){
+            filtered = filtered.filter(activity => String(activity.titulo_actividad).toLowerCase().includes(String(search[i]).toLowerCase()) || String(activity.description).toLowerCase().includes(String(search[i]).toLowerCase()))
+        }
+    }
+    return filtered
 }
