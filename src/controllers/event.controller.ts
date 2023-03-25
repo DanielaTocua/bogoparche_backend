@@ -31,7 +31,7 @@ class EventController {
 			const newEventEntry = toNewEventEntry(req.body);
 			// Connects to de DB
 			const result = eventServices.addEvent(newEventEntry);
-			const id = (await result).rows[0].id;
+			const id = (await result).rows[0].id_actividad;
 			res.json({id});
 		} catch (error) {
 			res.json({ error: error }).status(STATUS_CODES.BAD_REQUEST);
