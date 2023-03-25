@@ -29,7 +29,7 @@ class PlanController {
             // Retrieves plan info
             const newPlanEntry = toNewPlanEntry(req.body)
             console.log(newPlanEntry)
-            const result = planServices.addPlan(newPlanEntry)
+            const result = planServices.addPlan(await newPlanEntry)
             const id = (await result).rows[0].id;
             res.json(id)
         } catch (error) {

@@ -1,4 +1,5 @@
 import { Hours, NewActivityEntry, Range_prices } from "../dtos/activityTypes.dto";
+import * as activityServices from '../services/activity.service'
 
 export const parseString = (string: any): string => {
     if (typeof string != 'string'){
@@ -48,7 +49,17 @@ export const parseHours = (hoursFromRequest: any): Hours => {
     return hoursFromRequest
 }
 
-const toNewActivityEntry = (object: any): NewActivityEntry =>{
+export const parseCategoria = async (nombre_categoria:any): Promise<number> => {
+    const result = await activityServices.findCategory(nombre_categoria)
+    const rows = result.rows
+    return (rows[0].id_categoria)
+}
+
+export const categoriaAsNumber = async (promise: Promise<number>): Promise<number> => {
+    return await promise
+}
+
+const toNewActivityEntry = async (object: any): Promise<NewActivityEntry> =>{
     const newEntry: NewActivityEntry = {
         titulo_actividad: parseString(object.titulo_actividad),
         ubicacion: parseString(object.ubicacion),
@@ -56,8 +67,9 @@ const toNewActivityEntry = (object: any): NewActivityEntry =>{
         description: parseString(object.description),
         restriccion_edad: object.restriccion_edad,
         medio_contacto: parseString(object.medio_contacto), 
-        es_privada: object.es_privada
-
+        es_privada: object.es_privada,
+        es_plan: object.es_plan,
+        id_categoria: await parseCategoria(object.categoria)
     }
     console.log(newEntry)
     return newEntry

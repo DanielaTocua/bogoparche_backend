@@ -29,14 +29,19 @@ router.route('/event/:id')
     .get(asyncErrorMiddleware(eventController.getEvent))
     // Delete event
     .delete(asyncErrorMiddleware(eventController.deleteEvent))
-    
 
-// Create Plan
+// router.route('/create-activity')
+//     .post(activityController.addActivity)
+
+    // Create Plan
 router.route('/plan')
     .post(asyncErrorMiddleware(planController.addPlan))
 
 // Create Event
 router.route('/event')
     .post(asyncErrorMiddleware(eventController.addEvent))
+
+router.route('/filter')
+    .get(activityController.filter)
 
 export default router

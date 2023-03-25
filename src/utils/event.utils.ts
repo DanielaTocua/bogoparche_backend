@@ -2,7 +2,7 @@ import { NewEventEntry, Range_prices, Hours } from "../dtos/activityTypes.dto";
 import * as activityUtils from '../utils/activity.utils'
 
 
-const toNewEventEntry = (object: any): NewEventEntry =>{
+const toNewEventEntry = async (object: any): Promise<NewEventEntry> =>{
     if (typeof object.fecha_fin === undefined){
         object.fecha_fin = object.fecha_inicio
     }
@@ -20,8 +20,9 @@ const toNewEventEntry = (object: any): NewEventEntry =>{
         fecha_inicio: activityUtils.parseDate(object.fecha_inicio),
         fecha_fin: activityUtils.parseDate(object.fecha_fin),
         hora_inicio:  activityUtils.parseHours(object.hora_inicio),
-        hora_fin: activityUtils.parseHours(object.hora_fin)
-
+        hora_fin: activityUtils.parseHours(object.hora_fin),
+        es_plan: object.es_plan,
+        id_categoria: await activityUtils.parseCategoria(object.categoria)
     }
     console.log(newEntry)
     return newEntry
