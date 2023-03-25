@@ -21,7 +21,8 @@ export interface ActivityEntry {
     medio_contacto: string,
     es_privada: boolean,
     es_plan: boolean,
-    id_categoria: number
+    id_categoria: number,
+	es_aprobado: boolean
 
 }
 // With Pick

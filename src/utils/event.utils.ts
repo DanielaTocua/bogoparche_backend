@@ -21,7 +21,8 @@ const toNewEventEntry = async (object: any): Promise<NewEventEntry> =>{
         hora_inicio:  object.hora_inicio,
         hora_fin: object.hora_fin,
         es_plan: object.es_plan,
-        id_categoria: await activityUtils.parseCategoria(object.categoria)
+        id_categoria: await activityUtils.parseCategoria(object.categoria),
+        es_aprobado: object.es_aprobado
     }
     return newEntry
 

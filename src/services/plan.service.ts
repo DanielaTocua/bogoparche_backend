@@ -25,9 +25,9 @@ export const addPlan = async (
         const client = await pool.connect();
         // Inserts Plan
         const result = await client.query(
-            `INSERT INTO plan (titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto, es_privada, horario_plan, es_plan, id_categoria) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id_actividad`,
+            `INSERT INTO plan (titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto, es_privada, horario_plan, es_plan, id_categoria, es_aprobado) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id_actividad`,
             [newPlanEntry.titulo_actividad, newPlanEntry.ubicacion, newPlanEntry.rango_precio, newPlanEntry.description, newPlanEntry.restriccion_edad, newPlanEntry.medio_contacto, newPlanEntry.es_privada, 
-            newPlanEntry.horario_plan, newPlanEntry.es_plan, newPlanEntry.id_categoria],
+            newPlanEntry.horario_plan, newPlanEntry.es_plan, newPlanEntry.id_categoria, newPlanEntry.es_aprobado],
         );
         client.release();
     return result

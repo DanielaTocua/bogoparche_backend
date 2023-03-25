@@ -25,7 +25,6 @@ const isPriceRange = (price_range: any): boolean => {
 };
 
 
-
 export const parsePriceRange = (priceRangeFromRequest: any): Range_prices => {
 
     if (!isString(priceRangeFromRequest) || !(isPriceRange(priceRangeFromRequest))){
@@ -56,9 +55,9 @@ const toNewActivityEntry = async (object: any): Promise<NewActivityEntry> =>{
         medio_contacto: parseString(object.medio_contacto), 
         es_privada: object.es_privada,
         es_plan: object.es_plan,
-        id_categoria: await parseCategoria(object.categoria)
+        id_categoria: await parseCategoria(object.categoria),
+        es_aprobado: object.es_aprobado
     }
-    console.log(newEntry)
     return newEntry
 };
 

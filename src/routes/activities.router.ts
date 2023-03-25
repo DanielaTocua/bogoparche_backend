@@ -16,6 +16,9 @@ router
 	.route("/create-activity")
 	.post(asyncErrorMiddleware(activityController.addActivity));
 
+router.route("/create-activity-suggestion")
+	.post(asyncErrorMiddleware(activityController.addActivity));
+
 router
 	.route("/plan/:id")
 	// Get Plan

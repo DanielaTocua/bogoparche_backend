@@ -12,7 +12,8 @@ const toNewPlanEntry = async (object: any): Promise<NewPlanEntry> => {
         es_privada: object.es_privada,
         horario_plan: activityUtils.parseString(object.horario_plan),
         es_plan: object.es_plan,
-        id_categoria: await activityUtils.parseCategoria(object.categoria)
+        id_categoria: await activityUtils.parseCategoria(object.categoria),
+        es_aprobado: object.es_aprobado
 
     }
     return newEntry
