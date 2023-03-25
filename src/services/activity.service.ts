@@ -60,7 +60,7 @@ export const filterByCategory = async (categories: string[], filtered: any[]) =>
 export const searchByWords = (search: string[], filtered: any[]) => {
     if (search.length != 0) {
         for (let i=0;i<search.length;i++){
-            filtered = filtered.filter(activity => String(activity.titulo_actividad).toLowerCase().includes(String(search[i]).toLowerCase()) || String(activity.description).toLowerCase().includes(String(search[i]).toLowerCase()))
+            filtered = filtered.filter(activity => String(activity.titulo_actividad).toLowerCase().includes(String(search[i]).toLowerCase()) || String(activity.descripcion).toLowerCase().includes(String(search[i]).toLowerCase()))
         }
     }
     return filtered
