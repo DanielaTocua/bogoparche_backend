@@ -12,6 +12,7 @@ const router = express.Router();
 // Gets all activities (plan/events)
 router.route("/activities").get(activityController.getAll);
 
+// Creates activities
 router
 	.route("/create-activity")
 	.post(asyncErrorMiddleware(activityController.addActivity));
@@ -19,30 +20,36 @@ router
 router.route("/create-activity-suggestion")
 	.post(asyncErrorMiddleware(activityController.addActivity));
 
-router
-	.route("/plan/:id")
-	// Get Plan
-	.get(asyncErrorMiddleware(planController.getPlan))
-	// Delete Plan
-	.delete(asyncErrorMiddleware(planController.deletePlan));
+// Deletes activities	
+router.route("/delete-activity/:id/:es_plan")
+	.delete(asyncErrorMiddleware(activityController.deleteActivity));
 
-router
-	.route("/event/:id")
-	// Get Event
-	.get(asyncErrorMiddleware(eventController.getEvent))
-	// Delete event
-	.delete(asyncErrorMiddleware(eventController.deleteEvent));
-
-// Create Plan
-router.route("/plan").post(asyncErrorMiddleware(planController.addPlan));
-
+// Gets activities
+router.route("/get-activity/:id/:es_plan")
+	.get(asyncErrorMiddleware(activityController.getActivity));
 
 // Create Event
 router.route("/event").post(asyncErrorMiddleware(eventController.addEvent));
 
-
+// Filter activities
 router.route('/filter')
     .get(activityController.filter);
 
+
+// router.route("/plan/:id")
+// 	// Get Plan
+// 	.get(asyncErrorMiddleware(planController.getPlan))
+// 	// Delete Plan
+// 	.delete(asyncErrorMiddleware(planController.deletePlan));
+
+// router
+// 	.route("/event/:id")
+// 	// Get Event
+// 	.get(asyncErrorMiddleware(eventController.getEvent))
+// 	// Delete event
+// 	.delete(asyncErrorMiddleware(eventController.deleteEvent));
+
+// // Create Plan
+// router.route("/plan").post(asyncErrorMiddleware(planController.addPlan));	
 export default router;
 
