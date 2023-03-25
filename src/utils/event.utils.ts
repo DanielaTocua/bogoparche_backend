@@ -18,8 +18,8 @@ const toNewEventEntry = (object: any): NewEventEntry => {
 		es_privada: object.es_privada,
 		fecha_inicio: activityUtils.parseDate(object.fecha_inicio),
 		fecha_fin: activityUtils.parseDate(object.fecha_fin),
-		hora_inicio: activityUtils.parseHours(object.hora_inicio),
-		hora_fin: activityUtils.parseHours(object.hora_fin),
+		hora_inicio: object.hora_inicio,
+		hora_fin: object.hora_fin,
 	};
 	console.log(newEntry);
 	return newEntry;

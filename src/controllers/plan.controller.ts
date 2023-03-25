@@ -29,10 +29,9 @@ class PlanController {
 		try {
 			// Retrieves plan info
 			const newPlanEntry = toNewPlanEntry(req.body);
-			console.log(newPlanEntry);
-			const result = planServices.addPlan(newPlanEntry);
-			const id = (await result).rows[0].id;
-			res.json(id);
+			const result = await  planServices.addPlan(newPlanEntry);
+			const id = result.rows[0].id_actividad;
+			res.json({id});
 		} catch (error) {
 			res.json({ error: error }).status(STATUS_CODES.BAD_REQUEST);
 		}

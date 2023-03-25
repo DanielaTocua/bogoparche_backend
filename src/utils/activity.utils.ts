@@ -1,5 +1,4 @@
 import {
-	Hours,
 	NewActivityEntry,
 	Range_prices,
 } from "../dtos/activityTypes.dto";
@@ -23,9 +22,7 @@ const isPriceRange = (price_range: any): boolean => {
 	return Object.values(Range_prices).includes(price_range);
 };
 
-const isHours = (hours: any): boolean => {
-	return Object.values(Hours).includes(hours);
-};
+
 
 export const parseDate = (dateFromRequest: any): Date => {
 	if (!isString(dateFromRequest) || !isDate(dateFromRequest)) {
@@ -48,14 +45,7 @@ export const parsePriceRange = (priceRangeFromRequest: any): Range_prices => {
 	return priceRangeFromRequest;
 };
 
-export const parseHours = (hoursFromRequest: any): Hours => {
-	if (!isString(hoursFromRequest) || !isHours(hoursFromRequest)) {
-		console.log(typeof hoursFromRequest, hoursFromRequest);
-		console.log(isString(hoursFromRequest));
-		throw new Error("Rango horario no válido");
-	}
-	return hoursFromRequest;
-};
+
 
 const toNewActivityEntry = (object: any): NewActivityEntry => {
 	const newEntry: NewActivityEntry = {

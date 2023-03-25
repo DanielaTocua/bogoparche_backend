@@ -32,7 +32,7 @@ class EventController {
 			// Connects to de DB
 			const result = eventServices.addEvent(newEventEntry);
 			const id = (await result).rows[0].id;
-			res.json(id);
+			res.json({id});
 		} catch (error) {
 			res.json({ error: error }).status(STATUS_CODES.BAD_REQUEST);
 		}
