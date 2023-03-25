@@ -1,5 +1,5 @@
 
-=======
+
 import { Request, Response } from "express";
 
 import * as activityServices from "../services/activity.service";

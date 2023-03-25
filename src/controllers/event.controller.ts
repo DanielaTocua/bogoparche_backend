@@ -30,7 +30,7 @@ class EventController {
 			// Retrieves event info
 			const newEventEntry = toNewEventEntry(req.body);
 			// Connects to de DB
-			const result = eventServices.addEvent(newEventEntry);
+			const result = eventServices.addEvent(await newEventEntry);
 			const id = (await result).rows[0].id_actividad;
 			res.json({id});
 		} catch (error) {

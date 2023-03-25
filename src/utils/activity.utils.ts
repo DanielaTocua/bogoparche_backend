@@ -26,13 +26,6 @@ const isPriceRange = (price_range: any): boolean => {
 
 
 
-export const parseDate = (dateFromRequest: any): Date => {
-	if (!isString(dateFromRequest) || !isDate(dateFromRequest)) {
-		throw new Error("Fecha incorrecta o faltante");
-	}
-	return dateFromRequest;
-};
-
 export const parsePriceRange = (priceRangeFromRequest: any): Range_prices => {
 
     if (!isString(priceRangeFromRequest) || !(isPriceRange(priceRangeFromRequest))){
@@ -42,14 +35,6 @@ export const parsePriceRange = (priceRangeFromRequest: any): Range_prices => {
     return priceRangeFromRequest
 }
 
-export const parseHours = (hoursFromRequest: any): Hours => {
-    if (!isString(hoursFromRequest) || !(isHours(hoursFromRequest))){
-        console.log(typeof hoursFromRequest, hoursFromRequest)
-        console.log(isString(hoursFromRequest))
-        throw new Error('Rango horario no válido')
-    }
-    return hoursFromRequest
-}
 
 export const parseCategoria = async (nombre_categoria:any): Promise<number> => {
     const result = await activityServices.findCategory(nombre_categoria)

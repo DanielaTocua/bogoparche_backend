@@ -16,14 +16,13 @@ const toNewEventEntry = async (object: any): Promise<NewEventEntry> =>{
         restriccion_edad: object.restriccion_edad,
         medio_contacto: activityUtils.parseString(object.medio_contacto), 
         es_privada: object.es_privada,
-        fecha_inicio: activityUtils.parseDate(object.fecha_inicio),
-        fecha_fin: activityUtils.parseDate(object.fecha_fin),
-        hora_inicio:  activityUtils.parseHours(object.hora_inicio),
-        hora_fin: activityUtils.parseHours(object.hora_fin),
+        fecha_inicio: object.fecha_inicio,
+        fecha_fin: object.fecha_fin,
+        hora_inicio:  object.hora_inicio,
+        hora_fin: object.hora_fin,
         es_plan: object.es_plan,
         id_categoria: await activityUtils.parseCategoria(object.categoria)
     }
-    console.log(newEntry)
     return newEntry
 
 }

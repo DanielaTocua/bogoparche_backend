@@ -15,7 +15,6 @@ const toNewPlanEntry = async (object: any): Promise<NewPlanEntry> => {
         id_categoria: await activityUtils.parseCategoria(object.categoria)
 
     }
-    console.log(newEntry)
     return newEntry
 
 }
