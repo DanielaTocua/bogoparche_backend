@@ -24,7 +24,6 @@ class PlanController {
 		const rows = (await result).rows;
 		res.json(rows);
 	}
-
 	async addPlan(req: Request, res: Response): Promise<void> {
 		try {
 			// Retrieves plan info

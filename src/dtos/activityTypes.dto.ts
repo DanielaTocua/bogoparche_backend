@@ -9,16 +9,20 @@ export enum Range_prices {
 	Range_more_150 = "+ 150k",
 }
 
+
 // Tipos de Activities
 export interface ActivityEntry {
-	id_actividad: number;
-	titulo_actividad: string;
-	ubicacion: string;
-	rango_precio: Range_prices;
-	description: string;
-	restriccion_edad: boolean;
-	medio_contacto: string;
-	es_privada: boolean;
+    id_actividad: number,
+    titulo_actividad: string,
+    ubicacion: string,
+    rango_precio: Range_prices,
+    description: string,
+    restriccion_edad: boolean,
+    medio_contacto: string,
+    es_privada: boolean,
+    es_plan: boolean,
+    id_categoria: number
+
 }
 // With Pick
 // export type NonSensitiveInfoActivityEntry = Pick<ActivityEntry, 'titulo_actividad' | 'description' | 'medio_contacto' | 'rango_precio' | 'ubicacion' | 'restriccion_edad'>

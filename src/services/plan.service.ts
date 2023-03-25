@@ -20,27 +20,19 @@ export const findPlanById = async (id: string): Promise<QueryResult<any>> => {
 
 // Adds the id to the json
 export const addPlan = async (
-	newPlanEntry: NewPlanEntry,
-): Promise<QueryResult<any>> => {
-	// Connects to the DB
-	const client = await pool.connect();
-	// Inserts Plan
-	const result = await client.query(
-		`INSERT INTO plan (titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto, es_privada, horario_plan) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id_actividad`,
-		[
-			newPlanEntry.titulo_actividad,
-			newPlanEntry.ubicacion,
-			newPlanEntry.rango_precio,
-			newPlanEntry.description,
-			newPlanEntry.restriccion_edad,
-			newPlanEntry.medio_contacto,
-			newPlanEntry.es_privada,
-			newPlanEntry.horario_plan,
-		],
-	);
-	client.release();
-	return result;
-};
+    newPlanEntry: NewPlanEntry): Promise<QueryResult<any>> => {
+        // Connects to the DB
+        const client = await pool.connect();
+        // Inserts Plan
+        const result = await client.query(
+            `INSERT INTO plan (titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto, es_privada, horario_plan, es_plan, id_categoria) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id_actividad`,
+            [newPlanEntry.titulo_actividad, newPlanEntry.ubicacion, newPlanEntry.rango_precio, newPlanEntry.description, newPlanEntry.restriccion_edad, newPlanEntry.medio_contacto, newPlanEntry.es_privada, 
+            newPlanEntry.horario_plan, newPlanEntry.es_plan, newPlanEntry.id_categoria],
+        );
+        client.release();
+    return result
+}
+
 
 // Deletes plan
 export const deletePlan = async (id: string): Promise<void> => {

@@ -33,7 +33,13 @@ router
 // Create Plan
 router.route("/plan").post(asyncErrorMiddleware(planController.addPlan));
 
+
 // Create Event
 router.route("/event").post(asyncErrorMiddleware(eventController.addEvent));
 
+
+router.route('/filter')
+    .get(activityController.filter);
+
 export default router;
+
