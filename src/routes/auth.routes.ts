@@ -9,7 +9,7 @@ const router = express.Router();
 // Configurar rutas
 router.post("/signup", asyncErrorMiddleware(registerController.registerUser));
 
-router.post("/login",  asyncErrorMiddleware(loginController.loginUser));
+router.post("/login", asyncErrorMiddleware(loginController.loginUser));
 
 router.get("/login-success", (req, res) => {
 	res.send("Login successful");

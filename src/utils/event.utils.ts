@@ -1,4 +1,4 @@
-import {NewEventEntry } from "../dtos/activityTypes.dto";
+import { NewEventEntry } from "../dtos/activityTypes.dto";
 import * as activityUtils from "../utils/activity.utils";
 
 const toNewEventEntry = (object: any): NewEventEntry => {

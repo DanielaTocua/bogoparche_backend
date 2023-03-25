@@ -13,6 +13,10 @@ const router = express.Router();
 router.route("/activities").get(activityController.getAll);
 
 router
+	.route("/create-activity")
+	.post(asyncErrorMiddleware(activityController.addActivity));
+
+router
 	.route("/plan/:id")
 	// Get Plan
 	.get(asyncErrorMiddleware(planController.getPlan))
