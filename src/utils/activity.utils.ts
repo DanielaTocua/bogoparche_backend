@@ -1,38 +1,40 @@
-import { Hours, NewActivityEntry, Range_prices } from "../dtos/activityTypes.dto";
+
 import * as activityServices from '../services/activity.service'
+import {
+	NewActivityEntry,
+	Range_prices,
+} from "../dtos/activityTypes.dto";
 
 export const parseString = (string: any): string => {
-    if (typeof string != 'string'){
-        throw new Error('Entrada incorrecta o faltante')
-    }
-    return string
-}
+	if (typeof string != "string") {
+		throw new Error("Entrada incorrecta o faltante");
+	}
+	return string;
+};
 
 const isString = (string: string): boolean => {
-    return typeof string === 'string'
-}
+	return typeof string === "string";
+};
 
 const isDate = (date: string): boolean => {
-    return Boolean(Date.parse(date))
-}
+	return Boolean(Date.parse(date));
+};
 
 const isPriceRange = (price_range: any): boolean => {
-    return Object.values(Range_prices).includes(price_range)
-}
+	return Object.values(Range_prices).includes(price_range);
+};
 
-const isHours = (hours: any): boolean => {
-    return Object.values(Hours).includes(hours)
-}
+
 
 export const parseDate = (dateFromRequest: any): Date => {
-    if (!isString(dateFromRequest) || !(isDate(dateFromRequest))){
-        throw new Error('Fecha incorrecta o faltante')
-    }
-    return dateFromRequest
-}
-
+	if (!isString(dateFromRequest) || !isDate(dateFromRequest)) {
+		throw new Error("Fecha incorrecta o faltante");
+	}
+	return dateFromRequest;
+};
 
 export const parsePriceRange = (priceRangeFromRequest: any): Range_prices => {
+
     if (!isString(priceRangeFromRequest) || !(isPriceRange(priceRangeFromRequest))){
         console.log(typeof priceRangeFromRequest, (isPriceRange(priceRangeFromRequest)))
         throw new Error(`Rango de precio no válido`)
@@ -73,9 +75,6 @@ const toNewActivityEntry = async (object: any): Promise<NewActivityEntry> =>{
     }
     console.log(newEntry)
     return newEntry
+};
 
-}
-
-
-
-export default toNewActivityEntry
+export default toNewActivityEntry;

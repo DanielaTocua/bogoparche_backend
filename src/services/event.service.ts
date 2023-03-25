@@ -1,18 +1,22 @@
 import { QueryResult } from "pg";
+
 import pool from "../database/pool";
 import { NewEventEntry } from "../dtos/activityTypes.dto";
 
 // Find Event by Id
-export const findEventById = async(id: string): Promise<QueryResult<any>>=> {
-    // Connects to the DB
-    const client = await pool.connect();
-    const result = await client.query(`SELECT * FROM evento WHERE id_actividad = $1`, [id])
-    client.release();
-    if (result.rowCount === 0){
-        throw new Error(`No hay planes con el id ${id}`)
-    }
-    return result
-}
+export const findEventById = async (id: string): Promise<QueryResult<any>> => {
+	// Connects to the DB
+	const client = await pool.connect();
+	const result = await client.query(
+		`SELECT * FROM evento WHERE id_actividad = $1`,
+		[id],
+	);
+	client.release();
+	if (result.rowCount === 0) {
+		throw new Error(`No hay planes con el id ${id}`);
+	}
+	return result;
+};
 
 // Adds the id to the json
 export const addEvent = async (
@@ -26,9 +30,10 @@ export const addEvent = async (
     return result
 }
 
-// Deletes event 
-export const deleteEvent = async (id: string) : Promise<void> => {
-    const client = await pool.connect();
-    await client.query('DELETE FROM evento WHERE id_actividad = $1', [id]);
-    client.release();    
-}
+
+// Deletes event
+export const deleteEvent = async (id: string): Promise<void> => {
+	const client = await pool.connect();
+	await client.query("DELETE FROM evento WHERE id_actividad = $1", [id]);
+	client.release();
+};

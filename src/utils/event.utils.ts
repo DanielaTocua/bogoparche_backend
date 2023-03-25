@@ -1,6 +1,5 @@
-import { NewEventEntry, Range_prices, Hours } from "../dtos/activityTypes.dto";
-import * as activityUtils from '../utils/activity.utils'
-
+import { NewEventEntry } from "../dtos/activityTypes.dto";
+import * as activityUtils from "../utils/activity.utils";
 
 const toNewEventEntry = async (object: any): Promise<NewEventEntry> =>{
     if (typeof object.fecha_fin === undefined){
@@ -30,4 +29,5 @@ const toNewEventEntry = async (object: any): Promise<NewEventEntry> =>{
 }
 
 
-export default toNewEventEntry
+export default toNewEventEntry;
+

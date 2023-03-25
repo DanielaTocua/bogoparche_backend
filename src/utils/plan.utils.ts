@@ -1,5 +1,5 @@
-import { NewPlanEntry, Range_prices } from "../dtos/activityTypes.dto";
-import * as activityUtils from '../utils/activity.utils'
+import { NewPlanEntry } from "../dtos/activityTypes.dto";
+import * as activityUtils from "../utils/activity.utils";
 
 const toNewPlanEntry = async (object: any): Promise<NewPlanEntry> => {
     const newEntry: NewPlanEntry = {
@@ -23,3 +23,4 @@ const toNewPlanEntry = async (object: any): Promise<NewPlanEntry> => {
 
 
 export default toNewPlanEntry
+

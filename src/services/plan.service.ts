@@ -1,18 +1,22 @@
 import { QueryResult } from "pg";
+
 import pool from "../database/pool";
 import { NewPlanEntry } from "../dtos/activityTypes.dto";
 
 // Find Plan by Id
-export const findPlanById = async(id: string): Promise<QueryResult<any>>=> {
-    // Connects to the DB
-    const client = await pool.connect();
-    const result = await client.query(`SELECT * FROM plan WHERE id_actividad = $1`, [id])
-    client.release();
-    if (result.rowCount === 0){
-        throw new Error(`No hay planes con el id ${id}`)
-    }
-    return result
-}
+export const findPlanById = async (id: string): Promise<QueryResult<any>> => {
+	// Connects to the DB
+	const client = await pool.connect();
+	const result = await client.query(
+		`SELECT * FROM plan WHERE id_actividad = $1`,
+		[id],
+	);
+	client.release();
+	if (result.rowCount === 0) {
+		throw new Error(`No hay planes con el id ${id}`);
+	}
+	return result;
+};
 
 // Adds the id to the json
 export const addPlan = async (
@@ -29,10 +33,11 @@ export const addPlan = async (
     return result
 }
 
+
 // Deletes plan
-export const deletePlan = async (id: string) : Promise<void> => {
-    const client = await pool.connect();
-    await client.query('DELETE FROM plan WHERE id_actividad = $1', [id]);
-    client.release();
-    return
-}
+export const deletePlan = async (id: string): Promise<void> => {
+	const client = await pool.connect();
+	await client.query("DELETE FROM plan WHERE id_actividad = $1", [id]);
+	client.release();
+	return;
+};

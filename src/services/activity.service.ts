@@ -1,3 +1,4 @@
+
 import * as activityUtils from '../utils/activity.utils'
 import { QueryResult } from 'pg'
 import pool from '../database/pool'
@@ -5,6 +6,7 @@ import pool from '../database/pool'
 
 // Find all Activities
 export const findAll = async (): Promise<QueryResult<any>> => {
+
     // Connects to the DB
     const client = await pool.connect();
     // Query all the occurrences
@@ -63,3 +65,5 @@ export const searchByWords = (search: string[], filtered: any[]) => {
     }
     return filtered
 }
+
+
