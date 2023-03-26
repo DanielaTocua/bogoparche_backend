@@ -22,7 +22,7 @@ class PlanController {
 		}
 		planServices.deletePlan(req.params.id);
 		const rows = (await result).rows;
-		res.json(rows);
+		res.json(rows[0]);
 	}
 	
 	async addPlan(req: Request, res: Response): Promise<void> {

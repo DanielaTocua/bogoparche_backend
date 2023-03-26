@@ -22,7 +22,7 @@ class EventController {
 		}
 		eventServices.deleteEvent(req.params.id);
 		const rows = (await result).rows;
-		res.json(rows);
+		res.json(rows[0]);
 	}
 
 	async addEvent(req: Request, res: Response): Promise<void> {
