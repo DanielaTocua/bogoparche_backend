@@ -22,16 +22,17 @@ class ActivityController {
 	}
 
     async deleteActivity(req: Request, res: Response): Promise<void> {
-		const esPlan = req.params.es_plan;
+		const esPlan = JSON.parse(req.params.es_plan);
 		if (esPlan) {
-			planController.deletePlan(req, res);
+            planController.deletePlan(req, res);
+            
 		} else {
 			eventController.deleteEvent(req, res);
 		}
 	}
 
     async getActivity(req: Request, res: Response): Promise<void> {
-		const esPlan = req.params.es_plan;
+		const esPlan = JSON.parse(req.params.es_plan);
 		if (esPlan) {
 			planController.getPlan(req, res);
 		} else {
