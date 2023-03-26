@@ -8,6 +8,7 @@ import passport from "passport";
 import errorMiddleware from "./middlewares/error.middleware";
 import activitiesRoutes from "./routes/activities.router";
 import authRoutes from "./routes/auth.routes";
+import categoriesRoutes from "./routes/categories.router";
 import helloRoutes from "./routes/hello.routes";
 
 export class App {
@@ -25,6 +26,7 @@ export class App {
 		this._app.use(express.urlencoded({ extended: true }));
 		this._app.use(passport.initialize());
 		this._app.use("/api", activitiesRoutes);
+		this._app.use("/api", categoriesRoutes);
 		this._app.use("/api", authRoutes);
 		this._app.use("/api", helloRoutes);
 		this._app.use(errorMiddleware);
