@@ -21,6 +21,15 @@ class ActivityController {
 		}
 	}
 
+	async editActivity(req: Request, res: Response): Promise<void> {
+		const esPlan = req.body.es_plan;
+		if (esPlan) {
+			planController.editPlan(req, res);
+		} else {
+			eventController.editEvent(req, res);
+		}
+	}
+
     async deleteActivity(req: Request, res: Response): Promise<void> {
 		const esPlan = JSON.parse(req.params.es_plan);
 		if (esPlan) {

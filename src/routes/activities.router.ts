@@ -20,6 +20,11 @@ router
 router.route("/create-activity-suggestion")
 	.post(asyncErrorMiddleware(activityController.addActivity));
 
+// Edit activities
+router
+	.route("/edit-activity")
+	.put(asyncErrorMiddleware(activityController.editActivity));
+
 // Deletes activities	
 router.route("/delete-activity/:id/:es_plan")
 	.delete(asyncErrorMiddleware(activityController.deleteActivity));

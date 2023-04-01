@@ -25,6 +25,21 @@ class EventController {
 		res.json(rows[0]);
 	}
 
+	async editEvent(req: Request, res: Response): Promise<void> {
+		const newEventEntry =await toNewEventEntry(req.body);
+		const result = eventServices.findEventByTitulo(req.body.titulo_actividad);
+		const rowCount = (await result).rowCount;
+		if (rowCount === 0) {
+			res
+				.json({ message: "No existe el registro que desea editar" })
+				.status(STATUS_CODES.NOT_FOUND);
+		}
+		eventServices.editEvent(newEventEntry);
+		const rows = (await result).rows;
+		res.json(rows[0]);
+	}
+
+
 	async addEvent(req: Request, res: Response): Promise<void> {
 		try {
 			// Retrieves event info

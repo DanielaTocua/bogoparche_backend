@@ -18,6 +18,33 @@ export const findEventById = async (id: string): Promise<QueryResult<any>> => {
 	return result;
 };
 
+export const findEventByTitulo = async (id: string): Promise<QueryResult<any>> => {
+	// Connects to the DB
+	const client = await pool.connect();
+	const result = await client.query(
+		`SELECT * FROM evento WHERE titulo_actividad= $1`,
+		[id],
+	);
+	client.release();
+	if (result.rowCount === 0) {
+		throw new Error(`No hay eventos con el id ${id}`);
+	}
+	return result;
+};
+
+
+export const editEvent = async (newEventEntry: NewEventEntry): Promise<QueryResult<any>> => {
+	// Connects to the DB
+	const client = await pool.connect();
+	// Inserts Event
+	const result = await client.query(
+		`UPDATE evento SET ubicacion=$2, rango_precio=$3, descripcion=$4, restriccion_edad=$5, medio_contacto=$6, es_privada=$7, fecha_inicio=$8, fecha_fin=$9, hora_inicio=$10, hora_fin=$11, es_plan=$12, id_categoria=$13, es_aprobado=$14 WHERE titulo_actividad= $1`,
+		[newEventEntry.titulo_actividad, newEventEntry.ubicacion, newEventEntry.rango_precio, newEventEntry.description, newEventEntry.restriccion_edad, newEventEntry.medio_contacto, newEventEntry.es_privada, 
+			newEventEntry.fecha_inicio, newEventEntry.fecha_fin, newEventEntry.hora_inicio, newEventEntry.hora_fin, newEventEntry.es_plan, newEventEntry.id_categoria, newEventEntry.es_aprobado]);
+	client.release();
+	return result;
+}
+
 // Adds the id to the json
 export const addEvent = async (
     newEventEntry: NewEventEntry): Promise<QueryResult<any>> => {
