@@ -1,7 +1,7 @@
 import { QueryResult } from "pg";
 
 import pool from "../database/pool";
-import { NewEventEntry } from "../dtos/activityTypes.dto";
+import { NewEventEntry, EventEntry } from "../dtos/activityTypes.dto";
 
 // Find Event by Id
 export const findEventById = async (id: string): Promise<QueryResult<any>> => {
@@ -33,14 +33,14 @@ export const findEventByTitulo = async (id: string): Promise<QueryResult<any>> =
 };
 
 
-export const editEvent = async (newEventEntry: NewEventEntry): Promise<QueryResult<any>> => {
+export const editEvent = async (eventEntry: EventEntry): Promise<QueryResult<any>> => {
 	// Connects to the DB
 	const client = await pool.connect();
 	// Inserts Event
 	const result = await client.query(
-		`UPDATE evento SET ubicacion=$2, rango_precio=$3, descripcion=$4, restriccion_edad=$5, medio_contacto=$6, es_privada=$7, fecha_inicio=$8, fecha_fin=$9, hora_inicio=$10, hora_fin=$11, es_plan=$12, id_categoria=$13, es_aprobado=$14 WHERE titulo_actividad= $1`,
-		[newEventEntry.titulo_actividad, newEventEntry.ubicacion, newEventEntry.rango_precio, newEventEntry.description, newEventEntry.restriccion_edad, newEventEntry.medio_contacto, newEventEntry.es_privada, 
-			newEventEntry.fecha_inicio, newEventEntry.fecha_fin, newEventEntry.hora_inicio, newEventEntry.hora_fin, newEventEntry.es_plan, newEventEntry.id_categoria, newEventEntry.es_aprobado]);
+		`UPDATE evento SET ubicacion=$2, rango_precio=$3, descripcion=$4, restriccion_edad=$5, medio_contacto=$6, es_privada=$7, fecha_inicio=$8, fecha_fin=$9, hora_inicio=$10, hora_fin=$11, es_plan=$12, id_categoria=$13, es_aprobado=$14 WHERE id_actividad= $1`,
+		[eventEntry.id_actividad, eventEntry.ubicacion, eventEntry.rango_precio, eventEntry.description, eventEntry.restriccion_edad, eventEntry.medio_contacto, eventEntry.es_privada, 
+			eventEntry.fecha_inicio, eventEntry.fecha_fin, eventEntry.hora_inicio, eventEntry.hora_fin, eventEntry.es_plan, eventEntry.id_categoria, eventEntry.es_aprobado]);
 	client.release();
 	return result;
 }

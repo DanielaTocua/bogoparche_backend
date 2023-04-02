@@ -7,6 +7,7 @@ import {
 
 export const parseString = (string: any): string => {
 	if (typeof string != "string") {
+        console.log(string)
 		throw new Error("Entrada incorrecta o faltante");
 	}
 	return string;

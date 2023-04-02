@@ -22,7 +22,7 @@ router.route("/create-activity-suggestion")
 
 // Edit activities
 router
-	.route("/edit-activity")
+	.route("/edit-activity/:id/:es_plan")
 	.put(asyncErrorMiddleware(activityController.editActivity));
 
 // Deletes activities	

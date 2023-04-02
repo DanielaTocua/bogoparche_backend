@@ -1,3 +1,4 @@
+import { EventEntry } from "@/dtos/activityTypes.dto";
 import { Request, Response } from "express";
 
 import * as eventServices from "../services/event.service";
@@ -26,15 +27,24 @@ class EventController {
 	}
 
 	async editEvent(req: Request, res: Response): Promise<void> {
-		const newEventEntry =await toNewEventEntry(req.body);
-		const result = eventServices.findEventByTitulo(req.body.titulo_actividad);
+		// Checks if id_activity exists
+		const result = eventServices.findEventById(req.params.id);
 		const rowCount = (await result).rowCount;
 		if (rowCount === 0) {
 			res
 				.json({ message: "No existe el registro que desea editar" })
 				.status(STATUS_CODES.NOT_FOUND);
 		}
-		eventServices.editEvent(newEventEntry);
+		// Updates info
+		console.log(req.body)
+		const id:number = Number (JSON.parse(req.params.id))
+		const newEventEntry = await toNewEventEntry(req.body);
+		const eventEntry:EventEntry = {
+			id_actividad: id,
+			...newEventEntry
+		}
+		
+		eventServices.editEvent(eventEntry);
 		const rows = (await result).rows;
 		res.json(rows[0]);
 	}

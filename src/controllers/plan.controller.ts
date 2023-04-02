@@ -1,3 +1,4 @@
+import { PlanEntry } from "@/dtos/activityTypes.dto";
 import { Request, Response } from "express";
 
 import * as planServices from "../services/plan.service";
@@ -26,15 +27,21 @@ class PlanController {
 	}
 
 	async editPlan(req: Request, res: Response): Promise<void> {
-		const newPlanEntry =await toNewPlanEntry(req.body);
-		const result = planServices.findPlanByTitulo(req.body.titulo_actividad);
+		// Checks if id_activity exists
+		const result = planServices.findPlanById(req.params.id);
 		const rowCount = (await result).rowCount;
 		if (rowCount === 0) {
 			res
 				.json({ message: "No existe el registro que desea editar" })
 				.status(STATUS_CODES.NOT_FOUND);
 		}
-		planServices.editPlan(newPlanEntry);
+		// Updates info
+		const newPlanEntry = await toNewPlanEntry(req.body);
+		const planEntry: PlanEntry = {
+			id_actividad: req.body.id_actividad,
+			... newPlanEntry}
+		
+		planServices.editPlan(planEntry);
 		const rows = (await result).rows;
 		res.json(rows[0]);
 	}
