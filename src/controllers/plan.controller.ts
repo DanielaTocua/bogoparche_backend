@@ -36,9 +36,10 @@ class PlanController {
 				.status(STATUS_CODES.NOT_FOUND);
 		}
 		// Updates info
+		const id:number = Number (JSON.parse(req.params.id))
 		const newPlanEntry = await toNewPlanEntry(req.body);
 		const planEntry: PlanEntry = {
-			id_actividad: req.body.id_actividad,
+			id_actividad: id,
 			... newPlanEntry}
 		
 		planServices.editPlan(planEntry);
