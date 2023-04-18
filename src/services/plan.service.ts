@@ -1,7 +1,7 @@
 import { QueryResult } from "pg";
 
 import pool from "../database/pool";
-import { NewPlanEntry } from "../dtos/activityTypes.dto";
+import { NewPlanEntry, PlanEntry } from "../dtos/activityTypes.dto";
 
 // Find Plan by Id
 export const findPlanById = async (id: string): Promise<QueryResult<any>> => {
@@ -9,6 +9,20 @@ export const findPlanById = async (id: string): Promise<QueryResult<any>> => {
 	const client = await pool.connect();
 	const result = await client.query(
 		`SELECT * FROM plan WHERE id_actividad = $1`,
+		[id],
+	);
+	client.release();
+	if (result.rowCount === 0) {
+		throw new Error(`No hay planes con el id ${id}`);
+	}
+	return result;
+};
+
+export const findPlanByTitulo = async (id: string): Promise<QueryResult<any>> => {
+	// Connects to the DB
+	const client = await pool.connect();
+	const result = await client.query(
+		`SELECT * FROM plan WHERE titulo_actividad= $1`,
 		[id],
 	);
 	client.release();
@@ -33,6 +47,17 @@ export const addPlan = async (
     return result
 }
 
+export const editPlan = async (planEntry: PlanEntry): Promise<QueryResult<any>> => {
+        // Connects to the DB
+    const client = await pool.connect();
+        // Inserts Plan
+	const result = await client.query(
+            `UPDATE plan SET ubicacion=$2, rango_precio=$3, descripcion=$4, restriccion_edad=$5, medio_contacto=$6, es_privada=$7, horario_plan=$8, es_plan=$9, id_categoria=$10, es_aprobado=$11 WHERE id_actividad= $1`,
+            [planEntry.id_actividad, planEntry.ubicacion, planEntry.rango_precio, planEntry.description, planEntry.restriccion_edad, planEntry.medio_contacto, planEntry.es_privada, 
+				planEntry.horario_plan, planEntry.es_plan, planEntry.id_categoria, planEntry.es_aprobado]);
+			client.release();
+    return result;
+}
 
 // Deletes plan
 export const deletePlan = async (id: string): Promise<void> => {
