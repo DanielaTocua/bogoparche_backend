@@ -9,6 +9,7 @@ export default (
 	next: NextFunction,
 ) => {
 	res
+		.status(err.code)
 		.json({
 			error: err.message,
 		})
