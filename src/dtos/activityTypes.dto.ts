@@ -1,5 +1,3 @@
-
-
 export enum Range_prices {
 	Gratis = "Gratis",
 	Range_1_10 = "1k - 10k",
@@ -9,21 +7,19 @@ export enum Range_prices {
 	Range_more_150 = "+ 150k",
 }
 
-
 // Tipos de Activities
 export interface ActivityEntry {
-    id_actividad: number,
-    titulo_actividad: string,
-    ubicacion: string,
-    rango_precio: Range_prices,
-    description: string,
-    restriccion_edad: boolean,
-    medio_contacto: string,
-    es_privada: boolean,
-    es_plan: boolean,
-    id_categoria: number,
-	es_aprobado: boolean
-
+	id_actividad: number;
+	titulo_actividad: string;
+	ubicacion: string;
+	rango_precio: Range_prices;
+	description: string;
+	restriccion_edad: boolean;
+	medio_contacto: string;
+	es_privada: boolean;
+	es_plan: boolean;
+	id_categoria: number;
+	es_aprobado: boolean;
 }
 // With Pick
 // export type NonSensitiveInfoActivityEntry = Pick<ActivityEntry, 'titulo_actividad' | 'description' | 'medio_contacto' | 'rango_precio' | 'ubicacion' | 'restriccion_edad'>
@@ -36,7 +32,7 @@ export type NewActivityEntry = Omit<ActivityEntry, "id_actividad">;
 export interface EventEntry extends ActivityEntry {
 	fecha_inicio: Date;
 	fecha_fin: Date;
-	hora_inicio:Date;
+	hora_inicio: Date;
 	hora_fin: Date;
 }
 export type NewEventEntry = Omit<EventEntry, "id_actividad">;
