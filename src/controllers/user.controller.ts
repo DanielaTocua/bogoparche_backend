@@ -11,6 +11,7 @@ class UserController {
 		res: Response,
 		next: NextFunction,
 	): Promise<void> {
+		console.log("a")
 		const userDTO = plainToInstance(UserRegisterDTO, req.body);
 		res.json(await UserFacade.registerUser(userDTO)).status(STATUS_CODES.OK);
 	}
