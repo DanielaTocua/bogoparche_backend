@@ -8,6 +8,7 @@ import activitiesRoutes from "./routes/activities.router";
 import authRoutes from "./routes/auth.routes";
 import categoriesRoutes from "./routes/categories.router";
 import helloRoutes from "./routes/hello.routes";
+import userRoutes from "./routes/user.routes";
 export class App {
 	private readonly _app: Application;
 
@@ -30,6 +31,7 @@ export class App {
 		this._app.use("/api", categoriesRoutes);
 		this._app.use("/api", authRoutes);
 		this._app.use("/api", helloRoutes);
+		this._app.use("/api", userRoutes);
 		this._app.use(errorMiddleware);
 	}
 

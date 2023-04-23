@@ -1,5 +1,6 @@
-import { NewActivityEntry, Range_prices } from "../dtos/activityTypes.dto";
+import { NewActivityEntry } from "../dtos/activityTypes.dto";
 import * as activityServices from "../services/activity.service";
+import { RANGE_PRICES } from "./constants";
 
 export const parseString = (string: any): string => {
 	if (typeof string != "string") {
@@ -9,7 +10,7 @@ export const parseString = (string: any): string => {
 	return string;
 };
 
-const isString = (string: string): boolean => {
+export const isString = (string: string): boolean => {
 	return typeof string === "string";
 };
 
@@ -18,10 +19,10 @@ const isDate = (date: string): boolean => {
 };
 
 const isPriceRange = (price_range: any): boolean => {
-	return Object.values(Range_prices).includes(price_range);
+	return Object.values(RANGE_PRICES).includes(price_range);
 };
 
-export const parsePriceRange = (priceRangeFromRequest: any): Range_prices => {
+export const parsePriceRange = (priceRangeFromRequest: any): RANGE_PRICES => {
 	if (
 		!isString(priceRangeFromRequest) ||
 		!isPriceRange(priceRangeFromRequest)
@@ -54,7 +55,7 @@ const toNewActivityEntry = async (object: any): Promise<NewActivityEntry> => {
 		titulo_actividad: parseString(object.titulo_actividad),
 		ubicacion: parseString(object.ubicacion),
 		rango_precio: parsePriceRange(object.rango_precio),
-		description: parseString(object.description),
+		descripcion: parseString(object.description),
 		restriccion_edad: object.restriccion_edad,
 		medio_contacto: parseString(object.medio_contacto),
 		es_privada: object.es_privada,

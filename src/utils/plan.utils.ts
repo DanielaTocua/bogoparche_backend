@@ -6,7 +6,7 @@ const toNewPlanEntry = async (object: any): Promise<NewPlanEntry> => {
 		titulo_actividad: activityUtils.parseString(object.titulo_actividad),
 		ubicacion: activityUtils.parseString(object.ubicacion),
 		rango_precio: activityUtils.parsePriceRange(object.rango_precio),
-		description: activityUtils.parseString(object.description),
+		descripcion: activityUtils.parseString(object.description),
 		restriccion_edad: object.restriccion_edad,
 		medio_contacto: activityUtils.parseString(object.medio_contacto),
 		es_privada: object.es_privada,
