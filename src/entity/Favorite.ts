@@ -6,6 +6,7 @@ export class Favorite extends BaseEntity {
 	id: number;
 
 	@ManyToOne(type => User)
+	@JoinColumn({name:"id_usuario",referencedColumnName:"id"})
 	id_usuario: number;
 
 	@Column("integer")

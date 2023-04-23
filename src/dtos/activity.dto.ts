@@ -141,3 +141,20 @@ export class EventUpdateDTO extends ActivityUpdateDTO {
 	@IsOptional()
 	hora_fin: Date;
 }
+
+export class NewFavoriteEntryDTO {
+	@IsNumber()
+	@IsNotEmpty()
+	@Expose()
+	id_actividad: number
+
+	@IsNumber()
+	@IsNotEmpty()
+	@Expose()
+	id_usuario: number
+
+	@IsBoolean()
+	@IsNotEmpty()
+	@Expose()
+	es_plan: boolean
+}

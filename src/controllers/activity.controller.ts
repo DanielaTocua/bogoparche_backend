@@ -1,7 +1,7 @@
 import { plainToInstance } from "class-transformer";
 import { Request, Response } from "express";
 
-import { EventUpdateDTO, NewEventEntryDTO } from "../dtos/activity.dto";
+import { EventUpdateDTO, NewEventEntryDTO, NewFavoriteEntryDTO } from "../dtos/activity.dto";
 import { ServerError } from "../errors/server.error";
 import activityService from "../services/activity.service";
 import eventService from "../services/event.service";
@@ -103,5 +103,13 @@ class ActivityController {
 		filtered = activityService.searchByWords(search, filtered);
 		res.send(filtered);
 	}
+
+	async addFavorites(req: Request, res: Response): Promise<void> {
+		// Retrieves plan info
+		const newFavoriteEntry = plainToInstance(NewFavoriteEntryDTO,req.body,{excludeExtraneousValues:true});
+		await activityService.addFavorites(newFavoriteEntry);
+		res.json({msg:"Favorite succesfully added"})	
+	}
+
 }
 export default new ActivityController();

@@ -11,6 +11,7 @@ class UserService {
 	async registerUser(user: UserRegisterDTO): Promise<UserPublicDTO> {
 		const inputErrors = await validate(user);
 		if (inputErrors.length > 0) {
+			console.log(inputErrors)
 			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
 		}
 		if ((await User.findOneBy({ email: user.email })) != null) {

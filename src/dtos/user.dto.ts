@@ -32,6 +32,6 @@ export class UserPublicDTO extends UserEmailDTO {
 export class UserRegisterDTO extends UserPublicDTO {
 	@IsNotEmpty()
 	@IsString()
-	@Exclude({ toPlainOnly: true })
+	@Expose({ toClassOnly: true })
 	password: string;
 }
