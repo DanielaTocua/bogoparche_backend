@@ -1,6 +1,5 @@
-import { Request, Response } from "express";
-
 import { EventEntry } from "@/dtos/activityTypes.dto";
+import { Request, Response } from "express";
 
 import * as eventServices from "../services/event.service";
 import { STATUS_CODES } from "../utils/constants";
@@ -37,18 +36,19 @@ class EventController {
 				.status(STATUS_CODES.NOT_FOUND);
 		}
 		// Updates info
-		console.log(req.body);
-		const id = Number(JSON.parse(req.params.id));
+		console.log(req.body)
+		const id:number = Number (JSON.parse(req.params.id))
 		const newEventEntry = await toNewEventEntry(req.body);
-		const eventEntry: EventEntry = {
+		const eventEntry:EventEntry = {
 			id_actividad: id,
-			...newEventEntry,
-		};
-
+			...newEventEntry
+		}
+		
 		eventServices.editEvent(eventEntry);
 		const rows = (await result).rows;
 		res.json(rows[0]);
 	}
+
 
 	async addEvent(req: Request, res: Response): Promise<void> {
 		try {
@@ -57,7 +57,7 @@ class EventController {
 			// Connects to de DB
 			const result = eventServices.addEvent(await newEventEntry);
 			const id = (await result).rows[0].id_actividad;
-			res.json({ id });
+			res.json({id});
 		} catch (error) {
 			res.json({ error: error }).status(STATUS_CODES.BAD_REQUEST);
 		}

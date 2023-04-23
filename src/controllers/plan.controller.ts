@@ -1,6 +1,5 @@
-import { Request, Response } from "express";
-
 import { PlanEntry } from "@/dtos/activityTypes.dto";
+import { Request, Response } from "express";
 
 import * as planServices from "../services/plan.service";
 import { STATUS_CODES } from "../utils/constants";
@@ -37,13 +36,12 @@ class PlanController {
 				.status(STATUS_CODES.NOT_FOUND);
 		}
 		// Updates info
-		const id = Number(JSON.parse(req.params.id));
+		const id:number = Number (JSON.parse(req.params.id))
 		const newPlanEntry = await toNewPlanEntry(req.body);
 		const planEntry: PlanEntry = {
 			id_actividad: id,
-			...newPlanEntry,
-		};
-
+			... newPlanEntry}
+		
 		planServices.editPlan(planEntry);
 		const rows = (await result).rows;
 		res.json(rows[0]);
@@ -52,10 +50,10 @@ class PlanController {
 	async addPlan(req: Request, res: Response): Promise<void> {
 		try {
 			// Retrieves plan info
-			const newPlanEntry = await toNewPlanEntry(req.body);
-			const result = await planServices.addPlan(newPlanEntry);
+			const newPlanEntry =await toNewPlanEntry(req.body);
+			const result = await  planServices.addPlan(newPlanEntry);
 			const id = result.rows[0].id_actividad;
-			res.json({ id });
+			res.json({id});
 		} catch (error) {
 			res.json({ error: error }).status(STATUS_CODES.BAD_REQUEST);
 		}

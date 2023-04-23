@@ -1,3 +1,5 @@
+
+
 import { Request, Response } from "express";
 
 import * as activityServices from "../services/activity.service";
@@ -28,16 +30,17 @@ class ActivityController {
 		}
 	}
 
-	async deleteActivity(req: Request, res: Response): Promise<void> {
+    async deleteActivity(req: Request, res: Response): Promise<void> {
 		const esPlan = JSON.parse(req.params.es_plan);
 		if (esPlan) {
-			planController.deletePlan(req, res);
+            planController.deletePlan(req, res);
+            
 		} else {
 			eventController.deleteEvent(req, res);
 		}
 	}
 
-	async getActivity(req: Request, res: Response): Promise<void> {
+    async getActivity(req: Request, res: Response): Promise<void> {
 		const esPlan = JSON.parse(req.params.es_plan);
 		if (esPlan) {
 			planController.getPlan(req, res);
@@ -46,30 +49,24 @@ class ActivityController {
 		}
 	}
 
-	async filter(req: Request, res: Response): Promise<void> {
-		let filtered = (await activityServices.findAll()).rows;
+    async filter(req: Request, res: Response): Promise<void> {
+        let filtered = (await activityServices.findAll()).rows
 
-		const search: string[] = req.query.search
-			? (req.query.search as string).split(" ")
-			: [];
-		const rangePrices: string[] = req.query.range_prices
-			? (req.query.range_prices as string).split(",")
-			: [];
-		const categories: string[] = req.query.categories
-			? (req.query.categories as string).split(",")
-			: [];
+        const search: string[] = req.query.search ? (req.query.search as string).split(' ') : []
+        const rangePrices: string[] = req.query.range_prices ? (req.query.range_prices as string).split(',') : [];
+        const categories: string[] = req.query.categories ? (req.query.categories as string).split(',') : [];
+        
+        let filteredByCateg: any[] = [] 
 
-		const filteredByCateg: any[] = [];
-
-		// Filter by Price
-		filtered = activityServices.filterByPrices(rangePrices, filtered);
-
-		// Filter by Categories
-		filtered = await activityServices.filterByCategory(categories, filtered);
-
-		// Search
-		filtered = activityServices.searchByWords(search, filtered);
-		res.send(filtered);
-	}
+        // Filter by Price    
+        filtered = activityServices.filterByPrices(rangePrices,filtered)
+        
+        // Filter by Categories
+        filtered = await activityServices.filterByCategory(categories,filtered)
+        
+        // Search
+        filtered = activityServices.searchByWords(search,filtered)
+        res.send(filtered)
+    }
 }
 export default new ActivityController();
