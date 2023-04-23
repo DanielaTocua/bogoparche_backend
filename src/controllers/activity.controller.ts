@@ -1,13 +1,17 @@
 import { plainToInstance } from "class-transformer";
 import { Request, Response } from "express";
 
-import { EventUpdateDTO, NewEventEntryDTO, NewPlanEntryDTO, PlanUpdateDTO } from "../dtos/activity.dto";
+import {
+	EventUpdateDTO,
+	NewEventEntryDTO,
+	NewPlanEntryDTO,
+	PlanUpdateDTO,
+} from "../dtos/activity.dto";
 import { ServerError } from "../errors/server.error";
 import activityService from "../services/activity.service";
 import eventService from "../services/event.service";
 import planService from "../services/plan.service";
 import { STATUS_CODES } from "../utils/constants";
-import planController from "./plan.controller";
 
 class ActivityController {
 	async getAll(req: Request, res: Response): Promise<void> {
@@ -24,7 +28,7 @@ class ActivityController {
 		}
 		const esPlan = req.body.es_plan;
 		if (esPlan) {
-			const newPlanEntry = plainToInstance(NewPlanEntryDTO, req.body,{
+			const newPlanEntry = plainToInstance(NewPlanEntryDTO, req.body, {
 				excludeExtraneousValues: true,
 			});
 			const result = await planService.addPlan(newPlanEntry);
@@ -50,20 +54,20 @@ class ActivityController {
 			const newPlanEntry = plainToInstance(PlanUpdateDTO, req.body, {
 				excludeExtraneousValues: true,
 			});
-		const result = await planService.editPlan(
-			parseInt(req.params.id),
-			newPlanEntry,
-		);
-		res.json(result);
+			const result = await planService.editPlan(
+				parseInt(req.params.id),
+				newPlanEntry,
+			);
+			res.json(result);
 		} else {
 			const newEventEntry = plainToInstance(EventUpdateDTO, req.body, {
 				excludeExtraneousValues: true,
 			});
-		const result = await eventService.editEvent(
-			parseInt(req.params.id),
-			newEventEntry,
-		);
-		res.json(result);
+			const result = await eventService.editEvent(
+				parseInt(req.params.id),
+				newEventEntry,
+			);
+			res.json(result);
 		}
 	}
 
