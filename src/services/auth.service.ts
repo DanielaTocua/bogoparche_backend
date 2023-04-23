@@ -34,7 +34,7 @@ class AuthService {
 	}
 	async refresh(email: string, name: string, token: string): Promise<TokenDTO> {
 		const newUsedToken = Token.create({ token });
-		newUsedToken.save()
+		newUsedToken.save();
 		return jwtService.generate(email, name);
 	}
 }

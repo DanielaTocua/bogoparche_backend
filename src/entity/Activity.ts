@@ -1,6 +1,13 @@
-import { BaseEntity, Column, PrimaryGeneratedColumn } from "typeorm";
+import {
+	BaseEntity,
+	Column,
+	JoinColumn,
+	ManyToOne,
+	PrimaryGeneratedColumn,
+} from "typeorm";
 
 import { RANGE_PRICES } from "../utils/constants";
+import { Category } from "./Category";
 
 export class Activity extends BaseEntity {
 	@PrimaryGeneratedColumn()
@@ -16,22 +23,23 @@ export class Activity extends BaseEntity {
 	rango_precio: RANGE_PRICES;
 
 	@Column("varchar", { length: 200 })
-	description: string;
+	descripcion: string;
 
 	@Column("bool", { default: false })
 	restriccion_edad: boolean;
 
-	@Column("bool", { default: false })
-	medio_contacto: boolean;
+	@Column("varchar", { length: 200 })
+	medio_contacto: string;
 
 	@Column("bool", { default: false })
 	es_privada: boolean;
 
-	@Column("integer")
+	@ManyToOne((type) => Category)
+	@JoinColumn({ name: "id_categoria", referencedColumnName: "id" })
 	id_categoria: number;
 
 	@Column("bool", { default: false })
 	es_aprobado: boolean;
 
-	es_plan: boolean
+	es_plan: boolean;
 }

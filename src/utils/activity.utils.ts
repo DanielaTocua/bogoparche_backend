@@ -1,5 +1,5 @@
 import { NewActivityEntry } from "../dtos/activityTypes.dto";
-import * as activityServices from "../services/activity.service";
+import activityService from "../services/activity.service";
 import { RANGE_PRICES } from "./constants";
 
 export const parseString = (string: any): string => {
@@ -39,9 +39,8 @@ export const parsePriceRange = (priceRangeFromRequest: any): RANGE_PRICES => {
 export const parseCategoria = async (
 	nombre_categoria: any,
 ): Promise<number> => {
-	const result = await activityServices.findCategory(nombre_categoria);
-	const rows = result.rows;
-	return rows[0].id_categoria;
+	const result = await activityService.findCategory(nombre_categoria);
+	return result.id;
 };
 
 export const categoriaAsNumber = async (
