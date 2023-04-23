@@ -4,15 +4,15 @@ import { Activity } from "./Activity";
 
 @Entity("event")
 export class Event extends Activity {
-	@Column()
+	@Column("date")
 	fecha_inicio: Date;
 
-	@Column()
+	@Column("date")
 	fecha_fin: Date;
 
-	@Column()
+	@Column("time")
 	hora_inicio: Date;
 
-	@Column()
+	@Column("time")
 	hora_fin: Date;
 }

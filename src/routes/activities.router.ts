@@ -1,7 +1,6 @@
 import express from "express"; //ESModules
 
 import activityController from "../controllers/activity.controller";
-import eventController from "../controllers/event.controller";
 import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 // import toNewActivityEntry from '../utils/utils_activity'
 
@@ -9,7 +8,9 @@ import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 const router = express.Router();
 
 // Gets all activities (plan/events)
-router.route("/activities").get(activityController.getAll);
+router
+	.route("/activities")
+	.get(asyncErrorMiddleware(activityController.getAll));
 
 // Creates activities
 router
@@ -34,9 +35,6 @@ router
 router
 	.route("/get-activity/:id/:es_plan")
 	.get(asyncErrorMiddleware(activityController.getActivity));
-
-// Create Event
-router.route("/event").post(asyncErrorMiddleware(eventController.addEvent));
 
 // Filter activities
 router.route("/filter").get(activityController.filter);
