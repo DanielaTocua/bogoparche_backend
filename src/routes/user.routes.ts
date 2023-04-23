@@ -1,12 +1,11 @@
 import express from "express";
 
-import AuthController from "../controllers/auth.controller";
+import UserController from "../controllers/user.controller";
 import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 
 const router = express.Router();
 // Routes for database
 // Configurar rutas
-
-router.post("/login", asyncErrorMiddleware(loginController.loginUser));
+router.post("/createUser", asyncErrorMiddleware(UserController.registerUser));
 
 export default router;

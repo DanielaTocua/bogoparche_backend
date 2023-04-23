@@ -34,30 +34,54 @@ export const findPlanByTitulo = async (id: string): Promise<QueryResult<any>> =>
 
 // Adds the id to the json
 export const addPlan = async (
-    newPlanEntry: NewPlanEntry): Promise<QueryResult<any>> => {
-        // Connects to the DB
-        const client = await pool.connect();
-        // Inserts Plan
-        const result = await client.query(
-            `INSERT INTO plan (titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto, es_privada, horario_plan, es_plan, id_categoria, es_aprobado) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id_actividad`,
-            [newPlanEntry.titulo_actividad, newPlanEntry.ubicacion, newPlanEntry.rango_precio, newPlanEntry.description, newPlanEntry.restriccion_edad, newPlanEntry.medio_contacto, newPlanEntry.es_privada, 
-            newPlanEntry.horario_plan, newPlanEntry.es_plan, newPlanEntry.id_categoria, newPlanEntry.es_aprobado],
-        );
-        client.release();
-    return result
-}
+	newPlanEntry: NewPlanEntry,
+): Promise<QueryResult<any>> => {
+	// Connects to the DB
+	const client = await pool.connect();
+	// Inserts Plan
+	const result = await client.query(
+		`INSERT INTO plan (titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto, es_privada, horario_plan, es_plan, id_categoria, es_aprobado) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id_actividad`,
+		[
+			newPlanEntry.titulo_actividad,
+			newPlanEntry.ubicacion,
+			newPlanEntry.rango_precio,
+			newPlanEntry.descripcion,
+			newPlanEntry.restriccion_edad,
+			newPlanEntry.medio_contacto,
+			newPlanEntry.es_privada,
+			newPlanEntry.horario_plan,
+			newPlanEntry.es_plan,
+			newPlanEntry.id_categoria,
+			newPlanEntry.es_aprobado,
+		],
+	);
+	client.release();
+	return result;
+};
 
 export const editPlan = async (planEntry: PlanEntry): Promise<QueryResult<any>> => {
         // Connects to the DB
     const client = await pool.connect();
         // Inserts Plan
 	const result = await client.query(
-            `UPDATE plan SET ubicacion=$2, rango_precio=$3, descripcion=$4, restriccion_edad=$5, medio_contacto=$6, es_privada=$7, horario_plan=$8, es_plan=$9, id_categoria=$10, es_aprobado=$11 WHERE id_actividad= $1`,
-            [planEntry.id_actividad, planEntry.ubicacion, planEntry.rango_precio, planEntry.description, planEntry.restriccion_edad, planEntry.medio_contacto, planEntry.es_privada, 
-				planEntry.horario_plan, planEntry.es_plan, planEntry.id_categoria, planEntry.es_aprobado]);
-			client.release();
-    return result;
-}
+		`UPDATE plan SET ubicacion=$2, rango_precio=$3, descripcion=$4, restriccion_edad=$5, medio_contacto=$6, es_privada=$7, horario_plan=$8, es_plan=$9, id_categoria=$10, es_aprobado=$11 WHERE id_actividad= $1`,
+		[
+			planEntry.id_actividad,
+			planEntry.ubicacion,
+			planEntry.rango_precio,
+			planEntry.descripcion,
+			planEntry.restriccion_edad,
+			planEntry.medio_contacto,
+			planEntry.es_privada,
+			planEntry.horario_plan,
+			planEntry.es_plan,
+			planEntry.id_categoria,
+			planEntry.es_aprobado,
+		],
+	);
+	client.release();
+	return result;
+};
 
 // Deletes plan
 export const deletePlan = async (id: string): Promise<void> => {

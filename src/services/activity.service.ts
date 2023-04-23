@@ -28,6 +28,19 @@ export const findCategory = async (nombre_categoria:string) => {
     
 }
 
+export const findCategory = async (nombre_categoria: string) => {
+	const client = await pool.connect();
+	const result = await client.query(
+		`SELECT * FROM categoria WHERE nombre_categoria = $1`,
+		[nombre_categoria],
+	);
+	client.release();
+	if (result.rowCount === 0) {
+		throw new Error(`No hay categorias con el nombre ${nombre_categoria}`);
+	}
+	return result;
+};
+
 export const filterByPrices = (rangePrices: string[], filtered: any[]) => {
     let filteredByPrice: any[] = []
     if (rangePrices.length != 0){
