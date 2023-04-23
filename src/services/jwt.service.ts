@@ -6,7 +6,7 @@ class JwtService {
 	generate(email: string, username: string): TokenDTO {
 		const access = jwt.sign(
 			{
-				username: username,
+				name: username,
 				type: process.env.JWT_ACCESS,
 			},
 			process.env.JWT_KEY as string,
@@ -19,7 +19,7 @@ class JwtService {
 		);
 		const refresh = jwt.sign(
 			{
-				username: username,
+				name: username,
 				type: process.env.JWT_REFRESH,
 			},
 			process.env.JWT_KEY as string,

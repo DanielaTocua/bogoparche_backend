@@ -1,12 +1,19 @@
-import { RANGE_PRICES } from "../utils/constants";
+export enum Range_prices {
+	Gratis = "Gratis",
+	Range_1_10 = "1k - 10k",
+	Range_10_50 = "10k - 50k",
+	Range_50_100 = "50k - 100k",
+	Range_100_150 = "100k - 150k",
+	Range_more_150 = "+ 150k",
+}
 
 // Tipos de Activities
 export interface ActivityEntry {
 	id_actividad: number;
 	titulo_actividad: string;
 	ubicacion: string;
-	rango_precio: RANGE_PRICES;
-	descripcion: string;
+	rango_precio: Range_prices;
+	description: string;
 	restriccion_edad: boolean;
 	medio_contacto: string;
 	es_privada: boolean;

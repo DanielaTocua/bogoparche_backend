@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity("bgp_user")
+@Entity("user")
 export class User extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number;
