@@ -141,3 +141,17 @@ export class EventUpdateDTO extends ActivityUpdateDTO {
 	@IsOptional()
 	hora_fin: Date;
 }
+
+export class NewPlanEntryDTO extends NewActivityEntryDTO{
+	@IsString()
+	@IsNotEmpty()
+	@Expose()
+	horario_plan: String;
+}
+
+export class PlanUpdateDTO extends ActivityUpdateDTO {
+	@IsString()
+	@Expose()
+	@IsOptional()
+	horario_plan: String;
+}
