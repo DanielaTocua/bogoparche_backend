@@ -5,12 +5,11 @@ import { Request, Response } from "express";
 import * as activityServices from "../services/activity.service";
 import eventController from "./event.controller";
 import planController from "./plan.controller";
-import activityServiceTemp from "../services/activity.service-temp";
 
 class ActivityController {
 	async getAll(req: Request, res: Response): Promise<void> {
-		const result = await activityServiceTemp.findAllPublic();
-		res.send(result);
+		const result = activityServices.findAll();
+		res.send((await result).rows);
 	}
 
 	async addActivity(req: Request, res: Response): Promise<void> {
