@@ -11,7 +11,10 @@ class UserController {
 		res: Response,
 		next: NextFunction,
 	): Promise<void> {
+<<<<<<< HEAD
 		console.log("a")
+=======
+>>>>>>> 7a99664b067eb018fba5ca9bb0f8c9e0df84186c
 		const userDTO = plainToInstance(UserRegisterDTO, req.body);
 		res.json(await UserFacade.registerUser(userDTO)).status(STATUS_CODES.OK);
 	}

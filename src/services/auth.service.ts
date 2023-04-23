@@ -33,8 +33,12 @@ class AuthService {
 		throw new ServerError("Invalid credentials", STATUS_CODES.UNAUTHORIZED);
 	}
 	async refresh(email: string, name: string, token: string): Promise<TokenDTO> {
+<<<<<<< HEAD
 		const newUsedToken = Token.create({ token });
 		newUsedToken.save()
+=======
+		Token.create({ token });
+>>>>>>> 7a99664b067eb018fba5ca9bb0f8c9e0df84186c
 		return jwtService.generate(email, name);
 	}
 }

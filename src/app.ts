@@ -8,7 +8,7 @@ import activitiesRoutes from "./routes/activities.router";
 import authRoutes from "./routes/auth.routes";
 import categoriesRoutes from "./routes/categories.router";
 import helloRoutes from "./routes/hello.routes";
-import userRoutes from "./routes/user.routes";
+
 export class App {
 	private readonly _app: Application;
 

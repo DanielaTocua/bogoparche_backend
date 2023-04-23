@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 import { NewActivityEntry } from "../dtos/activityTypes.dto";
 import * as activityServices from "../services/activity.service";
 import { RANGE_PRICES } from "./constants";
+=======
+import { NewActivityEntry, Range_prices } from "../dtos/activityTypes.dto";
+import * as activityServices from "../services/activity.service";
+>>>>>>> 7a99664b067eb018fba5ca9bb0f8c9e0df84186c
 
 export const parseString = (string: any): string => {
 	if (typeof string != "string") {
@@ -22,7 +27,11 @@ const isPriceRange = (price_range: any): boolean => {
 	return Object.values(RANGE_PRICES).includes(price_range);
 };
 
+<<<<<<< HEAD
 export const parsePriceRange = (priceRangeFromRequest: any): RANGE_PRICES => {
+=======
+export const parsePriceRange = (priceRangeFromRequest: any): Range_prices => {
+>>>>>>> 7a99664b067eb018fba5ca9bb0f8c9e0df84186c
 	if (
 		!isString(priceRangeFromRequest) ||
 		!isPriceRange(priceRangeFromRequest)
@@ -55,7 +64,11 @@ const toNewActivityEntry = async (object: any): Promise<NewActivityEntry> => {
 		titulo_actividad: parseString(object.titulo_actividad),
 		ubicacion: parseString(object.ubicacion),
 		rango_precio: parsePriceRange(object.rango_precio),
+<<<<<<< HEAD
 		descripcion: parseString(object.description),
+=======
+		description: parseString(object.description),
+>>>>>>> 7a99664b067eb018fba5ca9bb0f8c9e0df84186c
 		restriccion_edad: object.restriccion_edad,
 		medio_contacto: parseString(object.medio_contacto),
 		es_privada: object.es_privada,
