@@ -15,10 +15,7 @@ export const findAll = async (): Promise<QueryResult<any>> => {
 	client.release();
 	return result;
 };
-<<<<<<< HEAD
 
-=======
->>>>>>> 7a99664b067eb018fba5ca9bb0f8c9e0df84186c
 
 export const findCategory = async (nombre_categoria: string) => {
 	const client = await pool.connect();

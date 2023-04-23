@@ -47,11 +47,7 @@ export const addPlan = async (
 			newPlanEntry.titulo_actividad,
 			newPlanEntry.ubicacion,
 			newPlanEntry.rango_precio,
-<<<<<<< HEAD
 			newPlanEntry.descripcion,
-=======
-			newPlanEntry.description,
->>>>>>> 7a99664b067eb018fba5ca9bb0f8c9e0df84186c
 			newPlanEntry.restriccion_edad,
 			newPlanEntry.medio_contacto,
 			newPlanEntry.es_privada,
@@ -77,11 +73,7 @@ export const editPlan = async (
 			planEntry.id_actividad,
 			planEntry.ubicacion,
 			planEntry.rango_precio,
-<<<<<<< HEAD
 			planEntry.descripcion,
-=======
-			planEntry.description,
->>>>>>> 7a99664b067eb018fba5ca9bb0f8c9e0df84186c
 			planEntry.restriccion_edad,
 			planEntry.medio_contacto,
 			planEntry.es_privada,

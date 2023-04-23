@@ -46,11 +46,7 @@ export const editEvent = async (
 			eventEntry.id_actividad,
 			eventEntry.ubicacion,
 			eventEntry.rango_precio,
-<<<<<<< HEAD
 			eventEntry.descripcion,
-=======
-			eventEntry.description,
->>>>>>> 7a99664b067eb018fba5ca9bb0f8c9e0df84186c
 			eventEntry.restriccion_edad,
 			eventEntry.medio_contacto,
 			eventEntry.es_privada,
@@ -79,11 +75,7 @@ export const addEvent = async (
 			newEventEntry.titulo_actividad,
 			newEventEntry.ubicacion,
 			newEventEntry.rango_precio,
-<<<<<<< HEAD
 			newEventEntry.descripcion,
-=======
-			newEventEntry.description,
->>>>>>> 7a99664b067eb018fba5ca9bb0f8c9e0df84186c
 			newEventEntry.restriccion_edad,
 			newEventEntry.medio_contacto,
 			newEventEntry.es_privada,
