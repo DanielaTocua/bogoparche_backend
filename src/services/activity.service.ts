@@ -1,8 +1,12 @@
+import { NewFavoriteEntryDTO } from "../dtos/activity.dto";
 import { appDataSource } from "../dataSource";
+import { instanceToPlain } from "class-transformer";
+import { validate } from "class-validator";
 import { Activity } from "../entity/Activity";
 import { Category } from "../entity/Category";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
+import { Favorite } from "../entity/Favorite";
 class ActivityService {
 	async findAllPublic(): Promise<Activity[]> {
 		console.log("IN FIND ALL PUBLIC")
@@ -80,6 +84,16 @@ class ActivityService {
 			}
 		}
 		return filtered;
+	}
+
+	async addFavorites (newFavoriteEntry: NewFavoriteEntryDTO): Promise<void>{
+			const inputErrors = await validate(newFavoriteEntry);
+			if (inputErrors.length > 0) {
+				console.log(inputErrors);
+				throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
+			}
+			const newFavorite = Favorite.create(instanceToPlain(newFavoriteEntry))
+			await newFavorite.save()
 	}
 }
 export default new ActivityService();

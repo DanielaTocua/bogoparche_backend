@@ -52,8 +52,6 @@ class EventService {
 
 	// Adds the id to the json
 	async addEvent(newEventEntry: NewEventEntryDTO): Promise<Event> {
-		console.log(newEventEntry);
-		console.log(instanceToPlain(newEventEntry));
 		const inputErrors = await validate(newEventEntry);
 		if (inputErrors.length > 0) {
 			console.log(inputErrors);

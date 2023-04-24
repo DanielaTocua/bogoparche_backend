@@ -1,7 +1,13 @@
 import { plainToInstance } from "class-transformer";
 import { Request, Response } from "express";
 
-import { EventUpdateDTO, NewEventEntryDTO, NewPlanEntryDTO, PlanUpdateDTO } from "../dtos/activity.dto";
+import {
+	EventUpdateDTO,
+	NewEventEntryDTO,
+	NewFavoriteEntryDTO,
+	NewPlanEntryDTO,
+	PlanUpdateDTO,
+} from "../dtos/activity.dto";
 import { ServerError } from "../errors/server.error";
 import activityService from "../services/activity.service";
 import { STATUS_CODES } from "../utils/constants";
@@ -23,7 +29,7 @@ class ActivityController {
 		}
 		const esPlan = req.body.es_plan;
 		if (esPlan) {
-			const newPlanEntry = plainToInstance(NewPlanEntryDTO, req.body,{
+			const newPlanEntry = plainToInstance(NewPlanEntryDTO, req.body, {
 				excludeExtraneousValues: true,
 			});
 			const result = await planFacade.addPlan(newPlanEntry);
@@ -117,5 +123,13 @@ class ActivityController {
 		filtered = activityService.searchByWords(search, filtered);
 		res.send(filtered);
 	}
+
+	async addFavorites(req: Request, res: Response): Promise<void> {
+		// Retrieves plan info
+		const newFavoriteEntry = plainToInstance(NewFavoriteEntryDTO,req.body,{excludeExtraneousValues:true});
+		await activityService.addFavorites(newFavoriteEntry);
+		res.json({msg:"Favorite succesfully added"})	
+	}
+
 }
 export default new ActivityController();

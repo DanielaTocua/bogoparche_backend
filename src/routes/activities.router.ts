@@ -39,6 +39,10 @@ router
 // Filter activities
 router.route("/filter").get(activityController.filter);
 
+// Add favorites
+router.route('/add-favorites')
+	.post(asyncErrorMiddleware(activityController.addFavorites));
+
 // router.route("/plan/:id")
 // 	// Get Plan
 // 	.get(asyncErrorMiddleware(planController.getPlan))

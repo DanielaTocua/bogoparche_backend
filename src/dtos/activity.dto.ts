@@ -142,16 +142,32 @@ export class EventUpdateDTO extends ActivityUpdateDTO {
 	hora_fin: Date;
 }
 
-export class NewPlanEntryDTO extends NewActivityEntryDTO{
+export class NewFavoriteEntryDTO {
+	@IsNumber()
+	@IsNotEmpty()
+	@Expose()
+	id_actividad: number
+
+	@IsNumber()
+	@IsNotEmpty()
+	@Expose()
+	id_usuario: number
+
+	@IsBoolean()
+	@IsNotEmpty()
+	@Expose()
+	es_plan: boolean
+}
+export class NewPlanEntryDTO extends NewActivityEntryDTO {
 	@IsString()
 	@IsNotEmpty()
 	@Expose()
-	horario_plan: String;
+	horario_plan: string;
 }
 
 export class PlanUpdateDTO extends ActivityUpdateDTO {
 	@IsString()
 	@Expose()
 	@IsOptional()
-	horario_plan: String;
+	horario_plan: string;
 }
