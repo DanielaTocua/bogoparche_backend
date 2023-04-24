@@ -60,7 +60,7 @@ export class NewActivityEntryDTO {
     @IsNotEmpty()
     @IsBoolean()
     @Expose()
-    es_aprobada: boolean
+    es_aprobado: boolean
 }
 
 export class ActivityUpdateDTO {

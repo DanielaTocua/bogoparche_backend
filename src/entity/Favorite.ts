@@ -14,9 +14,12 @@ export class Favorite extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number;
 
+	@Column({ name: 'id_usuario' })
+  	id_usuario: number;
+
 	@ManyToOne(type => User)
 	@JoinColumn({name:"id_usuario",referencedColumnName:"id"})
-	id_usuario: number;
+	user: User;
 
 	@Column("integer")
 	id_actividad: number;
