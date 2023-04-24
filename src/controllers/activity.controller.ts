@@ -4,10 +4,9 @@ import { Request, Response } from "express";
 import { EventUpdateDTO, NewEventEntryDTO, NewPlanEntryDTO, PlanUpdateDTO } from "../dtos/activity.dto";
 import { ServerError } from "../errors/server.error";
 import activityService from "../services/activity.service";
-import eventService from "../services/event.service";
-import planService from "../services/plan.service";
 import { STATUS_CODES } from "../utils/constants";
-import planController from "./plan.controller";
+import eventFacade from "../facades/event.facade";
+import planFacade from "../facades/plan.facade";
 
 class ActivityController {
 	async getAll(req: Request, res: Response): Promise<void> {
@@ -27,14 +26,14 @@ class ActivityController {
 			const newPlanEntry = plainToInstance(NewPlanEntryDTO, req.body,{
 				excludeExtraneousValues: true,
 			});
-			const result = await planService.addPlan(newPlanEntry);
+			const result = await planFacade.addPlan(newPlanEntry);
 			const id = result.id;
 			res.json({ id });
 		} else {
 			const newEventEntry = plainToInstance(NewEventEntryDTO, req.body, {
 				excludeExtraneousValues: true,
 			});
-			const result = await eventService.addEvent(newEventEntry);
+			const result = await eventFacade.addEvent(newEventEntry);
 			const id = result.id;
 			res.json({ id });
 		}
@@ -47,21 +46,21 @@ class ActivityController {
 
 		const esPlan = JSON.parse(req.params.es_plan);
 		if (esPlan) {
-			const newPlanEntry = plainToInstance(PlanUpdateDTO, req.body, {
+			const newPlanUpdated = plainToInstance(PlanUpdateDTO, req.body, {
 				excludeExtraneousValues: true,
 			});
-		const result = await planService.editPlan(
+		const result = await planFacade.editPlan(
 			parseInt(req.params.id),
-			newPlanEntry,
+			newPlanUpdated,
 		);
 		res.json(result);
 		} else {
-			const newEventEntry = plainToInstance(EventUpdateDTO, req.body, {
+			const newEventUpdated = plainToInstance(EventUpdateDTO, req.body, {
 				excludeExtraneousValues: true,
 			});
-		const result = await eventService.editEvent(
+		const result = await eventFacade.editEvent(
 			parseInt(req.params.id),
-			newEventEntry,
+			newEventUpdated,
 		);
 		res.json(result);
 		}
@@ -73,10 +72,10 @@ class ActivityController {
 		}
 		const esPlan = JSON.parse(req.params.es_plan);
 		if (esPlan) {
-			const result = await planService.deletePlan(parseInt(req.params.id));
+			const result = await planFacade.deletePlan(parseInt(req.params.id));
 			res.json(result);
 		} else {
-			const result = await eventService.deleteEvent(parseInt(req.params.id));
+			const result = await eventFacade.deleteEvent(parseInt(req.params.id))
 			res.json(result);
 		}
 	}
@@ -87,10 +86,10 @@ class ActivityController {
 		}
 		const esPlan = JSON.parse(req.params.es_plan);
 		if (esPlan) {
-			const result = planService.findPlanById(parseInt(req.params.id));
+			const result = planFacade.getPlan(parseInt(req.params.id));
 			res.json(result);
 		} else {
-			const result = eventService.findEventById(parseInt(req.params.id));
+			const result = await eventFacade.getEvent(parseInt(req.params.id));
 			res.json(result);
 		}
 	}
