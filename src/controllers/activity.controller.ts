@@ -131,5 +131,10 @@ class ActivityController {
 		res.json({msg:"Favorite succesfully added"})	
 	}
 
+	async deleteFavorites(req: Request, res: Response): Promise<void>{
+		await activityService.deleteFavorites(parseInt(req.params.id));
+		res.json({msg:"Favorite succesfully deleted"});
+	}
+
 }
 export default new ActivityController();

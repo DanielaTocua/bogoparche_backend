@@ -43,6 +43,10 @@ router.route("/filter").get(activityController.filter);
 router.route('/add-favorites')
 	.post(asyncErrorMiddleware(activityController.addFavorites));
 
+// Delete favorites
+router.route('/delete-favorites/:id')
+	.delete(asyncErrorMiddleware(activityController.deleteFavorites));
+
 // router.route("/plan/:id")
 // 	// Get Plan
 // 	.get(asyncErrorMiddleware(planController.getPlan))
