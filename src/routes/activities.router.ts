@@ -56,4 +56,6 @@ router.route('/get-comments/:id/:es_plan')
 router.route('/delete-favorites/:id')
 	.delete(asyncErrorMiddleware(activityController.deleteFavorites));
 
+router.route('/get-favorites')
+	.get(asyncErrorMiddleware(activityController.getFavorites));
 export default router;

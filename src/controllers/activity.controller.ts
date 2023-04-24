@@ -136,5 +136,11 @@ class ActivityController {
 		res.json({msg:"Favorite succesfully deleted"});
 	}
 
+	async getFavorites(req: Request, res: Response): Promise<void> {
+		const newFavoriteEntry = plainToInstance(NewFavoriteEntryDTO,req.body,{excludeExtraneousValues:true});
+		const id = await activityService.findFavorites(newFavoriteEntry);
+		res.json(id);
+	}
+
 }
 export default new ActivityController();

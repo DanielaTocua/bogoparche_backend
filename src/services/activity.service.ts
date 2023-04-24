@@ -126,5 +126,23 @@ class ActivityService {
 		const favorites = await this.findFavoritesById(id);
 		return Favorite.remove(favorites);
 	}
+
+	async findFavorites(newFavoriteEntry: NewFavoriteEntryDTO): Promise<any>{
+		const inputErrors = await validate(newFavoriteEntry);
+		if (inputErrors.length > 0) {
+			console.log(inputErrors);
+			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
+		}
+		try {
+			const user = await User.findOneByOrFail({username:newFavoriteEntry.username})
+			console.log({id_usuario: user.id, id_actividad: newFavoriteEntry.id_actividad, es_plan: newFavoriteEntry.es_plan })
+			const FavoriteFind = Favorite.findOneByOrFail({id_usuario: user.id, id_actividad: newFavoriteEntry.id_actividad, es_plan: newFavoriteEntry.es_plan})
+			const id = (await FavoriteFind).id
+			console.log(id)
+			return id;
+		} catch (error) {
+			throw new ServerError("favorito no encontrado", STATUS_CODES.BAD_REQUEST);		
+		}
+	}
 }
 export default new ActivityService();
