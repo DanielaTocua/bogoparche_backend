@@ -9,14 +9,14 @@ import {
 	PlanUpdateDTO,
 } from "../dtos/activity.dto";
 import { ServerError } from "../errors/server.error";
-import ActivityService from "../services/activity.service";
+import activityService from "../services/activity.service";
 import { STATUS_CODES } from "../utils/constants";
 import eventFacade from "../facades/event.facade";
 import planFacade from "../facades/plan.facade";
 
 class ActivityController {
 	async getAll(req: Request, res: Response): Promise<void> {
-		const result = await ActivityService.findAllPublic();
+		const result = await activityService.findAllPublic();
 		res.send(result);
 	}
 
@@ -101,7 +101,7 @@ class ActivityController {
 	}
 
 	async filter(req: Request, res: Response): Promise<void> {
-		let filtered = await ActivityService.findAllPublic();
+		let filtered = await activityService.findAllPublic();
 
 		const search: string[] = req.query.search
 			? (req.query.search as string).split(" ")
@@ -114,25 +114,25 @@ class ActivityController {
 			: [];
 
 		// Filter by Price
-		filtered = ActivityService.filterByPrices(rangePrices, filtered);
+		filtered = activityService.filterByPrices(rangePrices, filtered);
 
 		// Filter by Categories
-		filtered = await ActivityService.filterByCategory(categories, filtered);
+		filtered = await activityService.filterByCategory(categories, filtered);
 
 		// Search
-		filtered = ActivityService.searchByWords(search, filtered);
+		filtered = activityService.searchByWords(search, filtered);
 		res.send(filtered);
 	}
 
 	async addFavorites(req: Request, res: Response): Promise<void> {
 		// Retrieves plan info
 		const newFavoriteEntry = plainToInstance(NewFavoriteEntryDTO,req.body,{excludeExtraneousValues:true});
-		await ActivityService.addFavorites(newFavoriteEntry);
+		await activityService.addFavorites(newFavoriteEntry);
 		res.json({msg:"Favorite succesfully added"})	
 	}
 
 	async deleteFavorites(req: Request, res: Response): Promise<void>{
-		await ActivityService.deleteFavorites(parseInt(req.params.id));
+		await activityService.deleteFavorites(parseInt(req.params.id));
 		res.json({msg:"Favorite succesfully deleted"});
 	}
 
