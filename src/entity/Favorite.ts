@@ -1,4 +1,13 @@
-import { BaseEntity, CreateDateColumn, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column} from "typeorm";
+import {
+	BaseEntity,
+	Column,
+	CreateDateColumn,
+	Entity,
+	ManyToOne,
+	JoinColumn,
+	PrimaryGeneratedColumn,
+} from "typeorm";
+
 import { User } from "./User";
 @Entity("favorite")
 export class Favorite extends BaseEntity {
@@ -14,8 +23,6 @@ export class Favorite extends BaseEntity {
 
 	@Column("bool")
 	es_plan: boolean;
-	
-
 
 	@CreateDateColumn()
 	createdAt: Date;

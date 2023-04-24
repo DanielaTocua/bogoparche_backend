@@ -158,3 +158,16 @@ export class NewFavoriteEntryDTO {
 	@Expose()
 	es_plan: boolean
 }
+export class NewPlanEntryDTO extends NewActivityEntryDTO {
+	@IsString()
+	@IsNotEmpty()
+	@Expose()
+	horario_plan: string;
+}
+
+export class PlanUpdateDTO extends ActivityUpdateDTO {
+	@IsString()
+	@Expose()
+	@IsOptional()
+	horario_plan: string;
+}
