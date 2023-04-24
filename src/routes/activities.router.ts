@@ -57,5 +57,5 @@ router.route('/delete-favorites/:id')
 	.delete(asyncErrorMiddleware(activityController.deleteFavorites));
 
 router.route('/get-favorites')
-	.get(asyncErrorMiddleware(activityController.getFavorites));
+	.post(asyncErrorMiddleware(activityController.getFavorites));
 export default router;
