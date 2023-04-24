@@ -136,8 +136,8 @@ class ActivityService {
 		try {
 			const user = await User.findOneByOrFail({username:newFavoriteEntry.username})
 			console.log({id_usuario: user.id, id_actividad: newFavoriteEntry.id_actividad, es_plan: newFavoriteEntry.es_plan })
-			const FavoriteFind = Favorite.findOneByOrFail({id_usuario: user.id, id_actividad: newFavoriteEntry.id_actividad, es_plan: newFavoriteEntry.es_plan})
-			const id = (await FavoriteFind).id
+			const FavoriteFind = await Favorite.findOneByOrFail({ id_usuario: user.id, id_actividad: newFavoriteEntry.id_actividad, es_plan: newFavoriteEntry.es_plan })
+			const id = FavoriteFind.id
 			console.log(id)
 			return id;
 		} catch (error) {
