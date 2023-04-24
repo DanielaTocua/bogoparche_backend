@@ -95,5 +95,28 @@ class ActivityService {
 			const newFavorite = Favorite.create(instanceToPlain(newFavoriteEntry))
 			await newFavorite.save()
 	}
+
+	async findFavoritesById(id: number): Promise<Favorite> {
+		if (typeof id != "number") {
+			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
+		}
+		try {
+			const plan = await Favorite.findOneOrFail({ where: { id: id } });
+			return plan;
+		} catch {
+			throw new ServerError(
+				`The Favorites id: ${id} does not exist`,
+				STATUS_CODES.BAD_REQUEST,
+			);
+		}
+	}
+
+	async deleteFavorites(id: number): Promise<Favorite>{
+		if (typeof id != "number") {
+			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
+		}
+		const favorites = await this.findFavoritesById(id);
+		return Favorite.remove(favorites);
+	}
 }
 export default new ActivityService();
