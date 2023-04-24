@@ -1,7 +1,7 @@
 import express from "express"; //ESModules
-
 import activityController from "../controllers/activity.controller";
 import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
+import commentController from "../controllers/comment.controller";
 // import toNewActivityEntry from '../utils/utils_activity'
 
 // Crea router
@@ -43,19 +43,12 @@ router.route("/filter").get(activityController.filter);
 router.route('/add-favorites')
 	.post(asyncErrorMiddleware(activityController.addFavorites));
 
-// router.route("/plan/:id")
-// 	// Get Plan
-// 	.get(asyncErrorMiddleware(planController.getPlan))
-// 	// Delete Plan
-// 	.delete(asyncErrorMiddleware(planController.deletePlan));
+// Comment
+router.route('/comment')
+	.post(asyncErrorMiddleware(commentController.createComment))
 
-// router
-// 	.route("/event/:id")
-// 	// Get Event
-// 	.get(asyncErrorMiddleware(eventController.getEvent))
-// 	// Delete event
-// 	.delete(asyncErrorMiddleware(eventController.deleteEvent));
+// Get Comments
+router.route('/get-comments/:id/:es_plan')
+	.get(asyncErrorMiddleware(commentController.getCommentsFromTable))
 
-// // Create Plan
-// router.route("/plan").post(asyncErrorMiddleware(planController.addPlan));
-export default router;
+	export default router;
