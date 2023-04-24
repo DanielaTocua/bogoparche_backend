@@ -1,6 +1,8 @@
+import { CommentPlan } from "../entity/CommentPlan";
 import { NewActivityEntry } from "../dtos/activityTypes.dto";
 import activityService from "../services/activity.service";
 import { RANGE_PRICES } from "./constants";
+import { CommentEvent } from "../entity/CommentEvent";
 
 export const parseString = (string: any): string => {
 	if (typeof string != "string") {
@@ -64,5 +66,13 @@ const toNewActivityEntry = async (object: any): Promise<NewActivityEntry> => {
 	};
 	return newEntry;
 };
+
+export const getTable = (esPlan: boolean) => {
+	if (esPlan) {
+		return CommentPlan
+	} else {
+		return CommentEvent
+	}
+}
 
 export default toNewActivityEntry;

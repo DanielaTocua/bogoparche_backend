@@ -1,7 +1,7 @@
 import express from "express"; //ESModules
-
 import activityController from "../controllers/activity.controller";
 import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
+import commentController from "../controllers/comment.controller";
 // import toNewActivityEntry from '../utils/utils_activity'
 
 // Crea router
@@ -43,23 +43,17 @@ router.route("/filter").get(activityController.filter);
 router.route('/add-favorites')
 	.post(asyncErrorMiddleware(activityController.addFavorites));
 
+// Comment
+router.route('/comment')
+	.post(asyncErrorMiddleware(commentController.createComment))
+
+// Get Comments
+router.route('/get-comments/:id/:es_plan')
+	.get(asyncErrorMiddleware(commentController.getCommentsFromTable))
+
+
 // Delete favorites
 router.route('/delete-favorites/:id')
 	.delete(asyncErrorMiddleware(activityController.deleteFavorites));
 
-// router.route("/plan/:id")
-// 	// Get Plan
-// 	.get(asyncErrorMiddleware(planController.getPlan))
-// 	// Delete Plan
-// 	.delete(asyncErrorMiddleware(planController.deletePlan));
-
-// router
-// 	.route("/event/:id")
-// 	// Get Event
-// 	.get(asyncErrorMiddleware(eventController.getEvent))
-// 	// Delete event
-// 	.delete(asyncErrorMiddleware(eventController.deleteEvent));
-
-// // Create Plan
-// router.route("/plan").post(asyncErrorMiddleware(planController.addPlan));
 export default router;
