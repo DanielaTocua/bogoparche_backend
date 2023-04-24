@@ -7,6 +7,8 @@ import { Category } from "../entity/Category";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
 import { Favorite } from "../entity/Favorite";
+import { User } from "../entity/User";
+
 class ActivityService {
 	async findAllPublic(): Promise<Activity[]> {
 		console.log("IN FIND ALL PUBLIC")
@@ -87,13 +89,19 @@ class ActivityService {
 	}
 
 	async addFavorites (newFavoriteEntry: NewFavoriteEntryDTO): Promise<void>{
-			const inputErrors = await validate(newFavoriteEntry);
-			if (inputErrors.length > 0) {
-				console.log(inputErrors);
-				throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
-			}
-			const newFavorite = Favorite.create(instanceToPlain(newFavoriteEntry))
+		const inputErrors = await validate(newFavoriteEntry);
+		if (inputErrors.length > 0) {
+			console.log(inputErrors);
+			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
+		}
+		try {
+			const user = await User.findOneByOrFail({username:newFavoriteEntry.username})
+			console.log({id_usuario: user.id, id_actividad: newFavoriteEntry.id_actividad, es_plan: newFavoriteEntry.es_plan })
+			const newFavorite = Favorite.create({id_usuario: user.id, id_actividad: newFavoriteEntry.id_actividad, es_plan: newFavoriteEntry.es_plan })
 			await newFavorite.save()
+		} catch (error) {
+			throw new ServerError("usuario no encontrado", STATUS_CODES.BAD_REQUEST);		
+		}
 	}
 
 	async findFavoritesById(id: number): Promise<Favorite> {

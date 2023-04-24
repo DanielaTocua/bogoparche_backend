@@ -161,10 +161,10 @@ export class NewFavoriteEntryDTO {
 	@Expose()
 	id_actividad: number
 
-	@IsNumber()
+	@IsString()
 	@IsNotEmpty()
 	@Expose()
-	id_usuario: number
+	username: string
 
 	@IsBoolean()
 	@IsNotEmpty()

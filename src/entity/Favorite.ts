@@ -1,7 +1,6 @@
 import {
 	BaseEntity,
 	Column,
-	CreateDateColumn,
 	Entity,
 	ManyToOne,
 	JoinColumn,
@@ -26,7 +25,4 @@ export class Favorite extends BaseEntity {
 
 	@Column("bool")
 	es_plan: boolean;
-
-	@CreateDateColumn()
-	createdAt: Date;
 }
