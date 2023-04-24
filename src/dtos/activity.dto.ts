@@ -55,6 +55,12 @@ export class NewActivityEntryDTO {
 
 	@Exclude()
 	es_plan: boolean;
+
+
+    @IsNotEmpty()
+    @IsBoolean()
+    @Expose()
+    es_aprobada: boolean
 }
 
 export class ActivityUpdateDTO {
