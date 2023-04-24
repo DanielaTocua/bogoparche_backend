@@ -7,13 +7,14 @@ import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
 class EventService {
 	// Find Event by Id
-	async findEventById(id: number): Promise<Event> {
+	async findEventById(id: number): Promise<any> {
 		if (typeof id != "number") {
 			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
 		}
 		try {
 			const event = await Event.findOneOrFail({ where: { id: id } });
-			return event;
+			const eventWithEsPlan = {...event, es_plan: false  }
+			return eventWithEsPlan;
 		} catch {
 			throw new ServerError(
 				`The event id: ${id} does not exist`,

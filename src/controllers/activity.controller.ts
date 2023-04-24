@@ -92,7 +92,7 @@ class ActivityController {
 		}
 		const esPlan = JSON.parse(req.params.es_plan);
 		if (esPlan) {
-			const result = planFacade.getPlan(parseInt(req.params.id));
+			const result = await planFacade.getPlan(parseInt(req.params.id));
 			res.json(result);
 		} else {
 			const result = await eventFacade.getEvent(parseInt(req.params.id));
@@ -129,6 +129,11 @@ class ActivityController {
 		const newFavoriteEntry = plainToInstance(NewFavoriteEntryDTO,req.body,{excludeExtraneousValues:true});
 		await activityService.addFavorites(newFavoriteEntry);
 		res.json({msg:"Favorite succesfully added"})	
+	}
+
+	async deleteFavorites(req: Request, res: Response): Promise<void>{
+		await activityService.deleteFavorites(parseInt(req.params.id));
+		res.json({msg:"Favorite succesfully deleted"});
 	}
 
 }

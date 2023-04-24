@@ -9,13 +9,14 @@ import { STATUS_CODES } from "../utils/constants";
 
 class PlanService {
 	// Find Plan by Id
-	async findPlanById(id: number): Promise<Plan> {
+	async findPlanById(id: number): Promise<any> {
 		if (typeof id != "number") {
 			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
 		}
 		try {
 			const plan = await Plan.findOneOrFail({ where: { id: id } });
-			return plan;
+			const planWithEsPlan = {...plan, es_plan: true  }
+			return planWithEsPlan;
 		} catch {
 			throw new ServerError(
 				`The plan id: ${id} does not exist`,

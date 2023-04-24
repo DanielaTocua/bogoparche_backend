@@ -51,4 +51,9 @@ router.route('/comment')
 router.route('/get-comments/:id/:es_plan')
 	.get(asyncErrorMiddleware(commentController.getCommentsFromTable))
 
-	export default router;
+
+// Delete favorites
+router.route('/delete-favorites/:id')
+	.delete(asyncErrorMiddleware(activityController.deleteFavorites));
+
+export default router;
