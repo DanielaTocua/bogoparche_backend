@@ -52,8 +52,15 @@ export class NewActivityEntryDTO {
 	@Expose()
 	id_categoria: number;
 
+
 	@Exclude()
 	es_plan: boolean;
+
+
+    @IsNotEmpty()
+    @IsBoolean()
+    @Expose()
+    es_aprobada: boolean
 }
 
 export class ActivityUpdateDTO {
@@ -96,6 +103,12 @@ export class ActivityUpdateDTO {
 	@Expose()
 	@IsOptional()
 	id_categoria: number;
+
+    @Exclude()
+    @IsOptional()
+	es_plan: boolean;
+
+    
 }
 
 export class NewEventEntryDTO extends NewActivityEntryDTO {
@@ -158,6 +171,10 @@ export class NewFavoriteEntryDTO {
 	@Expose()
 	es_plan: boolean
 }
+export class EventUpdateFORMDTO{
+    
+}
+
 export class NewPlanEntryDTO extends NewActivityEntryDTO {
 	@IsString()
 	@IsNotEmpty()
