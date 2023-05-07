@@ -14,7 +14,7 @@ import { Plan } from "./Plan";
 import { Event } from "./Event";
 
 @Entity("activity")
-export class Activity {
+export class Activity extends BaseEntity{
 	@PrimaryGeneratedColumn()
 	id: number;
 
