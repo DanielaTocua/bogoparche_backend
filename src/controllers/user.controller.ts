@@ -10,7 +10,8 @@ class UserController {
 		res: Response,
 		next: NextFunction,
 	): Promise<void> {
-		res.json(await UserFacade.registerUser(req.body)).status(STATUS_CODES.OK);
+		const userPublicData = await UserFacade.registerUser(req.body)
+		res.json(userPublicData).status(STATUS_CODES.OK);
 	}
 }
 

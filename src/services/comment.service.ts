@@ -44,12 +44,13 @@ class CommentPlanService {
 	}
 
 	async addCommentPlan(newCommentEntry: CommentDTO): Promise<CommentPlan> {
-		const inputErrors = await validate(newCommentEntry);
-		if (inputErrors.length > 0) {
-			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
+		const newCommentPlan = CommentPlan.create(newCommentEntry);
+		try {
+			return newCommentPlan.save();			
+		} catch (error) {
+			throw new ServerError("There's been an error, try again later", STATUS_CODES.INTERNAL_ERROR)
 		}
-		const newCommentPlan = CommentPlan.create(instanceToPlain(newCommentEntry));
-		return newCommentPlan.save();
+		
 	}
 
 	async addCommentEvent(newCommentEntry: CommentDTO): Promise<CommentEvent> {

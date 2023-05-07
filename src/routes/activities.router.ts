@@ -3,6 +3,9 @@ import express from "express"; //ESModules
 import activityController from "../controllers/activity.controller";
 import commentController from "../controllers/comment.controller";
 import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
+import authMiddleware from "../middlewares/auth.middleware";
+import dtoValidationMiddleware from "../middlewares/dtoValidation.middleware";
+import { CommentDTO } from "../dtos/comment.dto";
 // import toNewActivityEntry from '../utils/utils_activity'
 
 // Crea router
@@ -48,7 +51,7 @@ router
 // Comment
 router
 	.route("/comment")
-	.post(asyncErrorMiddleware(commentController.createComment));
+	.post([authMiddleware, dtoValidationMiddleware(CommentDTO)],  asyncErrorMiddleware(commentController.createComment));
 
 // Get Comments
 router

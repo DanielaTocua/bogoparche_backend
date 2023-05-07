@@ -10,18 +10,26 @@ import {
 
 import { Plan } from "./Plan";
 import { User } from "./User";
+import { Activity } from "./Activity";
 @Entity("commentPlan")
 export class CommentPlan extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id_comentario: number;
 
+
+	@Column({ name: "id_usuario" })
+	id_usuario: number;
+
 	@ManyToOne((type) => User)
 	@JoinColumn({ name: "id_usuario", referencedColumnName: "id" })
-	id_usuario: number;
+	user: User;
+
+	@Column({ name: "id_actividad" })
+	id_actividad: number;
 
 	@ManyToOne((type) => Plan)
 	@JoinColumn({ name: "id_actividad", referencedColumnName: "id" })
-	id_actividad: number;
+	activity: Activity;
 
 	@Column("varchar", { length: 200 })
 	texto_comentario: string;
