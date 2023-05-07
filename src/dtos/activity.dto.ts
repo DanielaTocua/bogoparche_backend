@@ -165,9 +165,30 @@ export class NewFavoriteEntryDTO {
 	@IsBoolean()
 	@IsNotEmpty()
 	@Expose()
+	es_plan: boolean
+}
+
+export class NewAttendanceDTO{
+	@IsNumber()
+	@IsNotEmpty()
+	@Expose()
+	id_actividad: number
+
+	@IsString()
+	@IsNotEmpty()
+	@Expose()
+	username: string
+
+	@IsBoolean()
+	@IsNotEmpty()
+	@Expose()
+	es_plan: boolean
+}
+export class EventUpdateFORMDTO{
+    
 	es_plan: boolean;
 }
-export class EventUpdateFORMDTO {}
+
 
 export class NewPlanEntryDTO extends NewActivityEntryDTO {
 	@IsString()
