@@ -188,7 +188,7 @@ export class EventUpdateFORMDTO{
     
 	es_plan: boolean;
 }
-export class EventUpdateFORMDTO {}
+
 
 export class NewPlanEntryDTO extends NewActivityEntryDTO {
 	@IsString()
