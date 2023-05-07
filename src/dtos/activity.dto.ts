@@ -55,8 +55,6 @@ export class NewActivityEntryDTO {
 	@Exclude()
 	es_plan: boolean;
 
-	@IsNotEmpty()
-	@IsBoolean()
 	@Expose()
 	es_aprobado: boolean;
 }
@@ -165,30 +163,28 @@ export class NewFavoriteEntryDTO {
 	@IsBoolean()
 	@IsNotEmpty()
 	@Expose()
-	es_plan: boolean
+	es_plan: boolean;
 }
 
-export class NewAttendanceEntryDTO{
+export class NewAttendanceEntryDTO {
 	@IsNumber()
 	@IsNotEmpty()
 	@Expose()
-	id_actividad: number
+	id_actividad: number;
 
 	@IsString()
 	@IsNotEmpty()
 	@Expose()
-	username: string
+	username: string;
 
 	@IsBoolean()
 	@IsNotEmpty()
 	@Expose()
-	es_plan: boolean
-}
-export class EventUpdateFORMDTO{
-    
 	es_plan: boolean;
 }
-
+export class EventUpdateFORMDTO {
+	es_plan: boolean;
+}
 
 export class NewPlanEntryDTO extends NewActivityEntryDTO {
 	@IsString()

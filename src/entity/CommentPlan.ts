@@ -8,9 +8,9 @@ import {
 	PrimaryGeneratedColumn,
 } from "typeorm";
 
+import { Activity } from "./Activity";
 import { Plan } from "./Plan";
 import { User } from "./User";
-import { Activity } from "./Activity";
 @Entity("commentPlan")
 export class CommentPlan extends BaseEntity {
 	@PrimaryGeneratedColumn()

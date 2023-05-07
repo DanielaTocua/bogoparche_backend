@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
+import { User } from "../entity/User";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
-import userService from "../services/user.service";
-
 
 export default async (req: Request, res: Response, next: NextFunction) => {
 	if (req.headers.authorization) {
@@ -27,7 +26,9 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 				}
 				req.email = decoded.sub;
 				req.username = decoded.username;
-				req.userId =  await userService.getUserId(decoded.username)
+				const user = await User.findOneByOrFail({ username: decoded.username });
+				req.userId = user.id;
+				req.isAdmin = user.isAdmin;
 				return next();
 			} catch (err) {
 				next(new ServerError("Invalid jwt token", STATUS_CODES.UNAUTHORIZED));

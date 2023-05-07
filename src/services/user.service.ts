@@ -35,23 +35,12 @@ class UserService {
 			return plainToInstance(UserPublicDTO, await newUser.save(), {
 				excludeExtraneousValues: true,
 			});
-			
 		} catch (err) {
 			throw new ServerError(
 				"There's been an error, try again later",
 				STATUS_CODES.INTERNAL_ERROR,
 			);
-			
 		}
-		
-	}
-	async getUserId(username:string){
-		try {
-			return (await User.findOneByOrFail({username})).id			
-		} catch (error) {
-			throw new ServerError("This user does not exist", STATUS_CODES.BAD_REQUEST)	
-		}
-		
 	}
 }
 export default new UserService();

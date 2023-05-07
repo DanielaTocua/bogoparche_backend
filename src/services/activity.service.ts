@@ -1,14 +1,17 @@
 import { validate } from "class-validator";
 
 import { appDataSource } from "../dataSource";
-import { NewAttendanceEntryDTO, NewFavoriteEntryDTO } from "../dtos/activity.dto";
+import {
+	NewAttendanceEntryDTO,
+	NewFavoriteEntryDTO,
+} from "../dtos/activity.dto";
 import { Activity } from "../entity/Activity";
+import { Attendance } from "../entity/Attendance";
 import { Category } from "../entity/Category";
 import { Favorite } from "../entity/Favorite";
 import { User } from "../entity/User";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
-import { Attendance } from "../entity/Attendance";
 
 class ActivityService {
 	async findAllPublic(): Promise<Activity[]> {
@@ -166,7 +169,9 @@ class ActivityService {
 		}
 	}
 
-	async addAttendance(newAttendanceEntry: NewAttendanceEntryDTO): Promise<void> {
+	async addAttendance(
+		newAttendanceEntry: NewAttendanceEntryDTO,
+	): Promise<void> {
 		const inputErrors = await validate(newAttendanceEntry);
 		if (inputErrors.length > 0) {
 			console.log(inputErrors);
@@ -192,7 +197,9 @@ class ActivityService {
 		}
 	}
 
-	async findAttendance(newAttendanceEntry: NewAttendanceEntryDTO): Promise<any> {
+	async findAttendance(
+		newAttendanceEntry: NewAttendanceEntryDTO,
+	): Promise<any> {
 		const inputErrors = await validate(newAttendanceEntry);
 		if (inputErrors.length > 0) {
 			console.log(inputErrors);
@@ -216,7 +223,10 @@ class ActivityService {
 			console.log(id);
 			return id;
 		} catch (error) {
-			throw new ServerError("Attendance no encontrado", STATUS_CODES.BAD_REQUEST);
+			throw new ServerError(
+				"Attendance no encontrado",
+				STATUS_CODES.BAD_REQUEST,
+			);
 		}
 	}
 

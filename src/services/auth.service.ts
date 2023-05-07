@@ -1,4 +1,3 @@
-
 import { TokenDTO, UserAndTokenDTO } from "../dtos/token.dto";
 import { UserLoginDTO } from "../dtos/user.dto";
 import { Token } from "../entity/Token";
@@ -19,9 +18,10 @@ class AuthService {
 		if (await user.validatePassword(userLoginForm.password)) {
 			const token = jwtService.generate(user.email, user.username);
 			return {
+				isAdmin: user.isAdmin,
 				username: user.username,
 				access: token.access,
-				refresh: token.refresh
+				refresh: token.refresh,
 			};
 		}
 		throw new ServerError("Invalid credentials", STATUS_CODES.UNAUTHORIZED);

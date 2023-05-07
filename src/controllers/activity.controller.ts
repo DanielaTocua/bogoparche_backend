@@ -4,9 +4,7 @@ import { Request, Response } from "express";
 import {
 	EventUpdateDTO,
 	NewAttendanceEntryDTO,
-	NewEventEntryDTO,
 	NewFavoriteEntryDTO,
-	NewPlanEntryDTO,
 	PlanUpdateDTO,
 } from "../dtos/activity.dto";
 import { ServerError } from "../errors/server.error";
@@ -19,31 +17,6 @@ class ActivityController {
 	async getAll(req: Request, res: Response): Promise<void> {
 		const result = await activityService.findAllPublic();
 		res.send(result);
-	}
-
-	async addActivity(req: Request, res: Response): Promise<void> {
-		if (!("es_plan" in req.body)) {
-			throw new ServerError(
-				"es_plan invalid or not defined",
-				STATUS_CODES.BAD_REQUEST,
-			);
-		}
-		const esPlan = req.body.es_plan;
-		if (esPlan) {
-			const newPlanEntry = plainToInstance(NewPlanEntryDTO, req.body, {
-				excludeExtraneousValues: true,
-			});
-			const result = await planFacade.addPlan(newPlanEntry);
-			const id = result.id;
-			res.json({ id });
-		} else {
-			const newEventEntry = plainToInstance(NewEventEntryDTO, req.body, {
-				excludeExtraneousValues: true,
-			});
-			const result = await eventFacade.addEvent(newEventEntry);
-			const id = result.id;
-			res.json({ id });
-		}
 	}
 
 	async editActivity(req: Request, res: Response): Promise<void> {
@@ -149,9 +122,13 @@ class ActivityController {
 
 	async addAttendance(req: Request, res: Response): Promise<void> {
 		// Retrieves plan info
-		const newAttendanceEntry = plainToInstance(NewAttendanceEntryDTO, req.body, {
-			excludeExtraneousValues: true,
-		});
+		const newAttendanceEntry = plainToInstance(
+			NewAttendanceEntryDTO,
+			req.body,
+			{
+				excludeExtraneousValues: true,
+			},
+		);
 		await activityService.addAttendance(newAttendanceEntry);
 		res.json({ msg: "Attendance succesfully added" });
 	}
@@ -162,9 +139,13 @@ class ActivityController {
 	}
 
 	async getAttendance(req: Request, res: Response): Promise<void> {
-		const newAttendanceEntry = plainToInstance(NewAttendanceEntryDTO, req.body, {
-			excludeExtraneousValues: true,
-		});
+		const newAttendanceEntry = plainToInstance(
+			NewAttendanceEntryDTO,
+			req.body,
+			{
+				excludeExtraneousValues: true,
+			},
+		);
 		const id = await activityService.findAttendance(newAttendanceEntry);
 		res.json(id);
 	}

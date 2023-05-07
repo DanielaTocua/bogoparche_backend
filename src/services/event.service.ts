@@ -1,5 +1,13 @@
-import { instanceToPlain } from "class-transformer";
-import { EventUpdateDTO, NewEventEntryDTO } from "../dtos/activity.dto";
+import { instanceToPlain, plainToInstance } from "class-transformer";
+import { validate } from "class-validator";
+
+import { appDataSource } from "../dataSource";
+import {
+	EventUpdateDTO,
+	NewActivityEntryDTO,
+	NewEventEntryDTO,
+} from "../dtos/activity.dto";
+import { Activity } from "../entity/Activity";
 import { Event } from "../entity/Event";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
@@ -55,8 +63,38 @@ class EventService {
 
 	// Adds the id to the json
 	async addEvent(newEventEntry: NewEventEntryDTO): Promise<Event> {
-		const newEvent = Event.create(instanceToPlain(newEventEntry));
-		return await newEvent.save();
+		const newActivityEntry = plainToInstance(
+			NewActivityEntryDTO,
+			newEventEntry,
+			{ excludeExtraneousValues: true },
+		);
+		try {
+			return await appDataSource.manager.transaction(
+				async (transactionalEntityManager) => {
+					const newActivity = Activity.create(
+						instanceToPlain(newActivityEntry),
+					);
+					const createdActivity = await transactionalEntityManager.save(
+						newActivity,
+					);
+					const newEvent = Event.create({
+						id: createdActivity.id,
+						fecha_inicio: newEventEntry.fecha_inicio,
+						fecha_fin: newEventEntry.fecha_fin,
+						hora_inicio: newEventEntry.hora_inicio,
+						hora_fin: newEventEntry.hora_fin,
+					});
+					console.log(newEvent);
+					const createdEvent = await transactionalEntityManager.save(newEvent);
+					return createdEvent;
+				},
+			);
+		} catch (error) {
+			throw new ServerError(
+				"There's been an error, try again later",
+				STATUS_CODES.INTERNAL_ERROR,
+			);
+		}
 	}
 
 	// Deletes event

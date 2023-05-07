@@ -2,10 +2,17 @@ import express from "express"; //ESModules
 
 import activityController from "../controllers/activity.controller";
 import commentController from "../controllers/comment.controller";
+import eventController from "../controllers/event.controller";
+import planController from "../controllers/plan.controller";
+import {
+	ActivityUpdateDTO,
+	NewEventEntryDTO,
+	NewPlanEntryDTO,
+} from "../dtos/activity.dto";
+import { CommentDTO } from "../dtos/comment.dto";
 import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 import authMiddleware from "../middlewares/auth.middleware";
 import dtoValidationMiddleware from "../middlewares/dtoValidation.middleware";
-import { CommentDTO } from "../dtos/comment.dto";
 // import toNewActivityEntry from '../utils/utils_activity'
 
 // Crea router
@@ -18,17 +25,30 @@ router
 
 // Creates activities
 router
-	.route("/create-activity")
-	.post(asyncErrorMiddleware(activityController.addActivity));
+	.route("/plan")
+	.post(
+		[authMiddleware, dtoValidationMiddleware(NewPlanEntryDTO)],
+		asyncErrorMiddleware(planController.addPlan),
+	);
 
 router
-	.route("/create-activity-suggestion")
-	.post(asyncErrorMiddleware(activityController.addActivity));
+	.route("/event")
+	.post(
+		[authMiddleware, dtoValidationMiddleware(NewEventEntryDTO)],
+		asyncErrorMiddleware(eventController.addEvent),
+	);
+
+//router.route("/create-activity").post([authMiddleware,], asyncErrorMiddleware(activityController.addActivity));
+
+//router.route("/create-activity-suggestion").post([authMiddleware],asyncErrorMiddleware(activityController.addActivity));
 
 // Edit activities
 router
 	.route("/edit-activity/:id/:es_plan")
-	.put(asyncErrorMiddleware(activityController.editActivity));
+	.put(
+		[dtoValidationMiddleware(ActivityUpdateDTO)],
+		asyncErrorMiddleware(activityController.editActivity),
+	);
 
 // Deletes activities
 router
@@ -51,7 +71,10 @@ router
 // Comment
 router
 	.route("/comment")
-	.post([authMiddleware, dtoValidationMiddleware(CommentDTO)],  asyncErrorMiddleware(commentController.createComment));
+	.post(
+		[authMiddleware, dtoValidationMiddleware(CommentDTO)],
+		asyncErrorMiddleware(commentController.createComment),
+	);
 
 // Get Comments
 router

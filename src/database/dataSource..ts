@@ -31,4 +31,4 @@ const PostgresDataSource = new DataSource({
     ],
 })
 
-export default PostgresDataSource
+export default PostgresDataSource;

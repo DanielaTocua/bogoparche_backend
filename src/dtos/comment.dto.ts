@@ -16,6 +16,4 @@ export class CommentDTO {
 	@IsBoolean()
 	@Expose()
 	es_plan: boolean;
-
-
 }
