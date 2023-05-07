@@ -1,11 +1,11 @@
 import { instanceToPlain } from "class-transformer";
 import { validate } from "class-validator";
-
 import { NewPlanEntryDTO, PlanUpdateDTO } from "@/dtos/activity.dto";
-
 import { Plan } from "../entity/Plan";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
+import { Activity } from "../entity/Activity";
+import dataSource from "../database/dataSource.";
 
 class PlanService {
 	// Find Plan by Id
@@ -45,24 +45,62 @@ class PlanService {
 	async editPlan(id: number, planEntry: PlanUpdateDTO): Promise<Plan> {
 		// Finds plan
 		await this.findPlanById(id);
-
-		// Looks for errors in planEntry
-		const inputErrors = await validate(planEntry);
-		if (inputErrors.length > 0) {
-			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
+		if (typeof id != "number") {
+			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
 		}
-		await Plan.update(id, instanceToPlain(planEntry));
+		// create a new query runner
+		const queryRunner = dataSource.createQueryRunner()
 
+		// establish real database connection
+		await queryRunner.connect()
+
+		// open a new transaction:
+		await queryRunner.startTransaction()
+
+		try {
+			await Activity.update(id, instanceToPlain(planEntry));
+			await Plan.update(id, instanceToPlain(planEntry));
+
+			// commit transaction 
+			await queryRunner.commitTransaction()
+		} catch (err) {
+			// rollback changes we made
+			await queryRunner.rollbackTransaction()
+		} finally {
+			// release query runner
+			await queryRunner.release()
+		}
+		
 		return await Plan.findOneOrFail({ where: { id } });
 	}
 
 	// Deletes plan
 	async deletePlan(id: number): Promise<Plan> {
-		if (typeof id != "number") {
-			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
-		}
+		// Finds Event
 		const plan = await this.findPlanById(id);
-		return Plan.remove(plan);
+
+		// create a new query runner
+		const queryRunner = dataSource.createQueryRunner()
+
+		// establish real database connection
+		await queryRunner.connect()
+
+		// open a new transaction:
+		await queryRunner.startTransaction()
+
+		try {
+			Plan.remove(plan);
+			// commit transaction 
+			await queryRunner.commitTransaction()
+		} catch(err){
+			// rollback changes we made
+			await queryRunner.rollbackTransaction()
+		} finally {
+			// release query runner
+			await queryRunner.release()
+		}
+		
+		return plan
 	}
 }
 

@@ -1,4 +1,5 @@
 import { Activity } from "@/entity/Activity"
+import { Attendance } from "@/entity/Attendance"
 import { Category } from "@/entity/Category"
 import { CommentEvent } from "@/entity/CommentEvent"
 import { CommentPlan } from "@/entity/CommentPlan"
@@ -18,6 +19,7 @@ const PostgresDataSource = new DataSource({
     database: process.env.PG_DB_NAME,
     entities: [
         Activity,
+        Attendance,
         Category,
         CommentEvent,
         CommentPlan,
