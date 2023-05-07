@@ -1,15 +1,20 @@
 import {
 	BaseEntity,
 	Column,
+	Entity,
 	JoinColumn,
 	ManyToOne,
+	OneToOne,
 	PrimaryGeneratedColumn,
 } from "typeorm";
 
 import { RANGE_PRICES } from "../utils/constants";
 import { Category } from "./Category";
+import { Plan } from "./Plan";
+import { Event } from "./Event";
 
-export class Activity extends BaseEntity {
+@Entity("activity")
+export class Activity {
 	@PrimaryGeneratedColumn()
 	id: number;
 
@@ -44,5 +49,14 @@ export class Activity extends BaseEntity {
 	@Column("bool", { default: false })
 	es_aprobado: boolean;
 
+	@Column("bool", { default: false })
 	es_plan: boolean;
+
+	@OneToOne(() => Event, { cascade: true })
+	@JoinColumn()
+	event: Event;
+
+	@OneToOne(() => Plan, { cascade: true })
+	@JoinColumn()
+	plan: Plan;
 }
