@@ -16,7 +16,6 @@ export class CommentPlan extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id_comentario: number;
 
-
 	@Column({ name: "id_usuario" })
 	id_usuario: number;
 

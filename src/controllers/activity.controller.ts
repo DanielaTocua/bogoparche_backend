@@ -34,14 +34,14 @@ class ActivityController {
 				excludeExtraneousValues: true,
 			});
 			const result = await planFacade.addPlan(newPlanEntry);
-			const id = result.id;
+			const id = result.id_actividad;
 			res.json({ id });
 		} else {
 			const newEventEntry = plainToInstance(NewEventEntryDTO, req.body, {
 				excludeExtraneousValues: true,
 			});
 			const result = await eventFacade.addEvent(newEventEntry);
-			const id = result.id;
+			const id = result.id_actividad;
 			res.json({ id });
 		}
 	}
