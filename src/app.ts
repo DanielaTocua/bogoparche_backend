@@ -4,11 +4,12 @@ import helmet from "helmet";
 
 import { appDataSource } from "./dataSource";
 import errorMiddleware from "./middlewares/error.middleware";
-import activitiesRoutes from "./routes/activities.router";
+import activitiesRoutes from "./routes/activity.routes";
 import authRoutes from "./routes/auth.routes";
 import categoriesRoutes from "./routes/categories.router";
 import helloRoutes from "./routes/hello.routes";
 import userRoutes from "./routes/user.routes";
+import planRoutes from "./routes/plan.routes";
 export class App {
 	private readonly _app: Application;
 
@@ -27,11 +28,13 @@ export class App {
 		this._app.use(helmet());
 		this._app.use(express.json());
 		this._app.use(express.urlencoded({ extended: true }));
-		this._app.use("/api", activitiesRoutes);
-		this._app.use("/api", categoriesRoutes);
-		this._app.use("/api", authRoutes);
-		this._app.use("/api", helloRoutes);
-		this._app.use("/api", userRoutes);
+
+		this._app.use("/api/activity", activitiesRoutes);
+		this._app.use("/api/plan", planRoutes);
+		this._app.use("/api/category", categoriesRoutes);
+		this._app.use("/api/auth", authRoutes);
+		this._app.use("/api/hello", helloRoutes);
+		this._app.use("/api/user", userRoutes);
 		this._app.use(errorMiddleware);
 	}
 

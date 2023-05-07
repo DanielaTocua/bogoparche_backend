@@ -9,11 +9,6 @@ class EventFacade {
 		return result;
 	}
 
-	async deleteEvent(id: number): Promise<Event> {
-		const result = await eventService.deleteEvent(id);
-		return result;
-	}
-
 	async editEvent(id: number, newEventUpdated: EventUpdateDTO): Promise<Event> {
 		// Updates info
 		const result = await eventService.editEvent(id, newEventUpdated);

@@ -1,6 +1,6 @@
 import { instanceToPlain, plainToInstance } from "class-transformer";
-import { validate } from "class-validator";
 
+import dataSource from "../database/dataSource.";
 import { appDataSource } from "../dataSource";
 import {
 	EventUpdateDTO,
@@ -11,8 +11,6 @@ import { Activity } from "../entity/Activity";
 import { Event } from "../entity/Event";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
-import { Activity } from "../entity/Activity";
-import dataSource from "../database/dataSource.";
 
 class EventService {
 	// Find Event by Id
@@ -36,26 +34,26 @@ class EventService {
 		}
 
 		// create a new query runner
-		const queryRunner = dataSource.createQueryRunner()
+		const queryRunner = dataSource.createQueryRunner();
 
 		// establish real database connection
-		await queryRunner.connect()
+		await queryRunner.connect();
 
 		// open a new transaction:
-		await queryRunner.startTransaction()
+		await queryRunner.startTransaction();
 
 		try {
 			await Activity.update(id, instanceToPlain(eventEntry));
 			await Event.update(id, instanceToPlain(eventEntry));
 
-			// commit transaction 
-			await queryRunner.commitTransaction()
+			// commit transaction
+			await queryRunner.commitTransaction();
 		} catch (err) {
 			// rollback changes we made
-			await queryRunner.rollbackTransaction()
+			await queryRunner.rollbackTransaction();
 		} finally {
 			// release query runner
-			await queryRunner.release()
+			await queryRunner.release();
 		}
 
 		return await Event.findOneOrFail({ where: { id } });
@@ -107,28 +105,27 @@ class EventService {
 		const event = await this.findEventById(id);
 
 		// create a new query runner
-		const queryRunner = dataSource.createQueryRunner()
+		const queryRunner = dataSource.createQueryRunner();
 
 		// establish real database connection
-		await queryRunner.connect()
+		await queryRunner.connect();
 
 		// open a new transaction:
-		await queryRunner.startTransaction()
+		await queryRunner.startTransaction();
 
 		try {
 			Event.remove(event);
-			// commit transaction 
-			await queryRunner.commitTransaction()
-		} catch(err){
+			// commit transaction
+			await queryRunner.commitTransaction();
+		} catch (err) {
 			// rollback changes we made
-			await queryRunner.rollbackTransaction()
+			await queryRunner.rollbackTransaction();
 		} finally {
 			// release query runner
-			await queryRunner.release()
+			await queryRunner.release();
 		}
-		
-		return event
-		
+
+		return event;
 	}
 }
 export default new EventService();

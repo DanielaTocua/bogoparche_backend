@@ -12,6 +12,7 @@ import eventFacade from "../facades/event.facade";
 import planFacade from "../facades/plan.facade";
 import activityService from "../services/activity.service";
 import { STATUS_CODES } from "../utils/constants";
+import activityFacade from "../facades/activity.facade";
 
 class ActivityController {
 	async getAll(req: Request, res: Response): Promise<void> {
@@ -47,17 +48,9 @@ class ActivityController {
 	}
 
 	async deleteActivity(req: Request, res: Response): Promise<void> {
-		if (!("es_plan" in req.params)) {
-			throw new ServerError("es_plan not defined", STATUS_CODES.BAD_REQUEST);
-		}
-		const esPlan = JSON.parse(req.params.es_plan);
-		if (esPlan) {
-			const result = await planFacade.deletePlan(parseInt(req.params.id));
-			res.json(result);
-		} else {
-			const result = await eventFacade.deleteEvent(parseInt(req.params.id));
-			res.json(result);
-		}
+		console.log("aaa")
+		const result = await activityFacade.deleteActivity(parseInt(req.params.id));
+		res.json(result).status(STATUS_CODES.OK);
 	}
 
 	async getActivity(req: Request, res: Response): Promise<void> {

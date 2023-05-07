@@ -14,7 +14,7 @@ export class Event extends BaseEntity {
 	@PrimaryColumn()
 	id: number;
 
-	@OneToOne((type) => Activity)
+	@OneToOne((type) => Activity, { onDelete: "CASCADE"})
 	@JoinColumn({ name: "id", referencedColumnName: "id" })
 	activity: Activity;
 

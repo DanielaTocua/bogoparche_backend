@@ -12,18 +12,49 @@ import { Favorite } from "../entity/Favorite";
 import { User } from "../entity/User";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
+import { Plan } from "@/entity/Plan";
 
 class ActivityService {
+	async findActivityById(id: number): Promise<Activity> {
+		if (typeof id != "number") {
+			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
+		}
+		try {
+			const activity = await Activity.findOneByOrFail({id});
+			return activity;
+		} catch {
+			throw new ServerError(
+				`The activity id: ${id} does not exist`,
+				STATUS_CODES.BAD_REQUEST,
+			);
+		}
+	}
 	async findAllPublic(): Promise<Activity[]> {
 		console.log("IN FIND ALL PUBLIC");
 		// Puede cambiarse a raw queries
-		const publicActivities = (await appDataSource.manager
-			.query(`SELECT id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto, id_categoria, true AS es_plan FROM plan WHERE es_aprobado IS true AND es_privada IS false
-        UNION
-        SELECT id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, false AS es_plan FROM event  WHERE es_aprobado IS true AND es_privada IS false`)) as Activity[];
-		console.log(publicActivities);
-		return publicActivities;
+
+		try{
+			const publicActivities = (await appDataSource.manager
+				.query(`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan FROM activity WHERE es_aprobado IS true AND es_privada IS false`)) as Activity[];
+			return publicActivities;
+		} catch (error) {
+			throw new ServerError(
+				"There's been an error, try again later",
+				STATUS_CODES.INTERNAL_ERROR,
+			);
+		}
 	}
+
+	async deleteActivity(activity:Activity): Promise<Activity> {
+		
+		try {
+			Activity.remove(activity);
+		} catch (err) {
+			throw new ServerError("There's been an error, try again later", STATUS_CODES.BAD_REQUEST)
+		}
+		return activity;
+	}
+
 	async findCategory(nombre_categoria: string) {
 		if (typeof nombre_categoria != "string" || nombre_categoria == "") {
 			throw new ServerError("Invalid category name", STATUS_CODES.BAD_REQUEST);

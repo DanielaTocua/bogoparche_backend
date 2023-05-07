@@ -1,7 +1,4 @@
-import {
-	instanceToPlain,
-	plainToInstance,
-} from "class-transformer";
+import { instanceToPlain, plainToInstance } from "class-transformer";
 
 import { appDataSource } from "../dataSource";
 import {
@@ -13,8 +10,6 @@ import { Activity } from "../entity/Activity";
 import { Plan } from "../entity/Plan";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
-import { Activity } from "../entity/Activity";
-import dataSource from "../database/dataSource.";
 
 class PlanService {
 	// Find Plan by Id
@@ -68,65 +63,47 @@ class PlanService {
 
 	// Edits Plan
 	async editPlan(id: number, planEntry: PlanUpdateDTO): Promise<Plan> {
-		// Finds plan
-		await this.findPlanById(id);
-		if (typeof id != "number") {
-			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
-		}
 		// create a new query runner
-		const queryRunner = dataSource.createQueryRunner()
+		const queryRunner = appDataSource.createQueryRunner();
 
 		// establish real database connection
-		await queryRunner.connect()
+		await queryRunner.connect();
 
 		// open a new transaction:
-		await queryRunner.startTransaction()
+		await queryRunner.startTransaction();
+
+		const activityEntry = plainToInstance(
+			NewActivityEntryDTO,
+			planEntry,
+			{ excludeExtraneousValues: true },
+		);
 
 		try {
-			await Activity.update(id, instanceToPlain(planEntry));
-			await Plan.update(id, instanceToPlain(planEntry));
 
-			// commit transaction 
-			await queryRunner.commitTransaction()
+			await Activity.update(id, instanceToPlain(activityEntry));
+			const planUpdateEntry = {horario_plan:planEntry.horario_plan}
+
+			if (! Object.values(planUpdateEntry).every(el => el === undefined)) {
+				await Plan.update(id, planUpdateEntry);
+			}
+
+			// commit transaction
+			await queryRunner.commitTransaction();
 		} catch (err) {
 			// rollback changes we made
-			await queryRunner.rollbackTransaction()
-		} finally {
-			// release query runner
-			await queryRunner.release()
+			await queryRunner.rollbackTransaction();
+			await queryRunner.release();
+			throw new ServerError("There's been an error, try again later", STATUS_CODES.BAD_REQUEST)
+
 		}
-		
+		// release query runner
+		await queryRunner.release();
+
+
 		return await Plan.findOneOrFail({ where: { id } });
 	}
 
-	// Deletes plan
-	async deletePlan(id: number): Promise<Plan> {
-		// Finds Event
-		const plan = await this.findPlanById(id);
-
-		// create a new query runner
-		const queryRunner = dataSource.createQueryRunner()
-
-		// establish real database connection
-		await queryRunner.connect()
-
-		// open a new transaction:
-		await queryRunner.startTransaction()
-
-		try {
-			Plan.remove(plan);
-			// commit transaction 
-			await queryRunner.commitTransaction()
-		} catch(err){
-			// rollback changes we made
-			await queryRunner.rollbackTransaction()
-		} finally {
-			// release query runner
-			await queryRunner.release()
-		}
-		
-		return plan
-	}
+	
 }
 
 export default new PlanService();

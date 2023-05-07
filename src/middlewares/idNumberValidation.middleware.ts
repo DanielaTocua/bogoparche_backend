@@ -1,18 +1,13 @@
-import { plainToInstance } from "class-transformer";
-import { RequestHandler } from "express";
-import { validate, ValidationError } from "class-validator";
+import { NextFunction, Request, Response } from "express";
 
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
 
-function idNumberValidation(): RequestHandler {
-
-  return (req, res, next) => {
-    if (typeof req.params.id != "number") {
+export default async (req: Request, res: Response, next: NextFunction) => {
+		if (!("id" in req.params) || isNaN(parseInt(req.params.id))) {
 			next(new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST));
 		}
-    next();
-  }
+		next();
+	
 }
-  
-export default idNumberValidation;
+

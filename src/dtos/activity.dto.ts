@@ -52,7 +52,7 @@ export class NewActivityEntryDTO {
 	@Expose()
 	id_categoria: number;
 
-	@Exclude()
+	@Expose()
 	es_plan: boolean;
 
 	@Expose()

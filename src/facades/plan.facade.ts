@@ -1,3 +1,4 @@
+import activityService from "../services/activity.service";
 import { NewPlanEntryDTO, PlanUpdateDTO } from "../dtos/activity.dto";
 import { Plan } from "../entity/Plan";
 import planService from "../services/plan.service";
@@ -9,13 +10,11 @@ class PlanFacade {
 		return result;
 	}
 
-	async deletePlan(id: number): Promise<Plan> {
-		// Deletes Plan
-		const result = await planService.deletePlan(id);
-		return result;
-	}
 
 	async editPlan(id: number, newEventUpdated: PlanUpdateDTO): Promise<Plan> {
+		// checks if plan exists
+		await planService.findPlanById(id);
+
 		// Updates info
 		const result = await planService.editPlan(id, newEventUpdated);
 		return result;
