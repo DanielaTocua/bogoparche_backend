@@ -4,8 +4,11 @@ import { STATUS_CODES } from "../utils/constants";
 
 class EventController {
 	async addEvent(req: Request, res: Response): Promise<void> {
-        const result = await eventFacade.addEvent(req.body, req.isAdmin);
-        res.json({ id:result.id }).status(STATUS_CODES.OK);
+		const result = await eventFacade.addEvent(
+			{ ...req.body, es_plan: true },
+			req.isAdmin as boolean,
+		);
+		res.json({ id: result.id }).status(STATUS_CODES.OK);
 	}
 
 	async editEvent(req: Request, res: Response): Promise<void> {
