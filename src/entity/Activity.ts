@@ -53,10 +53,8 @@ export class Activity extends BaseEntity{
 	es_plan: boolean;
 
 	@OneToOne(() => Event, { cascade: true })
-	@JoinColumn()
 	event: Event;
 
 	@OneToOne(() => Plan, { cascade: true })
-	@JoinColumn()
 	plan: Plan;
 }
