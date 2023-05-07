@@ -39,8 +39,8 @@ export class Activity {
 	@Column("bool", { default: false })
 	es_privada: boolean;
 
-	@Column({ name: 'id_categoria' })
-  	id_categoria: number;
+	@Column({ name: "id_categoria" })
+	id_categoria: number;
 
 	@ManyToOne((type) => Category)
 	@JoinColumn({ name: "id_categoria", referencedColumnName: "id" })

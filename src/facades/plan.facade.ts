@@ -1,9 +1,9 @@
-import planService from "../services/plan.service";
-import {Plan} from '../entity/Plan'
 import { NewPlanEntryDTO, PlanUpdateDTO } from "../dtos/activity.dto";
+import { Plan } from "../entity/Plan";
+import planService from "../services/plan.service";
 
 class PlanFacade {
-    async getPlan (id: number): Promise<Plan> {
+	async getPlan(id: number): Promise<Plan> {
 		// Gets Plan
 		const result = await planService.findPlanById(id);
 		return result;
@@ -17,18 +17,14 @@ class PlanFacade {
 
 	async editPlan(id: number, newEventUpdated: PlanUpdateDTO): Promise<Plan> {
 		// Updates info
-        const result = await planService.editPlan(
-			id, newEventUpdated);
+		const result = await planService.editPlan(id, newEventUpdated);
 		return result;
 	}
 
-    async addPlan(newEventEntry: NewPlanEntryDTO): Promise<Plan> {
+	async addPlan(newEventEntry: NewPlanEntryDTO): Promise<Plan> {
 		// Adds info
-        const result = await planService.addPlan(
-			newEventEntry,
-		);
+		const result = await planService.addPlan(newEventEntry);
 		return result;
 	}
-
 }
-export default new PlanFacade()
+export default new PlanFacade();

@@ -1,23 +1,23 @@
-import { NewFavoriteEntryDTO } from "../dtos/activity.dto";
-import { appDataSource } from "../dataSource";
-import { instanceToPlain } from "class-transformer";
 import { validate } from "class-validator";
+
+import { appDataSource } from "../dataSource";
+import { NewFavoriteEntryDTO } from "../dtos/activity.dto";
 import { Activity } from "../entity/Activity";
 import { Category } from "../entity/Category";
-import { ServerError } from "../errors/server.error";
-import { STATUS_CODES } from "../utils/constants";
 import { Favorite } from "../entity/Favorite";
 import { User } from "../entity/User";
+import { ServerError } from "../errors/server.error";
+import { STATUS_CODES } from "../utils/constants";
 
 class ActivityService {
 	async findAllPublic(): Promise<Activity[]> {
-		console.log("IN FIND ALL PUBLIC")
+		console.log("IN FIND ALL PUBLIC");
 		// Puede cambiarse a raw queries
 		const publicActivities = (await appDataSource.manager
 			.query(`SELECT id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto, id_categoria, true AS es_plan FROM plan WHERE es_aprobado IS true AND es_privada IS false
         UNION
         SELECT id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, false AS es_plan FROM event  WHERE es_aprobado IS true AND es_privada IS false`)) as Activity[];
-		console.log(publicActivities)
+		console.log(publicActivities);
 		return publicActivities;
 	}
 	async findCategory(nombre_categoria: string) {
@@ -88,19 +88,29 @@ class ActivityService {
 		return filtered;
 	}
 
-	async addFavorites (newFavoriteEntry: NewFavoriteEntryDTO): Promise<void>{
+	async addFavorites(newFavoriteEntry: NewFavoriteEntryDTO): Promise<void> {
 		const inputErrors = await validate(newFavoriteEntry);
 		if (inputErrors.length > 0) {
 			console.log(inputErrors);
 			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
 		}
 		try {
-			const user = await User.findOneByOrFail({username:newFavoriteEntry.username})
-			console.log({id_usuario: user.id, id_actividad: newFavoriteEntry.id_actividad, es_plan: newFavoriteEntry.es_plan })
-			const newFavorite = Favorite.create({id_usuario: user.id, id_actividad: newFavoriteEntry.id_actividad, es_plan: newFavoriteEntry.es_plan })
-			await newFavorite.save()
+			const user = await User.findOneByOrFail({
+				username: newFavoriteEntry.username,
+			});
+			console.log({
+				id_usuario: user.id,
+				id_actividad: newFavoriteEntry.id_actividad,
+				es_plan: newFavoriteEntry.es_plan,
+			});
+			const newFavorite = Favorite.create({
+				id_usuario: user.id,
+				id_actividad: newFavoriteEntry.id_actividad,
+				es_plan: newFavoriteEntry.es_plan,
+			});
+			await newFavorite.save();
 		} catch (error) {
-			throw new ServerError("usuario no encontrado", STATUS_CODES.BAD_REQUEST);		
+			throw new ServerError("usuario no encontrado", STATUS_CODES.BAD_REQUEST);
 		}
 	}
 
@@ -119,7 +129,7 @@ class ActivityService {
 		}
 	}
 
-	async deleteFavorites(id: number): Promise<Favorite>{
+	async deleteFavorites(id: number): Promise<Favorite> {
 		if (typeof id != "number") {
 			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
 		}
@@ -127,21 +137,31 @@ class ActivityService {
 		return Favorite.remove(favorites);
 	}
 
-	async findFavorites(newFavoriteEntry: NewFavoriteEntryDTO): Promise<any>{
+	async findFavorites(newFavoriteEntry: NewFavoriteEntryDTO): Promise<any> {
 		const inputErrors = await validate(newFavoriteEntry);
 		if (inputErrors.length > 0) {
 			console.log(inputErrors);
 			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
 		}
 		try {
-			const user = await User.findOneByOrFail({username:newFavoriteEntry.username})
-			console.log({id_usuario: user.id, id_actividad: newFavoriteEntry.id_actividad, es_plan: newFavoriteEntry.es_plan })
-			const FavoriteFind = await Favorite.findOneByOrFail({ id_usuario: user.id, id_actividad: newFavoriteEntry.id_actividad, es_plan: newFavoriteEntry.es_plan })
-			const id = FavoriteFind.id
-			console.log(id)
+			const user = await User.findOneByOrFail({
+				username: newFavoriteEntry.username,
+			});
+			console.log({
+				id_usuario: user.id,
+				id_actividad: newFavoriteEntry.id_actividad,
+				es_plan: newFavoriteEntry.es_plan,
+			});
+			const FavoriteFind = await Favorite.findOneByOrFail({
+				id_usuario: user.id,
+				id_actividad: newFavoriteEntry.id_actividad,
+				es_plan: newFavoriteEntry.es_plan,
+			});
+			const id = FavoriteFind.id;
+			console.log(id);
 			return id;
 		} catch (error) {
-			throw new ServerError("favorito no encontrado", STATUS_CODES.BAD_REQUEST);		
+			throw new ServerError("favorito no encontrado", STATUS_CODES.BAD_REQUEST);
 		}
 	}
 }

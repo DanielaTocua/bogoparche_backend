@@ -1,10 +1,10 @@
-
-import eventService from "../services/event.service";
-import {Event} from '../entity/Event'
 import { EventUpdateDTO, NewEventEntryDTO } from "@/dtos/activity.dto";
 
+import { Event } from "../entity/Event";
+import eventService from "../services/event.service";
+
 class EventFacade {
-    async getEvent (id: number): Promise<Event> {
+	async getEvent(id: number): Promise<Event> {
 		const result = await eventService.findEventById(id);
 		return result;
 	}
@@ -14,20 +14,17 @@ class EventFacade {
 		return result;
 	}
 
-	async editEvent(id: number,newEventUpdated: EventUpdateDTO): Promise<Event> {
+	async editEvent(id: number, newEventUpdated: EventUpdateDTO): Promise<Event> {
 		// Updates info
-        const result = await eventService.editEvent(
-			id, newEventUpdated);
+		const result = await eventService.editEvent(id, newEventUpdated);
 		return result;
 	}
 
-    async addEvent(newEventEntry: NewEventEntryDTO): Promise<Event> {
+	async addEvent(newEventEntry: NewEventEntryDTO): Promise<Event> {
 		// Updates info
-        const result = await eventService.addEvent(
-			newEventEntry,
-		);
+		const result = await eventService.addEvent(newEventEntry);
 		return result;
 	}
 }
 
-export default new EventFacade()
+export default new EventFacade();

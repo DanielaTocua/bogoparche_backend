@@ -3,25 +3,33 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
-	ManyToOne,
 	JoinColumn,
+	ManyToOne,
 	PrimaryGeneratedColumn,
 } from "typeorm";
 
-import { User } from "./User";
 import { Plan } from "./Plan";
+import { User } from "./User";
+import { Activity } from "./Activity";
 @Entity("commentPlan")
 export class CommentPlan extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id_comentario: number;
 
-	@ManyToOne(type => User)
-	@JoinColumn({name:"id_usuario",referencedColumnName:"id"})
+
+	@Column({ name: "id_usuario" })
 	id_usuario: number;
 
-	@ManyToOne(type => Plan)
-	@JoinColumn({name:"id_actividad",referencedColumnName:"id" })
+	@ManyToOne((type) => User)
+	@JoinColumn({ name: "id_usuario", referencedColumnName: "id" })
+	user: User;
+
+	@Column({ name: "id_actividad" })
 	id_actividad: number;
+
+	@ManyToOne((type) => Plan)
+	@JoinColumn({ name: "id_actividad", referencedColumnName: "id" })
+	activity: Activity;
 
 	@Column("varchar", { length: 200 })
 	texto_comentario: string;
@@ -29,4 +37,3 @@ export class CommentPlan extends BaseEntity {
 	@CreateDateColumn()
 	createdAt: Date;
 }
-

@@ -1,7 +1,11 @@
 import express from "express"; //ESModules
+
 import activityController from "../controllers/activity.controller";
-import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 import commentController from "../controllers/comment.controller";
+import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
+import authMiddleware from "../middlewares/auth.middleware";
+import dtoValidationMiddleware from "../middlewares/dtoValidation.middleware";
+import { CommentDTO } from "../dtos/comment.dto";
 // import toNewActivityEntry from '../utils/utils_activity'
 
 // Crea router
@@ -40,22 +44,26 @@ router
 router.route("/filter").get(activityController.filter);
 
 // Add favorites
-router.route('/add-favorites')
+router
+	.route("/add-favorites")
 	.post(asyncErrorMiddleware(activityController.addFavorites));
 
 // Comment
-router.route('/comment')
-	.post(asyncErrorMiddleware(commentController.createComment))
+router
+	.route("/comment")
+	.post([authMiddleware, dtoValidationMiddleware(CommentDTO)],  asyncErrorMiddleware(commentController.createComment));
 
 // Get Comments
-router.route('/get-comments/:id/:es_plan')
-	.get(asyncErrorMiddleware(commentController.getCommentsFromTable))
-
+router
+	.route("/get-comments/:id/:es_plan")
+	.get(asyncErrorMiddleware(commentController.getCommentsFromTable));
 
 // Delete favorites
-router.route('/delete-favorites/:id')
+router
+	.route("/delete-favorites/:id")
 	.delete(asyncErrorMiddleware(activityController.deleteFavorites));
 
-router.route('/get-favorites')
+router
+	.route("/get-favorites")
 	.post(asyncErrorMiddleware(activityController.getFavorites));
 export default router;

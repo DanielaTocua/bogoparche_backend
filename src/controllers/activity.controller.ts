@@ -9,10 +9,10 @@ import {
 	PlanUpdateDTO,
 } from "../dtos/activity.dto";
 import { ServerError } from "../errors/server.error";
-import activityService from "../services/activity.service";
-import { STATUS_CODES } from "../utils/constants";
 import eventFacade from "../facades/event.facade";
 import planFacade from "../facades/plan.facade";
+import activityService from "../services/activity.service";
+import { STATUS_CODES } from "../utils/constants";
 
 class ActivityController {
 	async getAll(req: Request, res: Response): Promise<void> {
@@ -55,20 +55,20 @@ class ActivityController {
 			const newPlanUpdated = plainToInstance(PlanUpdateDTO, req.body, {
 				excludeExtraneousValues: true,
 			});
-		const result = await planFacade.editPlan(
-			parseInt(req.params.id),
-			newPlanUpdated,
-		);
-		res.json(result);
+			const result = await planFacade.editPlan(
+				parseInt(req.params.id),
+				newPlanUpdated,
+			);
+			res.json(result);
 		} else {
 			const newEventUpdated = plainToInstance(EventUpdateDTO, req.body, {
 				excludeExtraneousValues: true,
 			});
-		const result = await eventFacade.editEvent(
-			parseInt(req.params.id),
-			newEventUpdated,
-		);
-		res.json(result);
+			const result = await eventFacade.editEvent(
+				parseInt(req.params.id),
+				newEventUpdated,
+			);
+			res.json(result);
 		}
 	}
 
@@ -81,7 +81,7 @@ class ActivityController {
 			const result = await planFacade.deletePlan(parseInt(req.params.id));
 			res.json(result);
 		} else {
-			const result = await eventFacade.deleteEvent(parseInt(req.params.id))
+			const result = await eventFacade.deleteEvent(parseInt(req.params.id));
 			res.json(result);
 		}
 	}
@@ -126,21 +126,24 @@ class ActivityController {
 
 	async addFavorites(req: Request, res: Response): Promise<void> {
 		// Retrieves plan info
-		const newFavoriteEntry = plainToInstance(NewFavoriteEntryDTO,req.body,{excludeExtraneousValues:true});
+		const newFavoriteEntry = plainToInstance(NewFavoriteEntryDTO, req.body, {
+			excludeExtraneousValues: true,
+		});
 		await activityService.addFavorites(newFavoriteEntry);
-		res.json({msg:"Favorite succesfully added"})	
+		res.json({ msg: "Favorite succesfully added" });
 	}
 
-	async deleteFavorites(req: Request, res: Response): Promise<void>{
+	async deleteFavorites(req: Request, res: Response): Promise<void> {
 		await activityService.deleteFavorites(parseInt(req.params.id));
-		res.json({msg:"Favorite succesfully deleted"});
+		res.json({ msg: "Favorite succesfully deleted" });
 	}
 
 	async getFavorites(req: Request, res: Response): Promise<void> {
-		const newFavoriteEntry = plainToInstance(NewFavoriteEntryDTO,req.body,{excludeExtraneousValues:true});
+		const newFavoriteEntry = plainToInstance(NewFavoriteEntryDTO, req.body, {
+			excludeExtraneousValues: true,
+		});
 		const id = await activityService.findFavorites(newFavoriteEntry);
 		res.json(id);
 	}
-
 }
 export default new ActivityController();

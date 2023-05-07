@@ -13,8 +13,8 @@ class EventService {
 			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
 		}
 		try {
-			const event = Event.findOneOrFail({ where: { id: id } });
-			const eventWithEsPlan = {...event, es_plan: false  }
+			const event = await Event.findOneOrFail({ where: { id: id } });
+			const eventWithEsPlan = { ...event, es_plan: false };
 			return eventWithEsPlan;
 		} catch {
 			throw new ServerError(

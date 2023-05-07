@@ -52,15 +52,13 @@ export class NewActivityEntryDTO {
 	@Expose()
 	id_categoria: number;
 
-
 	@Exclude()
 	es_plan: boolean;
 
-
-    @IsNotEmpty()
-    @IsBoolean()
-    @Expose()
-    es_aprobado: boolean
+	@IsNotEmpty()
+	@IsBoolean()
+	@Expose()
+	es_aprobado: boolean;
 }
 
 export class ActivityUpdateDTO {
@@ -104,11 +102,9 @@ export class ActivityUpdateDTO {
 	@IsOptional()
 	id_categoria: number;
 
-    @Exclude()
-    @IsOptional()
+	@Exclude()
+	@IsOptional()
 	es_plan: boolean;
-
-    
 }
 
 export class NewEventEntryDTO extends NewActivityEntryDTO {
@@ -159,6 +155,23 @@ export class NewFavoriteEntryDTO {
 	@IsNumber()
 	@IsNotEmpty()
 	@Expose()
+	id_actividad: number;
+
+	@IsString()
+	@IsNotEmpty()
+	@Expose()
+	username: string;
+
+	@IsBoolean()
+	@IsNotEmpty()
+	@Expose()
+	es_plan: boolean
+}
+
+export class NewAttendanceDTO{
+	@IsNumber()
+	@IsNotEmpty()
+	@Expose()
 	id_actividad: number
 
 	@IsString()
@@ -173,7 +186,9 @@ export class NewFavoriteEntryDTO {
 }
 export class EventUpdateFORMDTO{
     
+	es_plan: boolean;
 }
+
 
 export class NewPlanEntryDTO extends NewActivityEntryDTO {
 	@IsString()

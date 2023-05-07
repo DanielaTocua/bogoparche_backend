@@ -1,4 +1,3 @@
-import { validate } from "class-validator";
 
 import { TokenDTO, UserAndTokenDTO } from "../dtos/token.dto";
 import { UserLoginDTO } from "../dtos/user.dto";
@@ -10,11 +9,6 @@ import jwtService from "./jwt.service";
 
 class AuthService {
 	async login(userLoginForm: UserLoginDTO): Promise<UserAndTokenDTO> {
-		const inputErrors = await validate(userLoginForm);
-		if (inputErrors.length > 0) {
-			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
-		}
-
 		const user = await User.findOneBy({ email: userLoginForm.email });
 		if (user == null) {
 			throw new ServerError(
@@ -27,7 +21,7 @@ class AuthService {
 			return {
 				username: user.username,
 				access: token.access,
-				refresh: token.refresh,
+				refresh: token.refresh
 			};
 		}
 		throw new ServerError("Invalid credentials", STATUS_CODES.UNAUTHORIZED);

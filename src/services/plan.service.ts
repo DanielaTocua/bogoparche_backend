@@ -15,7 +15,7 @@ class PlanService {
 		}
 		try {
 			const plan = await Plan.findOneOrFail({ where: { id: id } });
-			const planWithEsPlan = {...plan, es_plan: true  }
+			const planWithEsPlan = { ...plan, es_plan: true };
 			return planWithEsPlan;
 		} catch {
 			throw new ServerError(

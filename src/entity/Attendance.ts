@@ -2,22 +2,22 @@ import {
 	BaseEntity,
 	Column,
 	Entity,
-	JoinColumn,
 	ManyToOne,
+	JoinColumn,
 	PrimaryGeneratedColumn,
 } from "typeorm";
 
 import { User } from "./User";
-@Entity("favorite")
+@Entity("attendance")
 export class Favorite extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@Column({ name: "id_usuario" })
-	id_usuario: number;
+	@Column({ name: 'id_usuario' })
+  	id_usuario: number;
 
-	@ManyToOne((type) => User)
-	@JoinColumn({ name: "id_usuario", referencedColumnName: "id" })
+	@ManyToOne(type => User)
+	@JoinColumn({name:"id_usuario",referencedColumnName:"id"})
 	user: User;
 
 	@Column("integer")
