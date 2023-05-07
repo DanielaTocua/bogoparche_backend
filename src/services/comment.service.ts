@@ -46,11 +46,13 @@ class CommentPlanService {
 	async addCommentPlan(newCommentEntry: CommentDTO): Promise<CommentPlan> {
 		const newCommentPlan = CommentPlan.create(newCommentEntry);
 		try {
-			return newCommentPlan.save();			
+			return newCommentPlan.save();
 		} catch (error) {
-			throw new ServerError("There's been an error, try again later", STATUS_CODES.INTERNAL_ERROR)
+			throw new ServerError(
+				"There's been an error, try again later",
+				STATUS_CODES.INTERNAL_ERROR,
+			);
 		}
-		
 	}
 
 	async addCommentEvent(newCommentEntry: CommentDTO): Promise<CommentEvent> {

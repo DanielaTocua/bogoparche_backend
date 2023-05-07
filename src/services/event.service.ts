@@ -1,11 +1,16 @@
-import { instanceToPlain } from "class-transformer";
+import { instanceToPlain, plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
-import { EventUpdateDTO, NewEventEntryDTO } from "../dtos/activity.dto";
+
+import { appDataSource } from "../dataSource";
+import {
+	EventUpdateDTO,
+	NewActivityEntryDTO,
+	NewEventEntryDTO,
+} from "../dtos/activity.dto";
+import { Activity } from "../entity/Activity";
 import { Event } from "../entity/Event";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
-import dataSource from "../database/dataSource.";
-import { Activity } from "@/entity/Activity";
 class EventService {
 	// Find Event by Id
 	async findEventById(id: number): Promise<any> {
@@ -29,9 +34,10 @@ class EventService {
 			throw new ServerError("Invalid title", STATUS_CODES.BAD_REQUEST);
 		}
 		try {
-			const event = await Event.findOneOrFail({
-				where: { titulo_actividad: titulo },
+			const activity = await Activity.findOneOrFail({
+				where: { titulo_actividad: titulo, es_plan: false },
 			});
+			const event = activity.event;
 			return event;
 		} catch {
 			throw new ServerError(
@@ -54,47 +60,38 @@ class EventService {
 
 	// Adds the id to the json
 	async addEvent(newEventEntry: NewEventEntryDTO): Promise<Event> {
-		const inputErrors = await validate(newEventEntry);
-		if (inputErrors.length > 0) {
-			console.log(inputErrors);
-			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
+		const newActivityEntry = plainToInstance(
+			NewActivityEntryDTO,
+			newEventEntry,
+			{ excludeExtraneousValues: true },
+		);
+		try {
+			return await appDataSource.manager.transaction(
+				async (transactionalEntityManager) => {
+					const newActivity = Activity.create(
+						instanceToPlain(newActivityEntry),
+					);
+					const createdActivity = await transactionalEntityManager.save(
+						newActivity,
+					);
+					const newEvent = Event.create({
+						id: createdActivity.id,
+						fecha_inicio: newEventEntry.fecha_inicio,
+						fecha_fin: newEventEntry.fecha_fin,
+						hora_inicio: newEventEntry.hora_inicio,
+						hora_fin: newEventEntry.hora_fin,
+					});
+					console.log(newEvent);
+					const createdEvent = await transactionalEntityManager.save(newEvent);
+					return createdEvent;
+				},
+			);
+		} catch (error) {
+			throw new ServerError(
+				"There's been an error, try again later",
+				STATUS_CODES.INTERNAL_ERROR,
+			);
 		}
-
-		// // create a new query runner
-		// const queryRunner = dataSource.createQueryRunner()
-
-		// // establish real database connection using our new query runner
-		// await queryRunner.connect()
-
-		// // now we can execute any queries on a query runner, for example:
-		// await queryRunner.query("SELECT * FROM users")
-
-		// // we can also access entity manager that works with connection created by a query runner:
-		// const users = await queryRunner.manager.find(User)
-
-		// // lets now open a new transaction:
-		// await queryRunner.startTransaction()
-
-		// try {
-		// 	// execute some operations on this transaction:
-			
-		// 	await queryRunner.manager.save(user1)
-		// 	await queryRunner.manager.save(user2)
-		// 	await queryRunner.manager.save(photos)
-
-		// 	// commit transaction now:
-		// 	await queryRunner.commitTransaction()
-		// } catch (err) {
-		// 	// since we have errors let's rollback changes we made
-		// 	await queryRunner.rollbackTransaction()
-		// } finally {
-		// 	// you need to release query runner which is manually created:
-		// 	await queryRunner.release()
-		// }
-
-		const newEvent = Event.create(instanceToPlain(newEventEntry));
-
-		return await newEvent.save();
 	}
 
 	// Deletes event

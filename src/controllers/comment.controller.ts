@@ -1,17 +1,13 @@
-import { plainToInstance } from "class-transformer";
 import { Request, Response } from "express";
 
-import { CommentDTO } from "../dtos/comment.dto";
-import { ServerError } from "../errors/server.error";
 import commentServices from "../services/comment.service";
 import { STATUS_CODES } from "../utils/constants";
-import userService from "../services/user.service";
 
 class CommentController {
 	async createComment(req: Request, res: Response): Promise<void> {
-		const newCommentEntry ={...req.body, id_usuario: req.userId}
+		const newCommentEntry = { ...req.body, id_usuario: req.userId };
 		const esPlan = req.body.es_plan;
-		
+
 		if (esPlan) {
 			try {
 				const result = await commentServices.addCommentPlan(newCommentEntry);

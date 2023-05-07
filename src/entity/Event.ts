@@ -1,15 +1,22 @@
-import { Column, Entity, PrimaryGeneratedColumn,OneToOne, JoinColumn, BaseEntity, PrimaryColumn } from "typeorm";
+import {
+	BaseEntity,
+	Column,
+	Entity,
+	JoinColumn,
+	OneToOne,
+	PrimaryColumn,
+} from "typeorm";
 
 import { Activity } from "./Activity";
 
 @Entity("event")
-export class Event extends BaseEntity{
+export class Event extends BaseEntity {
 	@PrimaryColumn()
 	id: number;
 
-	@OneToOne(type => Activity)
-	@JoinColumn({name:"id",referencedColumnName:"id"})
-  	activity: Activity;
+	@OneToOne((type) => Activity)
+	@JoinColumn({ name: "id", referencedColumnName: "id" })
+	activity: Activity;
 
 	@Column("date")
 	fecha_inicio: Date;

@@ -20,9 +20,24 @@ class EventFacade {
 		return result;
 	}
 
-	async addEvent(newEventEntry: NewEventEntryDTO): Promise<Event> {
-		// Updates info
-		const result = await eventService.addEvent(newEventEntry);
+	async addEvent(
+		newEventEntry: NewEventEntryDTO,
+		isAdmin: boolean,
+	): Promise<Event> {
+		// Creates an event
+
+		let result: Event;
+		if (isAdmin) {
+			result = await eventService.addEvent({
+				...newEventEntry,
+				es_aprobado: true,
+			});
+		} else {
+			result = await eventService.addEvent({
+				...newEventEntry,
+				es_aprobado: false,
+			});
+		}
 		return result;
 	}
 }

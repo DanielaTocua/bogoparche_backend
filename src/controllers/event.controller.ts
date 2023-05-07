@@ -3,7 +3,6 @@ import { Request, Response } from "express";
 
 import {
 	EventUpdateDTO,
-	NewAttendanceEntryDTO,
 	NewFavoriteEntryDTO,
 	PlanUpdateDTO,
 } from "../dtos/activity.dto";
@@ -13,10 +12,13 @@ import planFacade from "../facades/plan.facade";
 import activityService from "../services/activity.service";
 import { STATUS_CODES } from "../utils/constants";
 
-class ActivityController {
-	async getAll(req: Request, res: Response): Promise<void> {
-		const result = await activityService.findAllPublic();
-		res.send(result);
+class EventController {
+	async addEvent(req: Request, res: Response): Promise<void> {
+		const result = await eventFacade.addEvent(
+			{ ...req.body, es_plan: true },
+			req.isAdmin as boolean,
+		);
+		res.json({ id: result.id }).status(STATUS_CODES.OK);
 	}
 
 	async editActivity(req: Request, res: Response): Promise<void> {
@@ -119,35 +121,5 @@ class ActivityController {
 		const id = await activityService.findFavorites(newFavoriteEntry);
 		res.json(id);
 	}
-
-	async addAttendance(req: Request, res: Response): Promise<void> {
-		// Retrieves plan info
-		const newAttendanceEntry = plainToInstance(
-			NewAttendanceEntryDTO,
-			req.body,
-			{
-				excludeExtraneousValues: true,
-			},
-		);
-		await activityService.addAttendance(newAttendanceEntry);
-		res.json({ msg: "Attendance succesfully added" });
-	}
-
-	async deleteAttendance(req: Request, res: Response): Promise<void> {
-		await activityService.deleteAttendance(parseInt(req.params.id));
-		res.json({ msg: "Attendance succesfully deleted" });
-	}
-
-	async getAttendance(req: Request, res: Response): Promise<void> {
-		const newAttendanceEntry = plainToInstance(
-			NewAttendanceEntryDTO,
-			req.body,
-			{
-				excludeExtraneousValues: true,
-			},
-		);
-		const id = await activityService.findAttendance(newAttendanceEntry);
-		res.json(id);
-	}
 }
-export default new ActivityController();
+export default new EventController();

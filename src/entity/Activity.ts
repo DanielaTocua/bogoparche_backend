@@ -10,11 +10,11 @@ import {
 
 import { RANGE_PRICES } from "../utils/constants";
 import { Category } from "./Category";
-import { Plan } from "./Plan";
 import { Event } from "./Event";
+import { Plan } from "./Plan";
 
 @Entity("activity")
-export class Activity extends BaseEntity{
+export class Activity extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number;
 

@@ -1,12 +1,18 @@
-import { instanceToPlain } from "class-transformer";
-import { validate } from "class-validator";
+import {
+	instanceToPlain,
+	plainToInstance,
+} from "class-transformer";
 
-import { NewPlanEntryDTO, PlanUpdateDTO } from "@/dtos/activity.dto";
-
+import { appDataSource } from "../dataSource";
+import {
+	NewActivityEntryDTO,
+	NewPlanEntryDTO,
+	PlanUpdateDTO,
+} from "../dtos/activity.dto";
+import { Activity } from "../entity/Activity";
 import { Plan } from "../entity/Plan";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
-
 class PlanService {
 	// Find Plan by Id
 	async findPlanById(id: number): Promise<any> {
@@ -27,18 +33,34 @@ class PlanService {
 
 	// Adds the id to the json
 	async addPlan(newPlanEntry: NewPlanEntryDTO): Promise<Plan> {
-		console.log(newPlanEntry);
-		console.log(instanceToPlain(newPlanEntry));
-
-		// Looks for errors in newPlanEntry
-		const inputErrors = await validate(newPlanEntry);
-		if (inputErrors.length > 0) {
-			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
+		const newActivityEntry = plainToInstance(
+			NewActivityEntryDTO,
+			newPlanEntry,
+			{ excludeExtraneousValues: true },
+		);
+		try {
+			return await appDataSource.manager.transaction(
+				async (transactionalEntityManager) => {
+					const newActivity = Activity.create(
+						instanceToPlain(newActivityEntry),
+					);
+					const createdActivity = await transactionalEntityManager.save(
+						newActivity,
+					);
+					const newPlan = Plan.create({
+						id: createdActivity.id,
+						horario_plan: newPlanEntry.horario_plan,
+					});
+					const createdPlan = await transactionalEntityManager.save(newPlan);
+					return createdPlan;
+				},
+			);
+		} catch (error) {
+			throw new ServerError(
+				"There's been an error, try again later",
+				STATUS_CODES.INTERNAL_ERROR,
+			);
 		}
-
-		// Adds the plan
-		const newPlan = Plan.create(instanceToPlain(newPlanEntry));
-		return await newPlan.save();
 	}
 
 	// Edits Plan
@@ -46,11 +68,6 @@ class PlanService {
 		// Finds plan
 		await this.findPlanById(id);
 
-		// Looks for errors in planEntry
-		const inputErrors = await validate(planEntry);
-		if (inputErrors.length > 0) {
-			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
-		}
 		await Plan.update(id, instanceToPlain(planEntry));
 
 		return await Plan.findOneOrFail({ where: { id } });

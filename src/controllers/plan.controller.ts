@@ -3,9 +3,7 @@ import { Request, Response } from "express";
 
 import {
 	EventUpdateDTO,
-	NewEventEntryDTO,
 	NewFavoriteEntryDTO,
-	NewPlanEntryDTO,
 	PlanUpdateDTO,
 } from "../dtos/activity.dto";
 import { ServerError } from "../errors/server.error";
@@ -16,9 +14,11 @@ import { STATUS_CODES } from "../utils/constants";
 
 class PlanController {
 	async addPlan(req: Request, res: Response): Promise<void> {
-        const result = await planFacade.addPlan(req.body, req.isAdmin);
-        res.json({ id:result.id }).status(STATUS_CODES.OK);
-
+		const result = await planFacade.addPlan(
+			{ ...req.body, es_plan: true },
+			req.isAdmin as boolean,
+		);
+		res.json({ id: result.id }).status(STATUS_CODES.OK);
 	}
 
 	async editActivity(req: Request, res: Response): Promise<void> {

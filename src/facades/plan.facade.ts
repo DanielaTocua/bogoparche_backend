@@ -21,9 +21,22 @@ class PlanFacade {
 		return result;
 	}
 
-	async addPlan(newEventEntry: NewPlanEntryDTO): Promise<Plan> {
-		// Adds info
-		const result = await planService.addPlan(newEventEntry);
+	async addPlan(
+		newPlanEntry: NewPlanEntryDTO,
+		isAdmin: boolean,
+	): Promise<Plan> {
+		let result: Plan;
+		if (isAdmin) {
+			result = await planService.addPlan({
+				...newPlanEntry,
+				es_aprobado: true,
+			});
+		} else {
+			result = await planService.addPlan({
+				...newPlanEntry,
+				es_aprobado: false,
+			});
+		}
 		return result;
 	}
 }
