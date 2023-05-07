@@ -1,13 +1,10 @@
-import { plainToInstance } from "class-transformer";
 import { NextFunction, Request, Response } from "express";
 
-import { UserLoginDTO } from "../dtos/user.dto";
 import AuthService from "../services/auth.service";
 
 class AuthController {
 	async login(req: Request, res: Response, next: NextFunction) {
-		const userDTO = plainToInstance(UserLoginDTO, req.body);
-		const userAndTokens = await AuthService.login(userDTO);
+		const userAndTokens = await AuthService.login(req.body);
 
 		return res.status(200).send(userAndTokens);
 	}

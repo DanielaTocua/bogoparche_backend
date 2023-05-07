@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-import { ServerError } from "../errors/server.error.js";
-import { STATUS_CODES } from "../utils/constants.js";
+import { ServerError } from "../errors/server.error";
+import { STATUS_CODES } from "../utils/constants";
 
 export default async (req: Request, res: Response, next: NextFunction) => {
 	if (req.headers.authorization) {

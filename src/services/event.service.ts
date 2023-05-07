@@ -13,7 +13,7 @@ class EventService {
 		}
 		try {
 			const event = await Event.findOneOrFail({ where: { id: id } });
-			const eventWithEsPlan = {...event, es_plan: false  }
+			const eventWithEsPlan = { ...event, es_plan: false };
 			return eventWithEsPlan;
 		} catch {
 			throw new ServerError(
