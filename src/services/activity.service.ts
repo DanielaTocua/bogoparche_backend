@@ -1,13 +1,14 @@
 import { validate } from "class-validator";
 
 import { appDataSource } from "../dataSource";
-import { NewFavoriteEntryDTO } from "../dtos/activity.dto";
+import { NewAttendanceEntryDTO, NewFavoriteEntryDTO } from "../dtos/activity.dto";
 import { Activity } from "../entity/Activity";
 import { Category } from "../entity/Category";
 import { Favorite } from "../entity/Favorite";
 import { User } from "../entity/User";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
+import { Attendance } from "../entity/Attendance";
 
 class ActivityService {
 	async findAllPublic(): Promise<Activity[]> {
@@ -163,6 +164,83 @@ class ActivityService {
 		} catch (error) {
 			throw new ServerError("favorito no encontrado", STATUS_CODES.BAD_REQUEST);
 		}
+	}
+
+	async addAttendance(newAttendanceEntry: NewAttendanceEntryDTO): Promise<void> {
+		const inputErrors = await validate(newAttendanceEntry);
+		if (inputErrors.length > 0) {
+			console.log(inputErrors);
+			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
+		}
+		try {
+			const user = await User.findOneByOrFail({
+				username: newAttendanceEntry.username,
+			});
+			console.log({
+				id_usuario: user.id,
+				id_actividad: newAttendanceEntry.id_actividad,
+				es_plan: newAttendanceEntry.es_plan,
+			});
+			const newAttendance = Attendance.create({
+				id_usuario: user.id,
+				id_actividad: newAttendanceEntry.id_actividad,
+				es_plan: newAttendanceEntry.es_plan,
+			});
+			await newAttendance.save();
+		} catch (error) {
+			throw new ServerError("usuario no encontrado", STATUS_CODES.BAD_REQUEST);
+		}
+	}
+
+	async findAttendance(newAttendanceEntry: NewAttendanceEntryDTO): Promise<any> {
+		const inputErrors = await validate(newAttendanceEntry);
+		if (inputErrors.length > 0) {
+			console.log(inputErrors);
+			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
+		}
+		try {
+			const user = await User.findOneByOrFail({
+				username: newAttendanceEntry.username,
+			});
+			console.log({
+				id_usuario: user.id,
+				id_actividad: newAttendanceEntry.id_actividad,
+				es_plan: newAttendanceEntry.es_plan,
+			});
+			const AttendanceFind = await Attendance.findOneByOrFail({
+				id_usuario: user.id,
+				id_actividad: newAttendanceEntry.id_actividad,
+				es_plan: newAttendanceEntry.es_plan,
+			});
+			const id = AttendanceFind.id;
+			console.log(id);
+			return id;
+		} catch (error) {
+			throw new ServerError("Attendance no encontrado", STATUS_CODES.BAD_REQUEST);
+		}
+	}
+
+	async findAttendanceById(id: number): Promise<Attendance> {
+		if (typeof id != "number") {
+			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
+		}
+		try {
+			const plan = await Attendance.findOneOrFail({ where: { id: id } });
+			return plan;
+		} catch {
+			throw new ServerError(
+				`The Attendance id: ${id} does not exist`,
+				STATUS_CODES.BAD_REQUEST,
+			);
+		}
+	}
+
+	async deleteAttendance(id: number): Promise<Attendance> {
+		if (typeof id != "number") {
+			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
+		}
+		const attendance = await this.findAttendanceById(id);
+		return Attendance.remove(attendance);
 	}
 }
 export default new ActivityService();

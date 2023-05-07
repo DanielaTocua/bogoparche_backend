@@ -168,7 +168,7 @@ export class NewFavoriteEntryDTO {
 	es_plan: boolean
 }
 
-export class NewAttendanceDTO{
+export class NewAttendanceEntryDTO{
 	@IsNumber()
 	@IsNotEmpty()
 	@Expose()

@@ -63,4 +63,17 @@ router
 router
 	.route("/get-favorites")
 	.post(asyncErrorMiddleware(activityController.getFavorites));
+
+// Add Attendance
+router
+	.route("/add-attendances")
+	.post(asyncErrorMiddleware(activityController.addAttendance));
+
+router
+	.route("/delete-attendances/:id")
+	.delete(asyncErrorMiddleware(activityController.deleteAttendance));
+
+router
+	.route("/get-attendances")
+	.post(asyncErrorMiddleware(activityController.getAttendance));
 export default router;
