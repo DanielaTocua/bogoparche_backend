@@ -1,6 +1,5 @@
 import bcrypt from "bcrypt";
 import { plainToInstance } from "class-transformer";
-import { validate } from "class-validator";
 
 import { UserPublicDTO, UserRegisterDTO } from "../dtos/user.dto";
 import { User } from "../entity/User";
@@ -9,11 +8,7 @@ import { STATUS_CODES } from "../utils/constants";
 
 class UserService {
 	async registerUser(user: UserRegisterDTO): Promise<UserPublicDTO> {
-		const inputErrors = await validate(user);
-		if (inputErrors.length > 0) {
-			console.log(inputErrors)
-			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
-		}
+
 		if ((await User.findOneBy({ email: user.email })) != null) {
 			throw new ServerError(
 				"this email is already registered",

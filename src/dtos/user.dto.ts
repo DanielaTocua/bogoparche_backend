@@ -10,7 +10,7 @@ export class UserEmailDTO {
 export class UserLoginDTO extends UserEmailDTO {
 	@IsNotEmpty()
 	@IsString()
-	@Exclude({ toPlainOnly: true })
+	@Expose({ toClassOnly: true })
 	password: string;
 }
 export class UserAuthDTO extends UserEmailDTO {
