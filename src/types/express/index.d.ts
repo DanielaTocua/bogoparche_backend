@@ -3,6 +3,7 @@ declare namespace Express {
 		username?: string;
 		email?: string;
 		user?: User;
+		userId:number
 	}
 	export interface Response {
 		username?: string;

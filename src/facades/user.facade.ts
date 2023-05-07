@@ -1,14 +1,10 @@
-import { UserPublicDTO, UserRegisterDTO } from "@/dtos/user.dto";
-
-import { GenericResponse } from "../dtos/genericResponse.dto";
+import { UserPublicDTO, UserRegisterDTO } from "../dtos/user.dto";
 import UserService from "../services/user.service";
 class UserFacade {
 	async registerUser(
 		user: UserRegisterDTO,
-	): Promise<GenericResponse<UserPublicDTO>> {
-		return {
-			data: await UserService.registerUser(user),
-		};
+	): Promise<UserPublicDTO> {
+		return await UserService.registerUser(user);
 	}
 }
 

@@ -8,7 +8,6 @@ import { STATUS_CODES } from "../utils/constants";
 
 class UserService {
 	async registerUser(user: UserRegisterDTO): Promise<UserPublicDTO> {
-
 		if ((await User.findOneBy({ email: user.email })) != null) {
 			throw new ServerError(
 				"this email is already registered",
@@ -31,9 +30,28 @@ class UserService {
 			password: hashedPassword,
 			isAdmin: user.isAdmin,
 		});
-		return plainToInstance(UserPublicDTO, await newUser.save(), {
-			excludeExtraneousValues: true,
-		});
+
+		try {
+			return plainToInstance(UserPublicDTO, await newUser.save(), {
+				excludeExtraneousValues: true,
+			});
+			
+		} catch (err) {
+			throw new ServerError(
+				"There's been an error, try again later",
+				STATUS_CODES.INTERNAL_ERROR,
+			);
+			
+		}
+		
+	}
+	async getUserId(username:string){
+		try {
+			return (await User.findOneByOrFail({username})).id			
+		} catch (error) {
+			throw new ServerError("This user does not exist", STATUS_CODES.BAD_REQUEST)	
+		}
+		
 	}
 }
 export default new UserService();

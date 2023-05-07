@@ -21,7 +21,7 @@ class AuthService {
 			return {
 				username: user.username,
 				access: token.access,
-				refresh: token.refresh,
+				refresh: token.refresh
 			};
 		}
 		throw new ServerError("Invalid credentials", STATUS_CODES.UNAUTHORIZED);

@@ -1,5 +1,5 @@
 import { Expose } from "class-transformer";
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CommentDTO {
 	@IsNotEmpty()
@@ -8,12 +8,14 @@ export class CommentDTO {
 	id_actividad: number;
 
 	@IsNotEmpty()
-	@IsNumber()
-	@Expose()
-	id_usuario: number;
-
-	@IsNotEmpty()
 	@IsString()
 	@Expose()
 	texto_comentario: string;
+
+	@IsNotEmpty()
+	@IsBoolean()
+	@Expose()
+	es_plan: boolean;
+
+
 }

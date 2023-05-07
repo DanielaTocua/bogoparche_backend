@@ -1,14 +1,16 @@
 import bcrypt from "bcrypt";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("bgp_user")
 export class User extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number;
 
+	@Index()
 	@Column("varchar", { length: 200, unique: true })
 	username: string;
 
+	@Index()
 	@Column("varchar", { length: 200, unique: true })
 	email: string;
 
