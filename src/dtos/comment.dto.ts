@@ -20,5 +20,5 @@ export class CommentDTO {
 	@IsNotEmpty()
 	@IsNumber()
 	@Expose()
-	calificacion: string;
+	calificacion: number;
 }
