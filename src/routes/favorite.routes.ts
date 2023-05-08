@@ -22,8 +22,8 @@ router
 	.delete([authMiddleware], asyncErrorMiddleware(activityController.deleteFavorites));
 
 router
-	.route("/get-favorites")
-	.post(asyncErrorMiddleware(activityController.getFavorites));
+	.route("")
+	.get(asyncErrorMiddleware(activityController.getFavorites));
 
 
 export default router;

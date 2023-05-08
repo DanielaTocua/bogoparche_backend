@@ -59,9 +59,9 @@ router
 	.route("/delete-favorites/:id")
 	.delete(asyncErrorMiddleware(activityController.deleteFavorites));
 
-router
-	.route("/get-favorites")
-	.post(asyncErrorMiddleware(activityController.getFavorites));
+// router
+// 	.route("/get-favorites")
+// 	.post(asyncErrorMiddleware(activityController.getFavorites));
 
 // Add Attendance
 router

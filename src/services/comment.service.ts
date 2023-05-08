@@ -44,7 +44,7 @@ class CommentPlanService {
 	}
 
 	async addCommentPlan(newCommentEntry: CommentDTO): Promise<CommentPlan> {
-		const newCommentPlan = CommentPlan.create(newCommentEntry);
+		const newCommentPlan = CommentPlan.create(instanceToPlain(newCommentEntry));
 		try {
 			return newCommentPlan.save();
 		} catch (error) {
