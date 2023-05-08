@@ -33,6 +33,9 @@ export class CommentPlan extends BaseEntity {
 	@Column("varchar", { length: 200 })
 	texto_comentario: string;
 
+	@Column("integer")
+	calificacion: number
+
 	@CreateDateColumn()
 	createdAt: Date;
 }
