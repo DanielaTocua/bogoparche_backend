@@ -23,7 +23,7 @@ export class Favorite extends BaseEntity {
 
 	@Column("integer")
 	id_actividad: number;
-	@ManyToOne((type) => Activity)
+	@ManyToOne((type) => Activity, { onDelete: "CASCADE" })
 	@JoinColumn({ name: "id_actividad", referencedColumnName: "id" })
 	activity: Activity;
 

@@ -43,11 +43,11 @@ class EventService {
 
 		try {
 			await Activity.update(id, instanceToPlain(activityEntry));
-			const eventUpdateEntry = { 
-				fecha_inicio: eventEntry.fecha_inicio ,
+			const eventUpdateEntry = {
+				fecha_inicio: eventEntry.fecha_inicio,
 				fecha_fin: eventEntry.fecha_fin,
 				hora_inicio: eventEntry.hora_inicio,
-				hora_fin: eventEntry.hora_fin
+				hora_fin: eventEntry.hora_fin,
 			};
 
 			if (!Object.values(eventUpdateEntry).every((el) => el === undefined)) {

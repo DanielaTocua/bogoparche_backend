@@ -27,7 +27,10 @@ router
 // Gets activities
 router
 	.route("/:id")
-	.get([idNumberValidationMiddleware],asyncErrorMiddleware(activityController.getActivity));
+	.get(
+		[idNumberValidationMiddleware],
+		asyncErrorMiddleware(activityController.getActivity),
+	);
 
 // Filter activities
 router.route("/filter").get(activityController.filter);
