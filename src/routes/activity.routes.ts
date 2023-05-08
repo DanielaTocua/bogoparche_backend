@@ -15,6 +15,7 @@ const router = express.Router();
 
 // Gets all activities (plan/events)
 router.route("/all").get(asyncErrorMiddleware(activityController.getAll));
+router.route("/all-not-approved").get(asyncErrorMiddleware(activityController.getAllNotApproved));
 
 // Deletes activities
 router

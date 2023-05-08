@@ -15,6 +15,11 @@ class ActivityController {
 		res.send(result);
 	}
 
+	async getAllNotApproved(req: Request, res: Response): Promise<void> {
+		const result = await activityService.findAllNotApproved();
+		res.send(result);
+	}
+
 	async deleteActivity(req: Request, res: Response): Promise<void> {
 		const result = await activityFacade.deleteActivity(parseInt(req.params.id));
 		res.json(result).status(STATUS_CODES.OK);

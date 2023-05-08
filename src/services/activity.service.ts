@@ -14,6 +14,7 @@ import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
 
 class ActivityService {
+
 	async findActivityById(id: number): Promise<Activity> {
 		if (typeof id != "number") {
 			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
@@ -44,6 +45,24 @@ class ActivityService {
 			);
 		}
 	}
+
+	async findAllNotApproved(): Promise<Activity[]> {
+		console.log("IN FIND ALL NOT APPROVED");
+		// Puede cambiarse a raw queries
+
+		try {
+			const notApprovedActivities = (await appDataSource.manager.query(
+				`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan FROM activity WHERE es_aprobado IS false AND es_privada IS false`,
+			)) as Activity[];
+			return notApprovedActivities;
+		} catch (error) {
+			throw new ServerError(
+				"There's been an error, try again later",
+				STATUS_CODES.INTERNAL_ERROR,
+			);
+		}
+	}
+
 
 	async deleteActivity(activity: Activity): Promise<Activity> {
 		try {
