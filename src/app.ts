@@ -8,6 +8,7 @@ import activitiesRoutes from "./routes/activity.routes";
 import authRoutes from "./routes/auth.routes";
 import categoriesRoutes from "./routes/categories.router";
 import eventRoutes from "./routes/event.routes";
+import favoriteRoutes from "./routes/favorite.routes";
 import helloRoutes from "./routes/hello.routes";
 import planRoutes from "./routes/plan.routes";
 import userRoutes from "./routes/user.routes";
@@ -33,6 +34,7 @@ export class App {
 		this._app.use("/api/activity", activitiesRoutes);
 		this._app.use("/api/plan", planRoutes);
 		this._app.use("/api/event", eventRoutes);
+		this._app.use("/api/favorite", favoriteRoutes);
 		this._app.use("/api/category", categoriesRoutes);
 		this._app.use("/api/auth", authRoutes);
 		this._app.use("/api/hello", helloRoutes);

@@ -59,7 +59,7 @@ class ActivityController {
 		const newFavoriteEntry = plainToInstance(NewFavoriteEntryDTO, req.body, {
 			excludeExtraneousValues: true,
 		});
-		await activityService.addFavorites(newFavoriteEntry);
+		await activityService.addFavorites(req.userId as number, newFavoriteEntry);
 		res.json({ msg: "Favorite succesfully added" });
 	}
 

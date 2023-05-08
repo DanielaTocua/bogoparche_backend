@@ -144,16 +144,9 @@ class ActivityService {
 		return filtered;
 	}
 
-	async addFavorites(newFavoriteEntry: NewFavoriteEntryDTO): Promise<void> {
-		const inputErrors = await validate(newFavoriteEntry);
-		if (inputErrors.length > 0) {
-			console.log(inputErrors);
-			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
-		}
+	async addFavorites(id:number, newFavoriteEntry: NewFavoriteEntryDTO): Promise<void> {
 		try {
-			const user = await User.findOneByOrFail({
-				username: newFavoriteEntry.username,
-			});
+			const user = await User.findOneByOrFail({id});
 			console.log({
 				id_usuario: user.id,
 				id_actividad: newFavoriteEntry.id_actividad,
@@ -161,8 +154,7 @@ class ActivityService {
 			});
 			const newFavorite = Favorite.create({
 				id_usuario: user.id,
-				id_actividad: newFavoriteEntry.id_actividad,
-				es_plan: newFavoriteEntry.es_plan,
+				...newFavoriteEntry
 			});
 			await newFavorite.save();
 		} catch (error) {
@@ -193,7 +185,7 @@ class ActivityService {
 		return Favorite.remove(favorites);
 	}
 
-	async findFavorites(newFavoriteEntry: NewFavoriteEntryDTO): Promise<any> {
+	async findFavorites(id:number, newFavoriteEntry: NewFavoriteEntryDTO): Promise<any> {
 		const inputErrors = await validate(newFavoriteEntry);
 		if (inputErrors.length > 0) {
 			console.log(inputErrors);
@@ -201,7 +193,7 @@ class ActivityService {
 		}
 		try {
 			const user = await User.findOneByOrFail({
-				username: newFavoriteEntry.username,
+				id: newFavoriteEntry.id_actividad,
 			});
 			console.log({
 				id_usuario: user.id,

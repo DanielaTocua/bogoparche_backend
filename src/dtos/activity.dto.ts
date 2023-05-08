@@ -155,13 +155,8 @@ export class NewFavoriteEntryDTO {
 	@Expose()
 	id_actividad: number;
 
-	@IsString()
-	@IsNotEmpty()
-	@Expose()
-	username: string;
 
 	@IsBoolean()
-	@IsNotEmpty()
 	@Expose()
 	es_plan: boolean;
 }
