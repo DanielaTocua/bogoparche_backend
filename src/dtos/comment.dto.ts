@@ -13,11 +13,6 @@ export class CommentDTO {
 	texto_comentario: string;
 
 	@IsNotEmpty()
-	@IsBoolean()
-	@Expose()
-	es_plan: boolean;
-
-	@IsNotEmpty()
 	@IsNumber()
 	@Expose()
 	calificacion: number;
