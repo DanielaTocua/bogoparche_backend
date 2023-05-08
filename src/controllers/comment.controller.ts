@@ -6,7 +6,7 @@ import { STATUS_CODES } from "../utils/constants";
 class CommentController {
 	async createComment(req: Request, res: Response): Promise<void> {
 		const newCommentEntry = { ...req.body, id_usuario: req.userId };
-		const esPlan = req.body.es_plan;
+		const esPlan = JSON.parse(req.body.es_plan);
 
 		if (esPlan) {
 			try {

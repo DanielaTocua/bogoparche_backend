@@ -16,4 +16,9 @@ export class CommentDTO {
 	@IsNumber()
 	@Expose()
 	calificacion: number;
+
+	@IsNotEmpty()
+	@IsBoolean()
+	@Expose()
+	es_plan: number;
 }
