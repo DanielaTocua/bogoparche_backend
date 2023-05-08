@@ -28,13 +28,8 @@ class EventService {
 	}
 
 	async editEvent(id: number, eventEntry: EventUpdateDTO): Promise<Event> {
-		await this.findEventById(id);
-		if (typeof id != "number") {
-			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
-		}
-
 		// create a new query runner
-		const queryRunner = dataSource.createQueryRunner();
+		const queryRunner = appDataSource.createQueryRunner();
 
 		// establish real database connection
 		await queryRunner.connect();
@@ -42,19 +37,36 @@ class EventService {
 		// open a new transaction:
 		await queryRunner.startTransaction();
 
+		const activityEntry = plainToInstance(NewActivityEntryDTO, eventEntry, {
+			excludeExtraneousValues: true,
+		});
+
 		try {
-			await Activity.update(id, instanceToPlain(eventEntry));
-			await Event.update(id, instanceToPlain(eventEntry));
+			await Activity.update(id, instanceToPlain(activityEntry));
+			const eventUpdateEntry = { 
+				fecha_inicio: eventEntry.fecha_inicio ,
+				fecha_fin: eventEntry.fecha_fin,
+				hora_inicio: eventEntry.hora_inicio,
+				hora_fin: eventEntry.hora_fin
+			};
+
+			if (!Object.values(eventUpdateEntry).every((el) => el === undefined)) {
+				await Event.update(id, eventUpdateEntry);
+			}
 
 			// commit transaction
 			await queryRunner.commitTransaction();
 		} catch (err) {
 			// rollback changes we made
 			await queryRunner.rollbackTransaction();
-		} finally {
-			// release query runner
 			await queryRunner.release();
+			throw new ServerError(
+				"There's been an error, try again later",
+				STATUS_CODES.BAD_REQUEST,
+			);
 		}
+		// release query runner
+		await queryRunner.release();
 
 		return await Event.findOneOrFail({ where: { id } });
 	}

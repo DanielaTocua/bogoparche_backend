@@ -72,18 +72,15 @@ class PlanService {
 		// open a new transaction:
 		await queryRunner.startTransaction();
 
-		const activityEntry = plainToInstance(
-			NewActivityEntryDTO,
-			planEntry,
-			{ excludeExtraneousValues: true },
-		);
+		const activityEntry = plainToInstance(NewActivityEntryDTO, planEntry, {
+			excludeExtraneousValues: true,
+		});
 
 		try {
-
 			await Activity.update(id, instanceToPlain(activityEntry));
-			const planUpdateEntry = {horario_plan:planEntry.horario_plan}
+			const planUpdateEntry = { horario_plan: planEntry.horario_plan };
 
-			if (! Object.values(planUpdateEntry).every(el => el === undefined)) {
+			if (!Object.values(planUpdateEntry).every((el) => el === undefined)) {
 				await Plan.update(id, planUpdateEntry);
 			}
 
@@ -93,17 +90,16 @@ class PlanService {
 			// rollback changes we made
 			await queryRunner.rollbackTransaction();
 			await queryRunner.release();
-			throw new ServerError("There's been an error, try again later", STATUS_CODES.BAD_REQUEST)
-
+			throw new ServerError(
+				"There's been an error, try again later",
+				STATUS_CODES.BAD_REQUEST,
+			);
 		}
 		// release query runner
 		await queryRunner.release();
 
-
 		return await Plan.findOneOrFail({ where: { id } });
 	}
-
-	
 }
 
 export default new PlanService();

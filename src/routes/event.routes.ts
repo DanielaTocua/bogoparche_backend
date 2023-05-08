@@ -1,26 +1,31 @@
 import express from "express"; //ESModules
 
-import activityController from "../controllers/activity.controller";
-import commentController from "../controllers/comment.controller";
 import eventController from "../controllers/event.controller";
-import planController from "../controllers/plan.controller";
-import { NewEventEntryDTO, NewPlanEntryDTO } from "../dtos/activity.dto";
+import { NewEventEntryDTO } from "../dtos/activity.dto";
 import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 import authMiddleware from "../middlewares/auth.middleware";
 import dtoValidationMiddleware from "../middlewares/dtoValidation.middleware";
 import idNumberValidation from "../middlewares/idNumberValidation.middleware";
+import validateAdminMiddleware from "../middlewares/validateAdmin.middleware";
 // import toNewActivityEntry from '../utils/utils_activity'
 
 // Crea router
 const router = express.Router();
 
-
-// Creates event
+// Creation
 router
-	.route("/event")
+	.route("")
 	.post(
 		[authMiddleware, dtoValidationMiddleware(NewEventEntryDTO)],
 		asyncErrorMiddleware(eventController.addEvent),
+	);
+
+// Editing
+router
+	.route("/:id")
+	.put(
+		[authMiddleware, validateAdminMiddleware, idNumberValidation],
+		asyncErrorMiddleware(eventController.editEvent),
 	);
 
 export default router;

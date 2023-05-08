@@ -43,7 +43,7 @@ export class Activity extends BaseEntity {
 	id_categoria: number;
 
 	@ManyToOne((type) => Category)
-	@JoinColumn({ name: "id_categoria", referencedColumnName: "id"})
+	@JoinColumn({ name: "id_categoria", referencedColumnName: "id" })
 	categoria: Category;
 
 	@Column("bool", { default: false })

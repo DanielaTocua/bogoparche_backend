@@ -12,7 +12,6 @@ import { Favorite } from "../entity/Favorite";
 import { User } from "../entity/User";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
-import { Plan } from "@/entity/Plan";
 
 class ActivityService {
 	async findActivityById(id: number): Promise<Activity> {
@@ -20,7 +19,7 @@ class ActivityService {
 			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
 		}
 		try {
-			const activity = await Activity.findOneByOrFail({id});
+			const activity = await Activity.findOneByOrFail({ id });
 			return activity;
 		} catch {
 			throw new ServerError(
@@ -33,9 +32,10 @@ class ActivityService {
 		console.log("IN FIND ALL PUBLIC");
 		// Puede cambiarse a raw queries
 
-		try{
-			const publicActivities = (await appDataSource.manager
-				.query(`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan FROM activity WHERE es_aprobado IS true AND es_privada IS false`)) as Activity[];
+		try {
+			const publicActivities = (await appDataSource.manager.query(
+				`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan FROM activity WHERE es_aprobado IS true AND es_privada IS false`,
+			)) as Activity[];
 			return publicActivities;
 		} catch (error) {
 			throw new ServerError(
@@ -45,12 +45,14 @@ class ActivityService {
 		}
 	}
 
-	async deleteActivity(activity:Activity): Promise<Activity> {
-		
+	async deleteActivity(activity: Activity): Promise<Activity> {
 		try {
 			Activity.remove(activity);
 		} catch (err) {
-			throw new ServerError("There's been an error, try again later", STATUS_CODES.BAD_REQUEST)
+			throw new ServerError(
+				"There's been an error, try again later",
+				STATUS_CODES.BAD_REQUEST,
+			);
 		}
 		return activity;
 	}

@@ -1,4 +1,3 @@
-import activityService from "../services/activity.service";
 import { NewPlanEntryDTO, PlanUpdateDTO } from "../dtos/activity.dto";
 import { Plan } from "../entity/Plan";
 import planService from "../services/plan.service";
@@ -9,7 +8,6 @@ class PlanFacade {
 		const result = await planService.findPlanById(id);
 		return result;
 	}
-
 
 	async editPlan(id: number, newEventUpdated: PlanUpdateDTO): Promise<Plan> {
 		// checks if plan exists

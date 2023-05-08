@@ -17,7 +17,6 @@ class PlanController {
 		res.json(result).status(STATUS_CODES.OK);
 	}
 
-
 	async getPlan(req: Request, res: Response): Promise<void> {
 		const result = await planFacade.getPlan(parseInt(req.params.id));
 		res.json(result);

@@ -7,9 +7,10 @@ import errorMiddleware from "./middlewares/error.middleware";
 import activitiesRoutes from "./routes/activity.routes";
 import authRoutes from "./routes/auth.routes";
 import categoriesRoutes from "./routes/categories.router";
+import eventRoutes from "./routes/event.routes";
 import helloRoutes from "./routes/hello.routes";
-import userRoutes from "./routes/user.routes";
 import planRoutes from "./routes/plan.routes";
+import userRoutes from "./routes/user.routes";
 export class App {
 	private readonly _app: Application;
 
@@ -31,6 +32,7 @@ export class App {
 
 		this._app.use("/api/activity", activitiesRoutes);
 		this._app.use("/api/plan", planRoutes);
+		this._app.use("/api/event",eventRoutes);
 		this._app.use("/api/category", categoriesRoutes);
 		this._app.use("/api/auth", authRoutes);
 		this._app.use("/api/hello", helloRoutes);

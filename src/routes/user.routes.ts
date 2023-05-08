@@ -9,7 +9,7 @@ const router = express.Router();
 // Routes for database
 // Configurar rutas
 router.post(
-	"/createUser",
+	"",
 	dtoValidationMiddleware(UserRegisterDTO),
 	asyncErrorMiddleware(UserController.registerUser),
 );

@@ -2,17 +2,14 @@ import { plainToInstance } from "class-transformer";
 import { Request, Response } from "express";
 
 import {
-	EventUpdateDTO,
 	NewAttendanceEntryDTO,
 	NewFavoriteEntryDTO,
-	PlanUpdateDTO,
 } from "../dtos/activity.dto";
-import { ServerError } from "../errors/server.error";
+import activityFacade from "../facades/activity.facade";
 import eventFacade from "../facades/event.facade";
 import planFacade from "../facades/plan.facade";
 import activityService from "../services/activity.service";
 import { STATUS_CODES } from "../utils/constants";
-import activityFacade from "../facades/activity.facade";
 
 class ActivityController {
 	async getAll(req: Request, res: Response): Promise<void> {
@@ -20,51 +17,16 @@ class ActivityController {
 		res.send(result);
 	}
 
-	async editActivity(req: Request, res: Response): Promise<void> {
-		if (!("es_plan" in req.params)) {
-			throw new ServerError("es_plan not defined", STATUS_CODES.BAD_REQUEST);
-		}
-
-		const esPlan = JSON.parse(req.params.es_plan);
-		if (esPlan) {
-			const newPlanUpdated = plainToInstance(PlanUpdateDTO, req.body, {
-				excludeExtraneousValues: true,
-			});
-			const result = await planFacade.editPlan(
-				parseInt(req.params.id),
-				newPlanUpdated,
-			);
-			res.json(result);
-		} else {
-			const newEventUpdated = plainToInstance(EventUpdateDTO, req.body, {
-				excludeExtraneousValues: true,
-			});
-			const result = await eventFacade.editEvent(
-				parseInt(req.params.id),
-				newEventUpdated,
-			);
-			res.json(result);
-		}
-	}
-
 	async deleteActivity(req: Request, res: Response): Promise<void> {
-		console.log("aaa")
 		const result = await activityFacade.deleteActivity(parseInt(req.params.id));
 		res.json(result).status(STATUS_CODES.OK);
 	}
 
 	async getActivity(req: Request, res: Response): Promise<void> {
-		if (!("es_plan" in req.params)) {
-			throw new ServerError("es_plan not defined", STATUS_CODES.BAD_REQUEST);
-		}
-		const esPlan = JSON.parse(req.params.es_plan);
-		if (esPlan) {
-			const result = await planFacade.getPlan(parseInt(req.params.id));
-			res.json(result);
-		} else {
-			const result = await eventFacade.getEvent(parseInt(req.params.id));
-			res.json(result);
-		}
+
+		const result = await activityFacade.getActivity(parseInt(req.params.id));
+		res.json(result);
+
 	}
 
 	async filter(req: Request, res: Response): Promise<void> {

@@ -7,6 +7,7 @@ import {
 	PrimaryGeneratedColumn,
 } from "typeorm";
 
+import { Activity } from "./Activity";
 import { User } from "./User";
 @Entity("favorite")
 export class Favorite extends BaseEntity {
@@ -22,6 +23,9 @@ export class Favorite extends BaseEntity {
 
 	@Column("integer")
 	id_actividad: number;
+	@ManyToOne((type) => Activity)
+	@JoinColumn({ name: "id_actividad", referencedColumnName: "id" })
+	activity: Activity;
 
 	@Column("bool")
 	es_plan: boolean;

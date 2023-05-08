@@ -5,7 +5,6 @@ import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
 
 export default async (req: Request, res: Response, next: NextFunction) => {
-	
 	const username = req.username;
 	const user = await User.findOneByOrFail({ username });
 	const isAdmin = user.isAdmin;
