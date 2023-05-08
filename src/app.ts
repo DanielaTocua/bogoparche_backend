@@ -32,7 +32,7 @@ export class App {
 
 		this._app.use("/api/activity", activitiesRoutes);
 		this._app.use("/api/plan", planRoutes);
-		this._app.use("/api/event",eventRoutes);
+		this._app.use("/api/event", eventRoutes);
 		this._app.use("/api/category", categoriesRoutes);
 		this._app.use("/api/auth", authRoutes);
 		this._app.use("/api/hello", helloRoutes);

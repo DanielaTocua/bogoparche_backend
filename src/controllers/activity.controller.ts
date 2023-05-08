@@ -6,8 +6,6 @@ import {
 	NewFavoriteEntryDTO,
 } from "../dtos/activity.dto";
 import activityFacade from "../facades/activity.facade";
-import eventFacade from "../facades/event.facade";
-import planFacade from "../facades/plan.facade";
 import activityService from "../services/activity.service";
 import { STATUS_CODES } from "../utils/constants";
 
@@ -23,10 +21,8 @@ class ActivityController {
 	}
 
 	async getActivity(req: Request, res: Response): Promise<void> {
-
 		const result = await activityFacade.getActivity(parseInt(req.params.id));
 		res.json(result);
-
 	}
 
 	async filter(req: Request, res: Response): Promise<void> {

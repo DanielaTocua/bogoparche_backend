@@ -10,20 +10,16 @@ class ActivityFacade {
 		return result;
 	}
 
-    async getActivity(id:number):Promise<any>{
-        const activity = await activityService.findActivityById(id)
-        if (activity.es_plan){
-            const plan = await planService.findPlanById(id)
-            console.log(plan)
-            return {...activity,...plan}
-
-        } else {
-            const event = await eventService.findEventById(id)
-            return {...activity,...event}
-
-        }
-    }
-
+	async getActivity(id: number): Promise<any> {
+		const activity = await activityService.findActivityById(id);
+		if (activity.es_plan) {
+			const plan = await planService.findPlanById(id);
+			return { ...activity, ...plan };
+		} else {
+			const event = await eventService.findEventById(id);
+			return { ...activity, ...event };
+		}
+	}
 }
 
 export default new ActivityFacade();
