@@ -146,17 +146,13 @@ class ActivityService {
 	async addFavorites(id:number, newFavoriteEntry: NewFavoriteEntryDTO): Promise<void> {
 		try {
 			const user = await User.findOneByOrFail({id});
-			console.log({
-				id_usuario: user.id,
-				id_actividad: newFavoriteEntry.id_actividad,
-				es_plan: newFavoriteEntry.es_plan,
-			});
 			const newFavorite = Favorite.create({
 				id_usuario: user.id,
 				...newFavoriteEntry
 			});
 			await newFavorite.save();
 		} catch (error) {
+			console.log(error)
 			throw new ServerError("usuario no encontrado", STATUS_CODES.BAD_REQUEST);
 		}
 	}

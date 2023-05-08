@@ -5,6 +5,7 @@ import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 import authMiddleware from "../middlewares/auth.middleware";
 import dtoValidationMiddleware from "../middlewares/dtoValidation.middleware";
 import { NewFavoriteEntryDTO } from "../dtos/activity.dto";
+import idNumberValidationMiddleware from "../middlewares/idNumberValidation.middleware";
 // import toNewActivityEntry from '../utils/utils_activity'
 
 // Crea router
@@ -23,7 +24,7 @@ router
 
 router
 	.route("")
-	.get(asyncErrorMiddleware(activityController.getFavorites));
+	.get([idNumberValidationMiddleware],asyncErrorMiddleware(activityController.getFavorites));
 
 
 export default router;

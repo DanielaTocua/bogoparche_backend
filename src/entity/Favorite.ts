@@ -27,6 +27,4 @@ export class Favorite extends BaseEntity {
 	@JoinColumn({ name: "id_actividad", referencedColumnName: "id" })
 	activity: Activity;
 
-	@Column("bool")
-	es_plan: boolean;
 }

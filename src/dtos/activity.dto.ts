@@ -155,10 +155,6 @@ export class NewFavoriteEntryDTO {
 	@Expose()
 	id_actividad: number;
 
-
-	@IsBoolean()
-	@Expose()
-	es_plan: boolean;
 }
 
 export class NewAttendanceEntryDTO {
@@ -172,10 +168,6 @@ export class NewAttendanceEntryDTO {
 	@Expose()
 	username: string;
 
-	@IsBoolean()
-	@IsNotEmpty()
-	@Expose()
-	es_plan: boolean;
 }
 export class EventUpdateFORMDTO {
 	es_plan: boolean;
