@@ -63,18 +63,19 @@ class ActivityController {
 		res.json({ msg: "Favorite succesfully added" });
 	}
 
+	async getFavorites(req: Request, res: Response): Promise<void> {
+        const newFavoriteEntry = plainToInstance(NewFavoriteEntryDTO, req.body, {
+            excludeExtraneousValues: true,
+        });
+        const id = await activityService.findFavorites(req.userId as number, newFavoriteEntry);
+        res.json(id);
+    }
+
 	async deleteFavorites(req: Request, res: Response): Promise<void> {
-		await activityService.deleteFavorites(parseInt(req.params.id));
+		await activityService.deleteFavorites( parseInt(req.params.id));
 		res.json({ msg: "Favorite succesfully deleted" });
 	}
 
-	async getFavorites(req: Request, res: Response): Promise<void> {
-		const newFavoriteEntry = plainToInstance(NewFavoriteEntryDTO, req.body, {
-			excludeExtraneousValues: true,
-		});
-		const id = await activityService.findFavorites(newFavoriteEntry);
-		res.json(id);
-	}
 
 	async addAttendance(req: Request, res: Response): Promise<void> {
 		// Retrieves plan info

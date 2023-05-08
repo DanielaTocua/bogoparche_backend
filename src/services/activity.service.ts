@@ -14,7 +14,6 @@ import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
 
 class ActivityService {
-
 	async findActivityById(id: number): Promise<Activity> {
 		if (typeof id != "number") {
 			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
@@ -29,6 +28,24 @@ class ActivityService {
 			);
 		}
 	}
+
+	async findAllNotApproved(): Promise<Activity[]> {
+        console.log("IN FIND ALL NOT APPROVED");
+        // Puede cambiarse a raw queries
+
+        try {
+            const notApprovedActivities = (await appDataSource.manager.query(
+                `SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan FROM activity WHERE es_aprobado IS false AND es_privada IS false`,
+            )) as Activity[];
+            return notApprovedActivities;
+        } catch (error) {
+            throw new ServerError(
+                "There's been an error, try again later",
+                STATUS_CODES.INTERNAL_ERROR,
+            );
+        }
+    }
+
 	async findAllPublic(): Promise<Activity[]> {
 		console.log("IN FIND ALL PUBLIC");
 		// Puede cambiarse a raw queries
@@ -45,24 +62,6 @@ class ActivityService {
 			);
 		}
 	}
-
-	async findAllNotApproved(): Promise<Activity[]> {
-		console.log("IN FIND ALL NOT APPROVED");
-		// Puede cambiarse a raw queries
-
-		try {
-			const notApprovedActivities = (await appDataSource.manager.query(
-				`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan FROM activity WHERE es_aprobado IS false AND es_privada IS false`,
-			)) as Activity[];
-			return notApprovedActivities;
-		} catch (error) {
-			throw new ServerError(
-				"There's been an error, try again later",
-				STATUS_CODES.INTERNAL_ERROR,
-			);
-		}
-	}
-
 
 	async deleteActivity(activity: Activity): Promise<Activity> {
 		try {
@@ -185,33 +184,24 @@ class ActivityService {
 		return Favorite.remove(favorites);
 	}
 
-	async findFavorites(id:number, newFavoriteEntry: NewFavoriteEntryDTO): Promise<any> {
-		const inputErrors = await validate(newFavoriteEntry);
-		if (inputErrors.length > 0) {
-			console.log(inputErrors);
-			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
-		}
-		try {
-			const user = await User.findOneByOrFail({
-				id: newFavoriteEntry.id_actividad,
-			});
-			console.log({
-				id_usuario: user.id,
-				id_actividad: newFavoriteEntry.id_actividad,
-				es_plan: newFavoriteEntry.es_plan,
-			});
-			const FavoriteFind = await Favorite.findOneByOrFail({
-				id_usuario: user.id,
-				id_actividad: newFavoriteEntry.id_actividad,
-				es_plan: newFavoriteEntry.es_plan,
-			});
-			const id = FavoriteFind.id;
-			console.log(id);
-			return id;
-		} catch (error) {
-			throw new ServerError("favorito no encontrado", STATUS_CODES.BAD_REQUEST);
-		}
-	}
+	async findFavorites(id_usuario:number, newFavoriteEntry: NewFavoriteEntryDTO): Promise<any> {
+        try {
+            const user = await User.findOneByOrFail({id:id_usuario});
+            console.log({
+                id_usuario: user.id,
+                id_actividad: newFavoriteEntry.id_actividad,
+            });
+            const FavoriteFind = await Favorite.findOneByOrFail({
+                id_usuario: user.id,
+                id_actividad: newFavoriteEntry.id_actividad,
+            });
+            const id = FavoriteFind.id;
+            console.log(id);
+            return id;
+        } catch (error) {
+            throw new ServerError("favorito no encontrado", STATUS_CODES.BAD_REQUEST);
+        }
+    }
 
 	async addAttendance(
 		newAttendanceEntry: NewAttendanceEntryDTO,
