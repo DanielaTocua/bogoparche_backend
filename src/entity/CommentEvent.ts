@@ -27,7 +27,7 @@ export class CommentEvent extends BaseEntity {
 	texto_comentario: string;
 
 	@Column("integer")
-	calificacion: number
+	calificacion: number;
 
 	@CreateDateColumn()
 	createdAt: Date;

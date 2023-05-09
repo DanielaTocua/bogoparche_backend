@@ -13,7 +13,6 @@ function dtoValidationMiddleware<T>(
 		const dtoObj = plainToInstance(dtoType, req.body, {
 			excludeExtraneousValues: true,
 		});
-
 		validate(dtoObj as object, { skipMissingProperties }).then(
 			(errors: ValidationError[]) => {
 				if (errors.length > 0) {

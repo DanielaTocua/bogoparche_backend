@@ -1,10 +1,5 @@
-import { plainToInstance } from "class-transformer";
 import { Request, Response } from "express";
 
-import {
-	NewAttendanceEntryDTO,
-	NewFavoriteEntryDTO,
-} from "../dtos/activity.dto";
 import activityFacade from "../facades/activity.facade";
 import activityService from "../services/activity.service";
 import { STATUS_CODES } from "../utils/constants";
@@ -54,57 +49,34 @@ class ActivityController {
 		res.send(filtered);
 	}
 
-	async addFavorites(req: Request, res: Response): Promise<void> {
-		// Retrieves plan info
-		const newFavoriteEntry = plainToInstance(NewFavoriteEntryDTO, req.body, {
-			excludeExtraneousValues: true,
-		});
-		await activityService.addFavorites(req.userId as number, newFavoriteEntry);
-		res.json({ msg: "Favorite succesfully added" });
-	}
+	// async addAttendance(req: Request, res: Response): Promise<void> {
+	// 	// Retrieves plan info
+	// 	const newAttendanceEntry = plainToInstance(
+	// 		idActividadDTO,
+	// 		req.body,
+	// 		{
+	// 			excludeExtraneousValues: true,
+	// 		},
+	// 	);
+	// 	await activityService.addAttendance(newAttendanceEntry);
+	// 	res.json({ msg: "Attendance succesfully added" });
+	// }
 
-	async getFavorites(req: Request, res: Response): Promise<void> {
-        const newFavoriteEntry = plainToInstance(NewFavoriteEntryDTO, req.body, {
-            excludeExtraneousValues: true,
-        });
-        const id = await activityService.findFavorites(req.userId as number, newFavoriteEntry);
-        res.json(id);
-    }
+	// async deleteAttendance(req: Request, res: Response): Promise<void> {
+	// 	await activityService.deleteAttendance(parseInt(req.params.id));
+	// 	res.json({ msg: "Attendance succesfully deleted" });
+	// }
 
-	async deleteFavorites(req: Request, res: Response): Promise<void> {
-		await activityService.deleteFavorites( parseInt(req.params.id));
-		res.json({ msg: "Favorite succesfully deleted" });
-	}
-
-
-	async addAttendance(req: Request, res: Response): Promise<void> {
-		// Retrieves plan info
-		const newAttendanceEntry = plainToInstance(
-			NewAttendanceEntryDTO,
-			req.body,
-			{
-				excludeExtraneousValues: true,
-			},
-		);
-		await activityService.addAttendance(newAttendanceEntry);
-		res.json({ msg: "Attendance succesfully added" });
-	}
-
-	async deleteAttendance(req: Request, res: Response): Promise<void> {
-		await activityService.deleteAttendance(parseInt(req.params.id));
-		res.json({ msg: "Attendance succesfully deleted" });
-	}
-
-	async getAttendance(req: Request, res: Response): Promise<void> {
-		const newAttendanceEntry = plainToInstance(
-			NewAttendanceEntryDTO,
-			req.body,
-			{
-				excludeExtraneousValues: true,
-			},
-		);
-		const id = await activityService.findAttendance(newAttendanceEntry);
-		res.json(id);
-	}
+	// async getAttendance(req: Request, res: Response): Promise<void> {
+	// 	const newAttendanceEntry = plainToInstance(
+	// 		idActividadDTO,
+	// 		req.body,
+	// 		{
+	// 			excludeExtraneousValues: true,
+	// 		},
+	// 	);
+	// 	const id = await activityService.findAttendance(newAttendanceEntry);
+	// 	res.json(id);
+	// }
 }
 export default new ActivityController();

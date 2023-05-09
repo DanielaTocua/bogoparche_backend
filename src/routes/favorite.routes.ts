@@ -1,30 +1,37 @@
 import express from "express"; //ESModules
 
-import activityController from "../controllers/activity.controller";
+import favoriteController from "../controllers/favorite.controller";
+import { idActividadDTO } from "../dtos/activity.dto";
 import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 import authMiddleware from "../middlewares/auth.middleware";
 import dtoValidationMiddleware from "../middlewares/dtoValidation.middleware";
-import { NewFavoriteEntryDTO } from "../dtos/activity.dto";
 import idNumberValidationMiddleware from "../middlewares/idNumberValidation.middleware";
 // import toNewActivityEntry from '../utils/utils_activity'
 
 // Crea router
 const router = express.Router();
 
-
 // Add favorites
 router
 	.route("")
-	.post([authMiddleware, dtoValidationMiddleware(NewFavoriteEntryDTO)], asyncErrorMiddleware(activityController.addFavorites));
+	.post(
+		[authMiddleware, dtoValidationMiddleware(idActividadDTO)],
+		asyncErrorMiddleware(favoriteController.addFavorites),
+	);
 
 // Delete favorites
 router
 	.route("/:id")
-	.delete([authMiddleware], asyncErrorMiddleware(activityController.deleteFavorites));
+	.delete(
+		[authMiddleware, idNumberValidationMiddleware],
+		asyncErrorMiddleware(favoriteController.deleteFavorites),
+	);
 
 router
-	.route("")
-	.get([idNumberValidationMiddleware],asyncErrorMiddleware(activityController.getFavorites));
-
+	.route("/:id")
+	.get(
+		[authMiddleware, idNumberValidationMiddleware],
+		asyncErrorMiddleware(favoriteController.getFavoriteByActivityId),
+	);
 
 export default router;

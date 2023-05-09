@@ -45,14 +45,7 @@ class CommentPlanService {
 
 	async addCommentPlan(newCommentEntry: CommentDTO): Promise<CommentPlan> {
 		const newCommentPlan = CommentPlan.create(instanceToPlain(newCommentEntry));
-		try {
-			return newCommentPlan.save();
-		} catch (error) {
-			throw new ServerError(
-				"There's been an error, try again later",
-				STATUS_CODES.INTERNAL_ERROR,
-			);
-		}
+		return newCommentPlan.save();
 	}
 
 	async addCommentEvent(newCommentEntry: CommentDTO): Promise<CommentEvent> {

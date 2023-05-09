@@ -15,7 +15,9 @@ const router = express.Router();
 
 // Gets all activities (plan/events)
 router.route("/all").get(asyncErrorMiddleware(activityController.getAll));
-router.route("/all-not-approved").get(asyncErrorMiddleware(activityController.getAllNotApproved));
+router
+	.route("/all-not-approved")
+	.get(asyncErrorMiddleware(activityController.getAllNotApproved));
 
 // Deletes activities
 router
@@ -36,11 +38,6 @@ router
 // Filter activities
 router.route("/filter").get(activityController.filter);
 
-// Add favorites
-router
-	.route("/add-favorites")
-	.post(asyncErrorMiddleware(activityController.addFavorites));
-
 // Comment
 router
 	.route("/comment")
@@ -54,25 +51,20 @@ router
 	.route("/get-comments/:id/:es_plan")
 	.get(asyncErrorMiddleware(commentController.getCommentsFromTable));
 
-// Delete favorites
-router
-	.route("/delete-favorites/:id")
-	.delete(asyncErrorMiddleware(activityController.deleteFavorites));
-
 // router
 // 	.route("/get-favorites")
 // 	.post(asyncErrorMiddleware(activityController.getFavorites));
 
-// Add Attendance
-router
-	.route("/add-attendances")
-	.post(asyncErrorMiddleware(activityController.addAttendance));
+// // Add Attendance
+// router
+// 	.route("/add-attendances")
+// 	.post(asyncErrorMiddleware(activityController.addAttendance));
 
-router
-	.route("/delete-attendances/:id")
-	.delete(asyncErrorMiddleware(activityController.deleteAttendance));
+// router
+// 	.route("/delete-attendances/:id")
+// 	.delete(asyncErrorMiddleware(activityController.deleteAttendance));
 
-router
-	.route("/get-attendances")
-	.post(asyncErrorMiddleware(activityController.getAttendance));
+// router
+// 	.route("/get-attendances")
+// 	.post(asyncErrorMiddleware(activityController.getAttendance));
 export default router;

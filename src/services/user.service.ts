@@ -31,16 +31,9 @@ class UserService {
 			isAdmin: user.isAdmin,
 		});
 
-		try {
-			return plainToInstance(UserPublicDTO, await newUser.save(), {
-				excludeExtraneousValues: true,
-			});
-		} catch (err) {
-			throw new ServerError(
-				"There's been an error, try again later",
-				STATUS_CODES.INTERNAL_ERROR,
-			);
-		}
+		return plainToInstance(UserPublicDTO, await newUser.save(), {
+			excludeExtraneousValues: true,
+		});
 	}
 }
 export default new UserService();

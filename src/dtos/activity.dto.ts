@@ -149,26 +149,13 @@ export class EventUpdateDTO extends ActivityUpdateDTO {
 	hora_fin: Date;
 }
 
-export class NewFavoriteEntryDTO {
+export class idActividadDTO {
 	@IsNumber()
 	@IsNotEmpty()
 	@Expose()
 	id_actividad: number;
-
 }
 
-export class NewAttendanceEntryDTO {
-	@IsNumber()
-	@IsNotEmpty()
-	@Expose()
-	id_actividad: number;
-
-	@IsString()
-	@IsNotEmpty()
-	@Expose()
-	username: string;
-
-}
 export class EventUpdateFORMDTO {
 	es_plan: boolean;
 }

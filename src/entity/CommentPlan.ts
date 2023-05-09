@@ -34,7 +34,7 @@ export class CommentPlan extends BaseEntity {
 	texto_comentario: string;
 
 	@Column("integer")
-	calificacion: number
+	calificacion: number;
 
 	@CreateDateColumn()
 	createdAt: Date;
