@@ -48,35 +48,5 @@ class ActivityController {
 		filtered = activityService.searchByWords(search, filtered);
 		res.send(filtered);
 	}
-
-	// async addAttendance(req: Request, res: Response): Promise<void> {
-	// 	// Retrieves plan info
-	// 	const newAttendanceEntry = plainToInstance(
-	// 		idActividadDTO,
-	// 		req.body,
-	// 		{
-	// 			excludeExtraneousValues: true,
-	// 		},
-	// 	);
-	// 	await activityService.addAttendance(newAttendanceEntry);
-	// 	res.json({ msg: "Attendance succesfully added" });
-	// }
-
-	// async deleteAttendance(req: Request, res: Response): Promise<void> {
-	// 	await activityService.deleteAttendance(parseInt(req.params.id));
-	// 	res.json({ msg: "Attendance succesfully deleted" });
-	// }
-
-	// async getAttendance(req: Request, res: Response): Promise<void> {
-	// 	const newAttendanceEntry = plainToInstance(
-	// 		idActividadDTO,
-	// 		req.body,
-	// 		{
-	// 			excludeExtraneousValues: true,
-	// 		},
-	// 	);
-	// 	const id = await activityService.findAttendance(newAttendanceEntry);
-	// 	res.json(id);
-	// }
 }
 export default new ActivityController();

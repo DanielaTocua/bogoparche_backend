@@ -1,20 +1,20 @@
 import { Request, Response } from "express";
 
-import favoriteService from "../services/favorite.service";
+import favoriteFacade from "../facades/favorite.facade";
 import { STATUS_CODES } from "../utils/constants";
 
 class FavoriteController {
 	async addFavorites(req: Request, res: Response): Promise<void> {
 		// Retrieves plan info
-		await favoriteService.addFavorites(
+		const result = await favoriteFacade.addFavorites(
 			req.userId as number,
 			req.body.id_actividad,
 		);
-		res.json({ msg: "Favorite succesfully added" }).status(STATUS_CODES.OK);
+		res.send(result).status(STATUS_CODES.OK);
 	}
 
 	async getFavoriteByActivityId(req: Request, res: Response): Promise<void> {
-		const favorite = await favoriteService.getFavoriteByActivityId(
+		const favorite = await favoriteFacade.getFavoriteByActivityId(
 			req.userId as number,
 			parseInt(req.params.id),
 		);
@@ -22,7 +22,7 @@ class FavoriteController {
 	}
 
 	async deleteFavorites(req: Request, res: Response): Promise<void> {
-		await favoriteService.deleteFavorites(
+		await favoriteFacade.deleteFavorites(
 			req.userId as number,
 			parseInt(req.params.id),
 		);
