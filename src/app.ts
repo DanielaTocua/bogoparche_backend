@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { appDataSource } from "./dataSource";
 import errorMiddleware from "./middlewares/error.middleware";
 import activitiesRoutes from "./routes/activity.routes";
+import attendanceRoutes from "./routes/attendance.routes";
 import authRoutes from "./routes/auth.routes";
 import categoriesRoutes from "./routes/categories.router";
 import eventRoutes from "./routes/event.routes";
@@ -35,6 +36,7 @@ export class App {
 		this._app.use("/api/plan", planRoutes);
 		this._app.use("/api/event", eventRoutes);
 		this._app.use("/api/favorite", favoriteRoutes);
+		this._app.use("/api/attendance", attendanceRoutes);
 		this._app.use("/api/category", categoriesRoutes);
 		this._app.use("/api/auth", authRoutes);
 		this._app.use("/api/hello", helloRoutes);

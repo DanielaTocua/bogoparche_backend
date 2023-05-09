@@ -1,6 +1,6 @@
 import { Favorite } from "../entity/Favorite";
 
-class ActivityService {
+class FavoriteService {
 	async addFavorites(id_usuario: number, id_actividad: number): Promise<void> {
 		const newFavorite = Favorite.create({ id_usuario, id_actividad });
 		await newFavorite.save();
@@ -15,4 +15,4 @@ class ActivityService {
 		Favorite.remove(favorite);
 	}
 }
-export default new ActivityService();
+export default new FavoriteService();
