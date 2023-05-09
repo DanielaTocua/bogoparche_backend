@@ -1,6 +1,5 @@
 import { instanceToPlain, plainToInstance } from "class-transformer";
 
-import dataSource from "../database/dataSource.";
 import { appDataSource } from "../dataSource";
 import {
 	EventUpdateDTO,
@@ -94,7 +93,6 @@ class EventService {
 						hora_inicio: newEventEntry.hora_inicio,
 						hora_fin: newEventEntry.hora_fin,
 					});
-					console.log(newEvent);
 					const createdEvent = await transactionalEntityManager.save(newEvent);
 					return createdEvent;
 				},
@@ -105,39 +103,6 @@ class EventService {
 				STATUS_CODES.INTERNAL_ERROR,
 			);
 		}
-	}
-
-	// Deletes event
-	async deleteEvent(id: number): Promise<Event> {
-		if (typeof id != "number") {
-			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
-		}
-
-		// Finds Event
-		const event = await this.findEventById(id);
-
-		// create a new query runner
-		const queryRunner = dataSource.createQueryRunner();
-
-		// establish real database connection
-		await queryRunner.connect();
-
-		// open a new transaction:
-		await queryRunner.startTransaction();
-
-		try {
-			Event.remove(event);
-			// commit transaction
-			await queryRunner.commitTransaction();
-		} catch (err) {
-			// rollback changes we made
-			await queryRunner.rollbackTransaction();
-		} finally {
-			// release query runner
-			await queryRunner.release();
-		}
-
-		return event;
 	}
 }
 export default new EventService();

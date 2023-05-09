@@ -1,5 +1,12 @@
 import { Expose } from "class-transformer";
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import {
+	IsInt,
+	IsNotEmpty,
+	IsNumber,
+	IsString,
+	Max,
+	Min,
+} from "class-validator";
 
 export class CommentDTO {
 	@IsNotEmpty()
@@ -13,12 +20,9 @@ export class CommentDTO {
 	texto_comentario: string;
 
 	@IsNotEmpty()
-	@IsNumber()
+	@IsInt()
+	@Min(1)
+	@Max(5)
 	@Expose()
 	calificacion: number;
-
-	@IsNotEmpty()
-	@IsBoolean()
-	@Expose()
-	es_plan: number;
 }

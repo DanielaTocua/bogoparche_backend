@@ -3,8 +3,7 @@ import { DataSource } from "typeorm";
 import { Activity } from "../entity/Activity";
 import { Attendance } from "../entity/Attendance";
 import { Category } from "../entity/Category";
-import { CommentEvent } from "../entity/CommentEvent";
-import { CommentPlan } from "../entity/CommentPlan";
+import { Comment } from "../entity/Comment";
 import { Event } from "../entity/Event";
 import { Favorite } from "../entity/Favorite";
 import { Plan } from "../entity/Plan";
@@ -22,8 +21,7 @@ const PostgresDataSource = new DataSource({
 		Activity,
 		Attendance,
 		Category,
-		CommentEvent,
-		CommentPlan,
+		Comment,
 		Event,
 		Favorite,
 		Plan,

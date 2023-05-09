@@ -1,62 +1,19 @@
-import { instanceToPlain } from "class-transformer";
-import { validate } from "class-validator";
-
 import { CommentDTO } from "../dtos/comment.dto";
-import { CommentEvent } from "../entity/CommentEvent";
-import { CommentPlan } from "../entity/CommentPlan";
-import { ServerError } from "../errors/server.error";
-import { STATUS_CODES } from "../utils/constants";
+import { Comment } from "../entity/Comment";
 
 class CommentPlanService {
 	// Find Plan by Id
-	async getCommentsPlan(idActividad: number): Promise<CommentPlan[]> {
-		if (typeof idActividad != "number") {
-			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
-		}
-		try {
-			const commentsPlan = await CommentPlan.find({
-				where: { id_actividad: idActividad },
-			});
-			return commentsPlan;
-		} catch {
-			throw new ServerError(
-				`The plan id: ${idActividad} does not exist`,
-				STATUS_CODES.BAD_REQUEST,
-			);
-		}
+	async getComments(id_actividad: number): Promise<Comment[]> {
+		const comments = await Comment.findBy({ id_actividad });
+		return comments;
 	}
 
-	async getCommentsEvent(idActividad: number): Promise<CommentEvent[]> {
-		if (typeof idActividad != "number") {
-			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
-		}
-		try {
-			const commentsPlan = await CommentEvent.find({
-				where: { id_actividad: idActividad },
-			});
-			return commentsPlan;
-		} catch {
-			throw new ServerError(
-				`The plan id: ${idActividad} does not exist`,
-				STATUS_CODES.BAD_REQUEST,
-			);
-		}
-	}
-
-	async addCommentPlan(newCommentEntry: CommentDTO): Promise<CommentPlan> {
-		const newCommentPlan = CommentPlan.create(instanceToPlain(newCommentEntry));
-		return newCommentPlan.save();
-	}
-
-	async addCommentEvent(newCommentEntry: CommentDTO): Promise<CommentEvent> {
-		const inputErrors = await validate(newCommentEntry);
-		if (inputErrors.length > 0) {
-			throw new ServerError("Invalid form", STATUS_CODES.BAD_REQUEST);
-		}
-		const newCommentEvent = CommentEvent.create(
-			instanceToPlain(newCommentEntry),
-		);
-		return newCommentEvent.save();
+	async addComment(
+		id_usuario: number,
+		newCommentEntry: CommentDTO,
+	): Promise<Comment> {
+		const newCommentPlan = Comment.create({ ...newCommentEntry, id_usuario });
+		return await newCommentPlan.save();
 	}
 }
 export default new CommentPlanService();

@@ -9,26 +9,23 @@ import {
 } from "typeorm";
 
 import { Activity } from "./Activity";
-import { Plan } from "./Plan";
 import { User } from "./User";
-@Entity("commentPlan")
-export class CommentPlan extends BaseEntity {
+@Entity("comment")
+export class Comment extends BaseEntity {
 	@PrimaryGeneratedColumn()
 	id_comentario: number;
 
-	@Column({ name: "id_usuario" })
+	@Column("integer")
 	id_usuario: number;
-
-	@ManyToOne((type) => User)
+	@ManyToOne((type) => User, { onDelete: "CASCADE" })
 	@JoinColumn({ name: "id_usuario", referencedColumnName: "id" })
 	user: User;
 
-	@Column({ name: "id_actividad" })
+	@Column("integer")
 	id_actividad: number;
-
-	@ManyToOne((type) => Plan)
+	@ManyToOne((type) => Activity, { onDelete: "CASCADE" })
 	@JoinColumn({ name: "id_actividad", referencedColumnName: "id" })
-	activity: Activity;
+	actividad: Activity;
 
 	@Column("varchar", { length: 200 })
 	texto_comentario: string;
