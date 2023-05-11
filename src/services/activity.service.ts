@@ -39,8 +39,31 @@ class ActivityService {
 
 	async deleteActivity(activity: Activity): Promise<Activity> {
 		Activity.remove(activity);
+		// Puede cambiarse a raw queries
 		return activity;
 	}
+
+	async findAllPublicAuthenticated(id: number): Promise<(Activity&{attendance:boolean, favorite:boolean})[]> {
+		// Puede cambiarse a raw queries
+
+		try{
+			const publicActivities = (await appDataSource.manager
+				.query(`SELECT activity.id,
+				CASE WHEN favorite.id IS NULL THEN false ELSE true END AS favorite,
+				CASE WHEN attendance.id IS NULL THEN false  ELSE true   END AS attendance,
+				titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad,
+				medio_contacto,id_categoria, activity.es_plan
+				FROM activity LEFT JOIN favorite ON activity.id=favorite.id_actividad AND  favorite.id_usuario = $1
+				LEFT JOIN attendance ON activity.id=favorite.id_actividad AND  attendance.id_usuario = $1 WHERE es_aprobado IS true AND es_privada IS false`,[id])) as (Activity&{attendance:boolean, favorite:boolean})[];
+			return publicActivities;
+		} catch (error) {
+			throw new ServerError(
+				"There's been an error, try again later",
+				STATUS_CODES.INTERNAL_ERROR,
+			);
+		}
+	}
+		
 
 	async findCategory(nombre_categoria: string) {
 		if (typeof nombre_categoria != "string" || nombre_categoria == "") {
@@ -89,6 +112,21 @@ class ActivityService {
 		}
 		return filtered;
 	}
+
+	/*
+	filterByFavorites(filtered: any[]) {
+		const filteredByCateg: any[] = [];
+				const id_categoria = (await this.findCategory(categories[i])).id;
+				const filteredCategI = filtered.filter(
+					(activity) => activity.id_categoria === id_categoria,
+				);
+				for (let n = 0; n < filteredCategI.length; n++) {
+					filteredByCateg.push(filteredCategI[n]);
+				}
+			filtered = filteredByCateg;
+		return filtered;
+	}
+	*/
 
 	searchByWords(search: string[], filtered: any[]) {
 		if (search.length != 0) {

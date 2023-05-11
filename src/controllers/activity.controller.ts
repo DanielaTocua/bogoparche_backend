@@ -25,28 +25,36 @@ class ActivityController {
 		res.json(result);
 	}
 
-	async filter(req: Request, res: Response): Promise<void> {
-		let filtered = await activityService.findAllPublic();
+	async filterPublic(req: Request, res: Response): Promise<void> {
+        const search: string[] = req.query.search
+            ? (req.query.search as string).split(" ")
+            : [];
+        const rangePrices: string[] = req.query.range_prices
+            ? (req.query.range_prices as string).split(",")
+            : [];
+        const categories: string[] = req.query.categories
+            ? (req.query.categories as string).split(",")
+            : [];
+        const result = await activityFacade.publicFilter(search,rangePrices,categories);
++
 
-		const search: string[] = req.query.search
-			? (req.query.search as string).split(" ")
-			: [];
-		const rangePrices: string[] = req.query.range_prices
-			? (req.query.range_prices as string).split(",")
-			: [];
-		const categories: string[] = req.query.categories
-			? (req.query.categories as string).split(",")
-			: [];
+        res.send(result);
+    }
 
-		// Filter by Price
-		filtered = activityService.filterByPrices(rangePrices, filtered);
-
-		// Filter by Categories
-		filtered = await activityService.filterByCategory(categories, filtered);
-
-		// Search
-		filtered = activityService.searchByWords(search, filtered);
-		res.send(filtered);
+	async filterPrivate(req: Request, res: Response): Promise<void> {
+		const favorite: boolean = ((req.query.favorite+'').toLowerCase() === 'true') ? true : false
+		const attendance: boolean = ((req.query.attendance+'').toLowerCase() === 'true') ? true : false
+        const search: string[] = req.query.search
+            ? (req.query.search as string).split(" ")
+            : [];
+        const rangePrices: string[] = req.query.range_prices
+            ? (req.query.range_prices as string).split(",")
+            : [];
+        const categories: string[] = req.query.categories
+            ? (req.query.categories as string).split(",")
+            : [];
+        const result = await activityFacade.privateFilter(req.userId as number,favorite ,attendance, search,rangePrices,categories);
+		res.send(result);
 	}
 }
 export default new ActivityController();

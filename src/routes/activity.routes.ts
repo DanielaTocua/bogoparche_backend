@@ -35,8 +35,10 @@ router
 		asyncErrorMiddleware(activityController.getActivity),
 	);
 
-// Filter activities
-router.route("/filter").get(activityController.filter);
+// Filter activities public
+router.route("/filter").get(activityController.filterPublic);
+
+router.route("/authfilter").get([authMiddleware],asyncErrorMiddleware(activityController.filterPrivate));
 
 // Comment
 router
