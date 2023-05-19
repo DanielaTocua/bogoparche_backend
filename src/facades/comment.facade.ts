@@ -4,7 +4,7 @@ import activityService from "../services/activity.service";
 import commentService from "../services/comment.service";
 
 class CommentFacade {
-	async getComments(id_actividad: number): Promise<Comment[]> {
+	async getComments(id_actividad: number): Promise<any> {
 		await activityService.findActivityById(id_actividad);
 		const commentsPlan = await commentService.getComments(id_actividad);
 		return commentsPlan;

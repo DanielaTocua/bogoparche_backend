@@ -1,10 +1,16 @@
+import { createQueryBuilder, getRepository } from "typeorm";
 import { CommentDTO } from "../dtos/comment.dto";
 import { Comment } from "../entity/Comment";
+import { User } from "../entity/User";
 
 class CommentPlanService {
 	// Find Plan by Id
-	async getComments(id_actividad: number): Promise<Comment[]> {
-		const comments = await Comment.findBy({ id_actividad });
+	async getComments(id_actividad: number): Promise<any> {
+		const comments = await Comment.find({
+			where: { id_actividad: id_actividad },
+			relations: ['user'], // Nombre de la relación definida en la entidad "Comment"
+		  });	
+		
 		return comments;
 	}
 

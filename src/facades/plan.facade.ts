@@ -18,20 +18,18 @@ class PlanFacade {
 		return result;
 	}
 
-	async addPlan(
-		newPlanEntry: NewPlanEntryDTO,
-		isAdmin: boolean,
-	): Promise<Plan> {
+	async addPlan(newPlanEntry: NewPlanEntryDTO, isAdmin: boolean): Promise<Plan> {
 		let result: Plan;
 		if (isAdmin) {
 			result = await planService.addPlan({
 				...newPlanEntry,
-				es_aprobado: true,
+				es_aprobado: true
 			});
 		} else {
 			result = await planService.addPlan({
 				...newPlanEntry,
 				es_aprobado: false,
+				es_privada: true
 			});
 		}
 		return result;
