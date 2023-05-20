@@ -10,9 +10,11 @@ const router = express.Router();
 
 	
 // Filter activities public
-router.route("").get(activityController.filterPublic);
+
 
 router.route("/auth").get([authMiddleware],asyncErrorMiddleware(activityController.filterPrivate));
+
+router.route("/noauth").get(activityController.filterPublic);
 
 
 

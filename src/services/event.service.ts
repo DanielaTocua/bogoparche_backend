@@ -40,7 +40,6 @@ class EventService {
 			excludeExtraneousValues: true,
 		});
 
-		try {
 			await Activity.update(id, instanceToPlain(activityEntry));
 			const eventUpdateEntry = {
 				fecha_inicio: eventEntry.fecha_inicio,
@@ -55,15 +54,6 @@ class EventService {
 
 			// commit transaction
 			await queryRunner.commitTransaction();
-		} catch (err) {
-			// rollback changes we made
-			await queryRunner.rollbackTransaction();
-			await queryRunner.release();
-			throw new ServerError(
-				"There's been an error, try again later",
-				STATUS_CODES.BAD_REQUEST,
-			);
-		}
 		// release query runner
 		await queryRunner.release();
 
@@ -77,7 +67,6 @@ class EventService {
 			newEventEntry,
 			{ excludeExtraneousValues: true },
 		);
-		try {
 			return await appDataSource.manager.transaction(
 				async (transactionalEntityManager) => {
 					const newActivity = Activity.create(
@@ -97,12 +86,6 @@ class EventService {
 					return createdEvent;
 				},
 			);
-		} catch (error) {
-			throw new ServerError(
-				"There's been an error, try again later",
-				STATUS_CODES.INTERNAL_ERROR,
-			);
-		}
 	}
 }
 export default new EventService();

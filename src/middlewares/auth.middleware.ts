@@ -26,7 +26,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 				}
 				req.email = decoded.sub;
 				req.username = decoded.username;
-				const user = await User.findOneByOrFail({ username: decoded.username });
+				const user = await User.findOneByOrFail({ email: decoded.sub});
 				req.userId = user.id;
 				req.isAdmin = user.isAdmin;
 				return next();

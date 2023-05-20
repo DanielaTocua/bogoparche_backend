@@ -55,22 +55,16 @@ class ActivityService {
 	async findAllPublicAuthenticated(id: number): Promise<(Activity&{attendance:boolean, favorite:boolean})[]> {
 		// Puede cambiarse a raw queries
 
-		try{
 			const publicActivities = (await appDataSource.manager
 				.query(`SELECT activity.id,
-				CASE WHEN favorite.id IS NULL THEN false ELSE true END AS favorite,
-				CASE WHEN attendance.id IS NULL THEN false  ELSE true   END AS attendance,
+				CASE WHEN favorite.id_usuario IS NULL THEN false ELSE true END AS favorite,
+				CASE WHEN attendance.id_usuario IS NULL THEN false  ELSE true   END AS attendance,
 				titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad,
 				medio_contacto,id_categoria, activity.es_plan
 				FROM activity LEFT JOIN favorite ON activity.id=favorite.id_actividad AND  favorite.id_usuario = $1
 				LEFT JOIN attendance ON activity.id=favorite.id_actividad AND  attendance.id_usuario = $1 WHERE es_aprobado IS true AND es_privada IS false`,[id])) as (Activity&{attendance:boolean, favorite:boolean})[];
 			return publicActivities;
-		} catch (error) {
-			throw new ServerError(
-				"There's been an error, try again later",
-				STATUS_CODES.INTERNAL_ERROR,
-			);
-		}
+
 	}
 		
 

@@ -36,29 +36,26 @@ class PlanService {
 			newPlanEntry,
 			{ excludeExtraneousValues: true },
 		);
-		try {
-			return await appDataSource.manager.transaction(
-				async (transactionalEntityManager) => {
-					const newActivity = Activity.create(
-						instanceToPlain(newActivityEntry),
-					);
-					const createdActivity = await transactionalEntityManager.save(
-						newActivity,
-					);
-					const newPlan = Plan.create({
-						id: createdActivity.id,
-						horario_plan: newPlanEntry.horario_plan,
-					});
-					const createdPlan = await transactionalEntityManager.save(newPlan);
-					return createdPlan;
-				},
-			);
-		} catch (error) {
-			throw new ServerError(
-				"There's been an error, try again later",
-				STATUS_CODES.INTERNAL_ERROR,
-			);
-		}
+		return await appDataSource.manager.transaction(
+			async (transactionalEntityManager) => {
+				const newActivity = Activity.create(
+					instanceToPlain(newActivityEntry),
+				);
+				console.log(newActivity)
+				const createdActivity = await transactionalEntityManager.save(
+					newActivity,
+				);
+				
+				const newPlan = Plan.create({
+					id: createdActivity.id,
+					horario_plan: newPlanEntry.horario_plan,
+				});
+				
+				const createdPlan = await transactionalEntityManager.save(newPlan);
+				return createdPlan;
+			},
+		);
+		
 	}
 
 	// Edits Plan
@@ -76,7 +73,7 @@ class PlanService {
 			excludeExtraneousValues: true,
 		});
 
-		try {
+		
 			await Activity.update(id, instanceToPlain(activityEntry));
 			const planUpdateEntry = { horario_plan: planEntry.horario_plan };
 
@@ -86,15 +83,7 @@ class PlanService {
 
 			// commit transaction
 			await queryRunner.commitTransaction();
-		} catch (err) {
-			// rollback changes we made
-			await queryRunner.rollbackTransaction();
-			await queryRunner.release();
-			throw new ServerError(
-				"There's been an error, try again later",
-				STATUS_CODES.BAD_REQUEST,
-			);
-		}
+		
 		// release query runner
 		await queryRunner.release();
 
