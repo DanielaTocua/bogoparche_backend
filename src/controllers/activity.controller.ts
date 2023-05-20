@@ -26,6 +26,7 @@ class ActivityController {
 	}
 
 	async filterPublic(req: Request, res: Response): Promise<void> {
+        
         const search: string[] = req.query.search
             ? (req.query.search as string).split(" ")
             : [];

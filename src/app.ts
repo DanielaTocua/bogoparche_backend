@@ -11,6 +11,7 @@ import categoriesRoutes from "./routes/categories.router";
 import commentRoutes from "./routes/comment.routes";
 import eventRoutes from "./routes/event.routes";
 import favoriteRoutes from "./routes/favorite.routes";
+import filterRoutes from "./routes/filter.routes";
 import helloRoutes from "./routes/hello.routes";
 import planRoutes from "./routes/plan.routes";
 import userRoutes from "./routes/user.routes";
@@ -34,6 +35,7 @@ export class App {
 		this._app.use(express.urlencoded({ extended: true }));
 
 		this._app.use("/api/activity", activitiesRoutes);
+		this._app.use("/api/filter", filterRoutes);
 		this._app.use("/api/plan", planRoutes);
 		this._app.use("/api/event", eventRoutes);
 		this._app.use("/api/favorite", favoriteRoutes);
