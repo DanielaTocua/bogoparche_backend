@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
-
+import jwt from 'jsonwebtoken';
 import planFacade from "../facades/plan.facade";
 import { STATUS_CODES } from "../utils/constants";
 
 class PlanController {
 	async addPlan(req: Request, res: Response): Promise<void> {
+		const user_id = req.userId
 		const result = await planFacade.addPlan(
-			{ ...req.body, es_plan: true },
+			{ ...req.body, es_plan: true, id_usuario: user_id },
 			req.isAdmin as boolean,
 		);
 		res.json({ id: result.id }).status(STATUS_CODES.OK);

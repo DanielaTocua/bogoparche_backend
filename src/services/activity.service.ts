@@ -37,6 +37,15 @@ class ActivityService {
 		return publicActivities;
 	}
 
+	async findUserPrivate(id: number): Promise<Activity[]> {
+		console.log("IN FIND USER PRIVATE");
+		const privateActivities = (await appDataSource.manager.query(
+			`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan FROM activity WHERE es_privada IS true AND id_usuario = $1`,
+			[id]
+		)) as Activity[];
+		return privateActivities;
+	}
+
 	async deleteActivity(activity: Activity): Promise<Activity> {
 		Activity.remove(activity);
 		// Puede cambiarse a raw queries

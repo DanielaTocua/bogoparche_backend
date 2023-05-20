@@ -26,11 +26,13 @@ class EventFacade {
 			result = await eventService.addEvent({
 				...newEventEntry,
 				es_aprobado: true,
+				es_privada: false
 			});
 		} else {
 			result = await eventService.addEvent({
 				...newEventEntry,
 				es_aprobado: false,
+				es_privada: true
 			});
 		}
 		return result;

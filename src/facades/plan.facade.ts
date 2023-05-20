@@ -23,7 +23,8 @@ class PlanFacade {
 		if (isAdmin) {
 			result = await planService.addPlan({
 				...newPlanEntry,
-				es_aprobado: true
+				es_aprobado: true,
+				es_privada: false
 			});
 		} else {
 			result = await planService.addPlan({

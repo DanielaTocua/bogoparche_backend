@@ -12,6 +12,7 @@ import { RANGE_PRICES } from "../utils/constants";
 import { Category } from "./Category";
 import { Event } from "./Event";
 import { Plan } from "./Plan";
+import { User } from "./User";
 
 @Entity("activity")
 export class Activity extends BaseEntity {
@@ -41,6 +42,10 @@ export class Activity extends BaseEntity {
 
 	@Column({ name: "id_categoria" })
 	id_categoria: number;
+
+	@ManyToOne((type) => User)
+	@JoinColumn({ name: "id_usuario", referencedColumnName: "id" })
+	id_usuario: User;
 
 	@ManyToOne((type) => Category)
 	@JoinColumn({ name: "id_categoria", referencedColumnName: "id" })

@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
-
+import jwt from 'jsonwebtoken';
 import eventFacade from "../facades/event.facade";
 import { STATUS_CODES } from "../utils/constants";
 
 class EventController {
 	async addEvent(req: Request, res: Response): Promise<void> {
+		const user_id = req.userId	
 		const result = await eventFacade.addEvent(
-			{ ...req.body, es_plan: false },
+			{ ...req.body, es_plan: false, id_usuario: user_id },
 			req.isAdmin as boolean,
 		);
 		res.json({ id: result.id }).status(STATUS_CODES.OK);

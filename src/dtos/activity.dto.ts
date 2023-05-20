@@ -13,6 +13,9 @@ import {
 import { RANGE_PRICES } from "../utils/constants";
 
 export class NewActivityEntryDTO {
+	@Expose()
+	id_usuario: number;
+
 	@IsNotEmpty()
 	@IsString()
 	@Expose()
@@ -42,8 +45,6 @@ export class NewActivityEntryDTO {
 	@Expose()
 	medio_contacto: string;
 
-	@IsNotEmpty()
-	@IsBoolean()
 	@Expose()
 	es_privada: boolean;
 

@@ -5,6 +5,13 @@ import activityService from "../services/activity.service";
 import { STATUS_CODES } from "../utils/constants";
 
 class ActivityController {
+    async getUserPrivate(req: Request, res: Response):Promise<void>{
+        const userId = req.userId ? req.userId : 0
+        console.log(req.userId)
+        const result = await activityService.findUserPrivate(userId);
+		res.send(result);
+    }
+
 	async getAll(req: Request, res: Response): Promise<void> {
 		const result = await activityService.findAllPublic();
 		res.send(result);
