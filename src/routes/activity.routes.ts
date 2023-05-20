@@ -29,7 +29,11 @@ router
 		[authMiddleware, validateAdminMiddleware, idNumberValidationMiddleware],
 		asyncErrorMiddleware(activityController.deleteActivity),
 	);
+	
+// Filter activities public
+router.route("/filter").get(activityController.filterPublic);
 
+router.route("/authfilter").get([authMiddleware],asyncErrorMiddleware(activityController.filterPrivate));
 // Gets activities
 router
 	.route("/:id")
@@ -38,10 +42,7 @@ router
 		asyncErrorMiddleware(activityController.getActivity),
 	);
 
-// Filter activities public
-router.route("/filter").get(activityController.filterPublic);
 
-router.route("/authfilter").get([authMiddleware],asyncErrorMiddleware(activityController.filterPrivate));
 
 // Comment
 router
