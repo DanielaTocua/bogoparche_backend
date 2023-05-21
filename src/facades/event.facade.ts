@@ -1,10 +1,8 @@
-import { Event } from "../entity/Event";
-import { ServerError } from "../errors/server.error";
-import { EventUpdateDTO, NewEventEntryDTO } from "../dtos/activity.dto";
-import { STATUS_CODES } from "../utils/constants";
-import eventService from "../services/event.service";
 import activityService from "../services/activity.service";
+import eventService from "../services/event.service";
 import { Activity } from "../entity/Activity";
+import { Event } from "../entity/Event";
+import { EventUpdateDTO, NewEventEntryDTO } from "../dtos/activity.dto";
 
 class EventFacade {
 	async getEvent(id: number): Promise<Event> {

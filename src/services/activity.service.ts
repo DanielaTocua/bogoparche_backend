@@ -1,11 +1,9 @@
-import { ActivityUpdateDTO, NewActivityEntryDTO } from "../dtos/activity.dto";
 import { appDataSource } from "../dataSource";
 import { Activity } from "../entity/Activity";
 import { Category } from "../entity/Category";
 import { Favorite } from "../entity/Favorite";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
-import { plainToInstance } from "class-transformer";
 
 class ActivityService {
 	async findActivityById(id: number): Promise<Activity> {
@@ -196,7 +194,7 @@ class ActivityService {
 		return foundFavorite === null ? true : false;
 	}
 
-	async checkAccess(activity: Activity, userId:number, isAdmin:boolean): Promise<void> {
+	checkAccess(activity: Activity, userId:number, isAdmin:boolean) {
 		// checks if event is private
 		if (activity.es_privada) {
 			// checks if user is the owner of the event

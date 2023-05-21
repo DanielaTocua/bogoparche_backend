@@ -6,7 +6,6 @@ import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 import authMiddleware from "../middlewares/auth.middleware";
 import idNumberValidationMiddleware from "../middlewares/idNumberValidation.middleware";
 import validateAdminMiddleware from "../middlewares/validateAdmin.middleware";
-import { ActivityUpdateDTO } from "@/dtos/activity.dto";
 // import toNewActivityEntry from '../utils/utils_activity'
 
 // Crea router
