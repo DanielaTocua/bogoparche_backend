@@ -22,12 +22,12 @@ class ActivityFacade {
 		}
 	}
 
-	async editApproved(id: number, newActivityUpdated: ActivityUpdateDTO){
+	async editApproved(id: number){
 		// checks if plan exists
 		await activityService.findActivityById(id);
 
 		// Updates info
-		await activityService.editApproved(id, newActivityUpdated);
+		await activityService.editApproved(id);
 	}
 
 	async publicAtributtesFilter(activities: Activity[]|(Activity&{attendance:boolean, favorite:boolean})[],search: string[], rangePrices: string[] , categories: string[]): Promise<Activity[]|(Activity&{attendance:boolean, favorite:boolean})[]> {

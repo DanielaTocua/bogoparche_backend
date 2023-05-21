@@ -23,8 +23,8 @@ class ActivityController {
 	}
 
     async editApproved(req: Request, res: Response): Promise<void>{
-        await activityFacade.editApproved(parseInt(req.params.id), req.body)
-        res.json({ msg: "Approve succesfully deleted" })
+        await activityFacade.editApproved(parseInt(req.params.id))
+        res.json({ msg: "Approve succesfully" })
     }
 
 	async deleteActivity(req: Request, res: Response): Promise<void> {

@@ -31,26 +31,13 @@ class ActivityService {
 		return notApprovedActivities;
 	}
 
-	async editApproved(id: number, update: ActivityUpdateDTO): Promise<void>{
+	async editApproved(id: number): Promise<void>{
 		console.log("CHANGE IN APPROVE");
 		const queryRunner = appDataSource.createQueryRunner();
 		await queryRunner.connect();
-		await queryRunner.startTransaction();
-		const activityEntry = plainToInstance(NewActivityEntryDTO, update, {
-			excludeExtraneousValues: true,
-		});
-		try{
-			await Activity.update(id, update)
-			await queryRunner.commitTransaction();
-		}
-		catch{
-			await queryRunner.rollbackTransaction();
-			await queryRunner.release();
-			throw new ServerError(
-				"There's been an error, try again later",
-				STATUS_CODES.BAD_REQUEST,
-			);
-		}
+		await appDataSource.manager.query(
+			`UPDATE activity SET es_aprobado=true WHERE id=$1`,[id]
+		);
 		await queryRunner.release();
 	}
 
