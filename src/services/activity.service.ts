@@ -23,6 +23,25 @@ class ActivityService {
 		}
 	}
 
+	async findActivityByIdPrivate(id: number, user_id: number): Promise<Activity> {
+		const activity = this.findActivityById(id)
+		console.log(await activity)
+		const privateActivities = this.findUserPrivate(user_id)
+		console.log(await privateActivities)
+
+		const activityIds = (await privateActivities).map(activity => activity.id);
+  		const activityInUserPrivate = activityIds.includes((await activity).id);
+
+		// Verificar si 'activity' está dentro de 'privateActivities'
+		console.log(activityInUserPrivate)
+
+		if (activityInUserPrivate) {
+			return activity
+		  } else {
+			throw new ServerError(`Cannot delete. The id: ${id} does not correspond to any user's activity.` , STATUS_CODES.FORBIDDEN);
+		  }
+	}
+
 	async findAllNotApproved(): Promise<Activity[]> {
 		console.log("IN FIND ALL NOT APPROVED");
 		const notApprovedActivities = (await appDataSource.manager.query(
@@ -59,9 +78,24 @@ class ActivityService {
 	}
 
 	async deleteActivity(activity: Activity): Promise<Activity> {
-		Activity.remove(activity);
-		// Puede cambiarse a raw queries
+		// create a new query runner
+		const queryRunner = appDataSource.createQueryRunner();
+
+		// establish real database connection
+		await queryRunner.connect();
+
+		// open a new transaction:
+		await queryRunner.startTransaction();
+
+		await Activity.remove(activity);
+
+		// commit transaction
+		await queryRunner.commitTransaction();
+		// release query runner
+		await queryRunner.release();
+
 		return activity;
+		
 	}
 
 	async findAllPublicAuthenticated(id: number): Promise<(Activity&{attendance:boolean, favorite:boolean})[]> {

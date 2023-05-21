@@ -11,6 +11,12 @@ class ActivityFacade {
 		return result;
 	}
 
+	async deletePrivateActivity(id: number, user_id: number): Promise<Activity> {
+		const activity = await activityService.findActivityByIdPrivate(id, user_id);
+		const result = await activityService.deleteActivity(activity);
+		return result;
+	}
+
 	async getActivity(id: number): Promise<any> {
 		const activity = await activityService.findActivityById(id);
 		if (activity.es_plan) {

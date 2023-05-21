@@ -1,12 +1,12 @@
 import express from "express"; //ESModules
-
 import activityController from "../controllers/activity.controller";
 import commentController from "../controllers/comment.controller";
+import { CommentDTO } from "../dtos/comment.dto";
 import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 import authMiddleware from "../middlewares/auth.middleware";
+import dtoValidationMiddleware from "../middlewares/dtoValidation.middleware";
 import idNumberValidationMiddleware from "../middlewares/idNumberValidation.middleware";
 import validateAdminMiddleware from "../middlewares/validateAdmin.middleware";
-import { ActivityUpdateDTO } from "@/dtos/activity.dto";
 // import toNewActivityEntry from '../utils/utils_activity'
 
 // Crea router
@@ -29,6 +29,13 @@ router
 		asyncErrorMiddleware(activityController.deleteActivity),
 	);
 
+router
+.route("/private/:id")
+.delete(
+	[authMiddleware, idNumberValidationMiddleware],
+	asyncErrorMiddleware(activityController.deletePrivateActivity),
+);
+	
 // Gets activities
 router
 	.route("/:id")
@@ -38,20 +45,6 @@ router
 	);
 
 
-// Editing Approve
-router
-	.route("/approve/:id")
-	.put(
-		[authMiddleware, validateAdminMiddleware],
-		asyncErrorMiddleware(activityController.editApproved),
-	);
-
-
-
-// Get Comments
-router
-	.route("/get-comments/:id/:es_plan")
-	.get([idNumberValidationMiddleware],asyncErrorMiddleware(commentController.getCommentsFromTable));
 
 // router
 // 	.route("/get-favorites")

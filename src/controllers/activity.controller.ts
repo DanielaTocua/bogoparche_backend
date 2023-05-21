@@ -32,6 +32,12 @@ class ActivityController {
 		res.json(result).status(STATUS_CODES.OK);
 	}
 
+    async deletePrivateActivity(req: Request, res: Response): Promise<void> {
+        const userId = req.userId ? req.userId : 0
+		const result = await activityFacade.deletePrivateActivity(parseInt(req.params.id), userId);
+		res.json(result).status(STATUS_CODES.OK);
+	}
+
 	async getActivity(req: Request, res: Response): Promise<void> {
 		const result = await activityFacade.getActivity(parseInt(req.params.id));
 		res.json(result);
