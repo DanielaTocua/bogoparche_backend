@@ -18,7 +18,7 @@ class PlanService {
 			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
 		}
 		try {
-			const plan = await Plan.findOneOrFail({ where: { id: id } });
+			const plan = await Plan.findOneOrFail({ where: { id: id }, relations:["activity"] });
 			const planWithEsPlan = { ...plan, es_plan: true };
 			return planWithEsPlan;
 		} catch {

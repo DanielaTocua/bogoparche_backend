@@ -1,6 +1,8 @@
+import { Activity } from "../entity/Activity";
 import { NewPlanEntryDTO, PlanUpdateDTO } from "../dtos/activity.dto";
 import { Plan } from "../entity/Plan";
 import planService from "../services/plan.service";
+import activityService from "../services/activity.service";
 
 class PlanFacade {
 	async getPlan(id: number): Promise<Plan> {
@@ -9,9 +11,14 @@ class PlanFacade {
 		return result;
 	}
 
-	async editPlan(id: number, newEventUpdated: PlanUpdateDTO): Promise<Plan> {
+	async editPlan(id: number, newEventUpdated: PlanUpdateDTO, userId: number, isAdmin:boolean): Promise<Plan> {
 		// checks if plan exists
-		await planService.findPlanById(id);
+		const plan = await planService.findPlanById(id);
+
+		// checks if event exists
+		const activity:Activity = plan.activity;
+		
+		activityService.checkAccess(activity, userId, isAdmin)
 
 		// Updates info
 		const result = await planService.editPlan(id, newEventUpdated);

@@ -14,7 +14,7 @@ class PlanController {
 	}
 
 	async editPlan(req: Request, res: Response): Promise<void> {
-		const result = await planFacade.editPlan(parseInt(req.params.id), req.body);
+		const result = await planFacade.editPlan(parseInt(req.params.id), req.body, req.userId as number, req.isAdmin as boolean);
 		res.json(result).status(STATUS_CODES.OK);
 	}
 

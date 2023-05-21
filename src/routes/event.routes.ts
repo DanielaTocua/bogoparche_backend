@@ -24,7 +24,7 @@ router
 router
 	.route("/:id")
 	.put(
-		[authMiddleware, validateAdminMiddleware, idNumberValidation],
+		[authMiddleware, idNumberValidation],
 		asyncErrorMiddleware(eventController.editEvent),
 	);
 
