@@ -15,7 +15,7 @@ class EventService {
 	// Find Event by Id
 	async findEventById(id: number): Promise<any> {
 		try {
-			const event = await Event.findOneOrFail({ where: { id: id } });
+			const event = await Event.findOneOrFail({ where: { id: id } , relations:["activity"]});
 			const eventWithEsPlan = { ...event, es_plan: false };
 			return eventWithEsPlan;
 		} catch {

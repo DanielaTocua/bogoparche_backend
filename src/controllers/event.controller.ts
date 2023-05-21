@@ -17,10 +17,12 @@ class EventController {
 	async editEvent(req: Request, res: Response): Promise<void> {
 		const result = await eventFacade.editEvent(
 			parseInt(req.params.id),
-			req.body,
+			req.body, req.userId as number, req.isAdmin as boolean
 		);
 		res.json(result).status(STATUS_CODES.OK);
 	}
+
+
 
 	async getEvent(req: Request, res: Response): Promise<void> {
 		const result = await eventFacade.getEvent(parseInt(req.params.id));

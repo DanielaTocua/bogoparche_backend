@@ -1,4 +1,3 @@
-import { ActivityUpdateDTO } from "../dtos/activity.dto";
 import { Activity } from "../entity/Activity";
 import activityService from "../services/activity.service";
 import eventService from "../services/event.service";

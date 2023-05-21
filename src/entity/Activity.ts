@@ -43,9 +43,12 @@ export class Activity extends BaseEntity {
 	@Column({ name: "id_categoria" })
 	id_categoria: number;
 
+	@Column({ name: "id_usuario" })
+	id_usuario: number;
+
 	@ManyToOne((type) => User)
 	@JoinColumn({ name: "id_usuario", referencedColumnName: "id" })
-	id_usuario: User;
+	user: User;
 
 	@ManyToOne((type) => Category)
 	@JoinColumn({ name: "id_categoria", referencedColumnName: "id" })

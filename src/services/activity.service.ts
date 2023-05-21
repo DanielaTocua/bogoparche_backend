@@ -1,11 +1,9 @@
-import { ActivityUpdateDTO, NewActivityEntryDTO } from "../dtos/activity.dto";
 import { appDataSource } from "../dataSource";
 import { Activity } from "../entity/Activity";
 import { Category } from "../entity/Category";
 import { Favorite } from "../entity/Favorite";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
-import { plainToInstance } from "class-transformer";
 
 class ActivityService {
 	async findActivityById(id: number): Promise<Activity> {
@@ -108,7 +106,7 @@ class ActivityService {
 				titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad,
 				medio_contacto,id_categoria, activity.es_plan
 				FROM activity LEFT JOIN favorite ON activity.id=favorite.id_actividad AND  favorite.id_usuario = $1
-				LEFT JOIN attendance ON activity.id=favorite.id_actividad AND  attendance.id_usuario = $1 WHERE es_aprobado IS true AND es_privada IS false`,[id])) as (Activity&{attendance:boolean, favorite:boolean})[];
+				LEFT JOIN attendance ON activity.id=attendance.id_actividad AND  attendance.id_usuario = $1 WHERE es_aprobado IS true AND es_privada IS false`,[id])) as (Activity&{attendance:boolean, favorite:boolean})[];
 			return publicActivities;
 
 	}
@@ -228,6 +226,20 @@ class ActivityService {
 			id_actividad,
 		});
 		return foundFavorite === null ? true : false;
+	}
+
+	checkAccess(activity: Activity, userId:number, isAdmin:boolean) {
+		// checks if event is private
+		if (activity.es_privada) {
+			// checks if user is the owner of the event
+			if (activity.id_usuario !== userId)
+			throw new ServerError("You don't have access to this activity", STATUS_CODES.FORBIDDEN);
+		} else {
+			// checks if user is admin
+			if (!isAdmin){
+				throw new ServerError("You don't have access to this activity", STATUS_CODES.FORBIDDEN);
+			}
+		}
 	}
 }
 export default new ActivityService();
