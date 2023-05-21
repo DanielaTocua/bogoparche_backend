@@ -34,5 +34,5 @@ export class Comment extends BaseEntity {
 	calificacion: number;
 
 	@CreateDateColumn()
-	createdAt: Date;
+	created_at: Date;
 }

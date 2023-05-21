@@ -6,6 +6,7 @@ import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 import authMiddleware from "../middlewares/auth.middleware";
 import dtoValidationMiddleware from "../middlewares/dtoValidation.middleware";
 import idNumberValidationMiddleware from "../middlewares/idNumberValidation.middleware";
+import optionalAuthMiddleware from "../middlewares/optionalAuth.middleware";
 
 // Crea router
 const router = express.Router();
@@ -22,7 +23,7 @@ router
 router 
 	.route("/:id")
 	.get(
-		[authMiddleware, idNumberValidationMiddleware],
+		[optionalAuthMiddleware, idNumberValidationMiddleware],
 		asyncErrorMiddleware(commentController.getCommentsFromTable),
 	);
 

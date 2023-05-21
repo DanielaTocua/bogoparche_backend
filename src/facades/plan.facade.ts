@@ -24,13 +24,12 @@ class PlanFacade {
 			result = await planService.addPlan({
 				...newPlanEntry,
 				es_aprobado: true,
-				es_privada: false
 			});
 		} else {
 			result = await planService.addPlan({
 				...newPlanEntry,
 				es_aprobado: false,
-				es_privada: true
+
 			});
 		}
 		return result;

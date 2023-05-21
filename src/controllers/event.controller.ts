@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import jwt from 'jsonwebtoken';
+
 import eventFacade from "../facades/event.facade";
 import { STATUS_CODES } from "../utils/constants";
 
@@ -12,6 +12,7 @@ class EventController {
 		);
 		res.json({ id: result.id }).status(STATUS_CODES.OK);
 	}
+
 
 	async editEvent(req: Request, res: Response): Promise<void> {
 		const result = await eventFacade.editEvent(

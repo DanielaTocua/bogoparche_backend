@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import jwt from 'jsonwebtoken';
+
 import planFacade from "../facades/plan.facade";
 import { STATUS_CODES } from "../utils/constants";
 

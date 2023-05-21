@@ -4,9 +4,9 @@ import activityService from "../services/activity.service";
 import commentService from "../services/comment.service";
 
 class CommentFacade {
-	async getComments(id_actividad: number): Promise<any> {
+	async getComments(id_actividad: number, userId:number | null): Promise<any> {
 		await activityService.findActivityById(id_actividad);
-		const commentsPlan = await commentService.getComments(id_actividad);
+		const commentsPlan = await commentService.getComments(id_actividad, userId);
 		return commentsPlan;
 	}
 

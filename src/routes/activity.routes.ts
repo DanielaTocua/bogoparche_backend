@@ -2,10 +2,8 @@ import express from "express"; //ESModules
 
 import activityController from "../controllers/activity.controller";
 import commentController from "../controllers/comment.controller";
-import { CommentDTO } from "../dtos/comment.dto";
 import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 import authMiddleware from "../middlewares/auth.middleware";
-import dtoValidationMiddleware from "../middlewares/dtoValidation.middleware";
 import idNumberValidationMiddleware from "../middlewares/idNumberValidation.middleware";
 import validateAdminMiddleware from "../middlewares/validateAdmin.middleware";
 // import toNewActivityEntry from '../utils/utils_activity'
@@ -40,18 +38,12 @@ router
 
 
 
-// Comment
-router
-	.route("/comment")
-	.post(
-		[authMiddleware, dtoValidationMiddleware(CommentDTO)],
-		asyncErrorMiddleware(commentController.createComment),
-	);
+
 
 // Get Comments
 router
 	.route("/get-comments/:id/:es_plan")
-	.get(asyncErrorMiddleware(commentController.getCommentsFromTable));
+	.get([idNumberValidationMiddleware],asyncErrorMiddleware(commentController.getCommentsFromTable));
 
 // router
 // 	.route("/get-favorites")

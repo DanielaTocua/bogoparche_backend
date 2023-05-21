@@ -52,7 +52,7 @@ class ActivityFacade {
     }
 	
 	async publicFilter(search: string[], rangePrices: string[], categories: string[]): Promise<Activity[]> {
-        let filtered = await activityService.findAllPublic();
+        const filtered = await activityService.findAllPublic();
 		
 		return (await this.publicAtributtesFilter(filtered, search, rangePrices, categories)) as Activity[]
 	}
