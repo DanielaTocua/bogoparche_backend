@@ -6,6 +6,7 @@ import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 import authMiddleware from "../middlewares/auth.middleware";
 import idNumberValidationMiddleware from "../middlewares/idNumberValidation.middleware";
 import validateAdminMiddleware from "../middlewares/validateAdmin.middleware";
+import { ActivityUpdateDTO } from "@/dtos/activity.dto";
 // import toNewActivityEntry from '../utils/utils_activity'
 
 // Crea router
@@ -27,7 +28,7 @@ router
 		[authMiddleware, validateAdminMiddleware, idNumberValidationMiddleware],
 		asyncErrorMiddleware(activityController.deleteActivity),
 	);
-	
+
 // Gets activities
 router
 	.route("/:id")
@@ -37,6 +38,13 @@ router
 	);
 
 
+// Editing Approve
+router
+	.route("/approve/:id")
+	.put(
+		[authMiddleware, validateAdminMiddleware],
+		asyncErrorMiddleware(activityController.editApproved),
+	);
 
 
 

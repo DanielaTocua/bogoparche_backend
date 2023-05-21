@@ -104,6 +104,11 @@ export class ActivityUpdateDTO {
 	@Exclude()
 	@IsOptional()
 	es_plan: boolean;
+
+	@Exclude()
+	@IsOptional()
+	@IsBoolean()
+	es_aprobado: boolean;
 }
 
 export class NewEventEntryDTO extends NewActivityEntryDTO {

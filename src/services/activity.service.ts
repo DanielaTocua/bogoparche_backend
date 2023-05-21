@@ -1,9 +1,11 @@
+import { ActivityUpdateDTO, NewActivityEntryDTO } from "../dtos/activity.dto";
 import { appDataSource } from "../dataSource";
 import { Activity } from "../entity/Activity";
 import { Category } from "../entity/Category";
 import { Favorite } from "../entity/Favorite";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
+import { plainToInstance } from "class-transformer";
 
 class ActivityService {
 	async findActivityById(id: number): Promise<Activity> {
@@ -27,6 +29,29 @@ class ActivityService {
 			`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan FROM activity WHERE es_aprobado IS false AND es_privada IS false`,
 		)) as Activity[];
 		return notApprovedActivities;
+	}
+
+	async editApproved(id: number, update: ActivityUpdateDTO): Promise<void>{
+		console.log("CHANGE IN APPROVE");
+		const queryRunner = appDataSource.createQueryRunner();
+		await queryRunner.connect();
+		await queryRunner.startTransaction();
+		const activityEntry = plainToInstance(NewActivityEntryDTO, update, {
+			excludeExtraneousValues: true,
+		});
+		try{
+			await Activity.update(id, update)
+			await queryRunner.commitTransaction();
+		}
+		catch{
+			await queryRunner.rollbackTransaction();
+			await queryRunner.release();
+			throw new ServerError(
+				"There's been an error, try again later",
+				STATUS_CODES.BAD_REQUEST,
+			);
+		}
+		await queryRunner.release();
 	}
 
 	async findAllPublic(): Promise<Activity[]> {

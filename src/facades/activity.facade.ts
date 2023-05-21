@@ -1,3 +1,4 @@
+import { ActivityUpdateDTO } from "../dtos/activity.dto";
 import { Activity } from "../entity/Activity";
 import activityService from "../services/activity.service";
 import eventService from "../services/event.service";
@@ -19,6 +20,14 @@ class ActivityFacade {
 			const event = await eventService.findEventById(id);
 			return { ...activity, ...event };
 		}
+	}
+
+	async editApproved(id: number, newActivityUpdated: ActivityUpdateDTO){
+		// checks if plan exists
+		await activityService.findActivityById(id);
+
+		// Updates info
+		await activityService.editApproved(id, newActivityUpdated);
 	}
 
 	async publicAtributtesFilter(activities: Activity[]|(Activity&{attendance:boolean, favorite:boolean})[],search: string[], rangePrices: string[] , categories: string[]): Promise<Activity[]|(Activity&{attendance:boolean, favorite:boolean})[]> {
