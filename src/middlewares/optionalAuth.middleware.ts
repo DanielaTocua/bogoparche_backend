@@ -31,7 +31,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 				req.isAdmin = user.isAdmin;
 				return next();
 			} catch (err) {
-				next(new ServerError("Invalid jwt token", STATUS_CODES.UNAUTHORIZED));
+				return next();
 			}
 		}
 		return next();
