@@ -51,7 +51,7 @@ class ActivityService {
 	async findAllNotApproved(): Promise<Activity[]> {
 		console.log("IN FIND ALL NOT APPROVED");
 		const notApprovedActivities = (await appDataSource.manager.query(
-			`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan FROM activity WHERE es_aprobado IS false AND es_privada IS false`,
+			`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada FROM activity WHERE es_aprobado IS false AND es_privada IS false`,
 		)) as Activity[];
 		return notApprovedActivities;
 	}
@@ -70,7 +70,7 @@ class ActivityService {
 	async findAllPublic(): Promise<Activity[]> {
 		console.log("IN FIND ALL PUBLIC");
 		const publicActivities = (await appDataSource.manager.query(
-			`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan FROM activity WHERE es_aprobado IS true AND es_privada IS false`,
+			`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada FROM activity WHERE es_aprobado IS true AND es_privada IS false`,
 		)) as Activity[];
 		return publicActivities;
 	}
@@ -78,7 +78,7 @@ class ActivityService {
 	async findUserPrivate(id: number): Promise<Activity[]> {
 		console.log("IN FIND USER PRIVATE");
 		const privateActivities = (await appDataSource.manager.query(
-			`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan FROM activity WHERE es_privada IS true AND id_usuario = $1`,
+			`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada FROM activity WHERE es_privada IS true AND id_usuario = $1`,
 			[id],
 		)) as Activity[];
 		return privateActivities;
@@ -114,7 +114,7 @@ class ActivityService {
 				CASE WHEN favorite.id_usuario IS NULL THEN false ELSE true END AS favorite,
 				CASE WHEN attendance.id_usuario IS NULL THEN false  ELSE true   END AS attendance,
 				titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad,
-				medio_contacto,id_categoria, activity.es_plan
+				medio_contacto,id_categoria, activity.es_plan, es_privada
 				FROM activity LEFT JOIN favorite ON activity.id=favorite.id_actividad AND  favorite.id_usuario = $1
 				LEFT JOIN attendance ON activity.id=attendance.id_actividad AND  attendance.id_usuario = $1 WHERE es_aprobado IS true AND es_privada IS false`,
 			[id],
