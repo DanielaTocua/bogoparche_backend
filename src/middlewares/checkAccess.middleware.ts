@@ -21,7 +21,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 			);
 	} else {
 		// checks if user is admin
-		if (req.isAdmin) {
+		if (!req.isAdmin) {
 			next(
 				new ServerError(
 					"You don't have access to this activity",
