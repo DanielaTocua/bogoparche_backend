@@ -27,4 +27,13 @@ router
 		asyncErrorMiddleware(commentController.getCommentsFromTable),
 	);
 
+// Delete Comment
+
+router
+	.route("/:id")
+	.delete(
+		[authMiddleware, idNumberValidationMiddleware],
+		asyncErrorMiddleware(commentController.deleteComment),
+	);
+
 export default router;

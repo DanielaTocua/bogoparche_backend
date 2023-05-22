@@ -17,6 +17,15 @@ class CommentController {
 		const result = await commentFacade.getComments(id_actividad, userId);
 		res.json(result);
 	}
+
+	async deleteComment(req: Request, res: Response): Promise<void> {
+		const id_comentario = parseInt(req.params.id);
+		await commentFacade.deleteComment(
+			id_comentario,
+			req.userId as number,
+		);
+		res.json({ msg: "Comment succesfully deleted" });
+	}
 }
 
 export default new CommentController();
