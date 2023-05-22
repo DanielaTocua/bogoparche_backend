@@ -5,7 +5,7 @@ import { STATUS_CODES } from "../utils/constants";
 
 class PlanController {
 	async addPlan(req: Request, res: Response): Promise<void> {
-		const user_id = req.userId
+		const user_id = req.userId;
 		const result = await planFacade.addPlan(
 			{ ...req.body, es_plan: true, id_usuario: user_id },
 			req.isAdmin as boolean,
@@ -14,7 +14,7 @@ class PlanController {
 	}
 
 	async editPlan(req: Request, res: Response): Promise<void> {
-		const result = await planFacade.editPlan(parseInt(req.params.id), req.body, req.userId as number, req.isAdmin as boolean);
+		const result = await planFacade.editPlan(parseInt(req.params.id), req.body);
 		res.json(result).status(STATUS_CODES.OK);
 	}
 

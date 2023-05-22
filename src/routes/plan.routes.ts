@@ -4,8 +4,9 @@ import planController from "../controllers/plan.controller";
 import { NewPlanEntryDTO } from "../dtos/activity.dto";
 import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 import authMiddleware from "../middlewares/auth.middleware";
+import checkAccessMiddleware from "../middlewares/checkAccess.middleware";
 import dtoValidationMiddleware from "../middlewares/dtoValidation.middleware";
-import idNumberValidation from "../middlewares/idNumberValidation.middleware";
+import idNumberValidationMiddleware from "../middlewares/idNumberValidation.middleware";
 // import toNewActivityEntry from '../utils/utils_activity'
 
 // Crea router
@@ -23,7 +24,7 @@ router
 router
 	.route("/:id")
 	.put(
-		[authMiddleware, idNumberValidation],
+		[authMiddleware, idNumberValidationMiddleware, checkAccessMiddleware],
 		asyncErrorMiddleware(planController.editPlan),
 	);
 

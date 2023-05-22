@@ -5,7 +5,7 @@ import { STATUS_CODES } from "../utils/constants";
 
 class EventController {
 	async addEvent(req: Request, res: Response): Promise<void> {
-		const user_id = req.userId	
+		const user_id = req.userId;
 		const result = await eventFacade.addEvent(
 			{ ...req.body, es_plan: false, id_usuario: user_id },
 			req.isAdmin as boolean,
@@ -13,16 +13,13 @@ class EventController {
 		res.json({ id: result.id }).status(STATUS_CODES.OK);
 	}
 
-
 	async editEvent(req: Request, res: Response): Promise<void> {
 		const result = await eventFacade.editEvent(
 			parseInt(req.params.id),
-			req.body, req.userId as number, req.isAdmin as boolean
+			req.body,
 		);
 		res.json(result).status(STATUS_CODES.OK);
 	}
-
-
 
 	async getEvent(req: Request, res: Response): Promise<void> {
 		const result = await eventFacade.getEvent(parseInt(req.params.id));

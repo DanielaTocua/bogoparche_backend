@@ -21,23 +21,31 @@ class ActivityService {
 		}
 	}
 
-	async findActivityByIdPrivate(id: number, user_id: number): Promise<Activity> {
-		const activity = this.findActivityById(id)
-		console.log(await activity)
-		const privateActivities = this.findUserPrivate(user_id)
-		console.log(await privateActivities)
+	async findActivityByIdPrivate(
+		id: number,
+		user_id: number,
+	): Promise<Activity> {
+		const activity = this.findActivityById(id);
+		console.log(await activity);
+		const privateActivities = this.findUserPrivate(user_id);
+		console.log(await privateActivities);
 
-		const activityIds = (await privateActivities).map(activity => activity.id);
-  		const activityInUserPrivate = activityIds.includes((await activity).id);
+		const activityIds = (await privateActivities).map(
+			(activity) => activity.id,
+		);
+		const activityInUserPrivate = activityIds.includes((await activity).id);
 
 		// Verificar si 'activity' está dentro de 'privateActivities'
-		console.log(activityInUserPrivate)
+		console.log(activityInUserPrivate);
 
 		if (activityInUserPrivate) {
-			return activity
-		  } else {
-			throw new ServerError(`Cannot delete. The id: ${id} does not correspond to any user's activity.` , STATUS_CODES.FORBIDDEN);
-		  }
+			return activity;
+		} else {
+			throw new ServerError(
+				`Cannot delete. The id: ${id} does not correspond to any user's activity.`,
+				STATUS_CODES.FORBIDDEN,
+			);
+		}
 	}
 
 	async findAllNotApproved(): Promise<Activity[]> {
@@ -48,12 +56,13 @@ class ActivityService {
 		return notApprovedActivities;
 	}
 
-	async editApproved(id: number): Promise<void>{
+	async editApproved(id: number): Promise<void> {
 		console.log("CHANGE IN APPROVE");
 		const queryRunner = appDataSource.createQueryRunner();
 		await queryRunner.connect();
 		await appDataSource.manager.query(
-			`UPDATE activity SET es_aprobado=true WHERE id=$1`,[id]
+			`UPDATE activity SET es_aprobado=true WHERE id=$1`,
+			[id],
 		);
 		await queryRunner.release();
 	}
@@ -70,7 +79,7 @@ class ActivityService {
 		console.log("IN FIND USER PRIVATE");
 		const privateActivities = (await appDataSource.manager.query(
 			`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan FROM activity WHERE es_privada IS true AND id_usuario = $1`,
-			[id]
+			[id],
 		)) as Activity[];
 		return privateActivities;
 	}
@@ -93,24 +102,25 @@ class ActivityService {
 		await queryRunner.release();
 
 		return activity;
-		
 	}
 
-	async findAllPublicAuthenticated(id: number): Promise<(Activity&{attendance:boolean, favorite:boolean})[]> {
+	async findAllPublicAuthenticated(
+		id: number,
+	): Promise<(Activity & { attendance: boolean; favorite: boolean })[]> {
 		// Puede cambiarse a raw queries
 
-			const publicActivities = (await appDataSource.manager
-				.query(`SELECT activity.id,
+		const publicActivities = (await appDataSource.manager.query(
+			`SELECT activity.id,
 				CASE WHEN favorite.id_usuario IS NULL THEN false ELSE true END AS favorite,
 				CASE WHEN attendance.id_usuario IS NULL THEN false  ELSE true   END AS attendance,
 				titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad,
 				medio_contacto,id_categoria, activity.es_plan
 				FROM activity LEFT JOIN favorite ON activity.id=favorite.id_actividad AND  favorite.id_usuario = $1
-				LEFT JOIN attendance ON activity.id=attendance.id_actividad AND  attendance.id_usuario = $1 WHERE es_aprobado IS true AND es_privada IS false`,[id])) as (Activity&{attendance:boolean, favorite:boolean})[];
-			return publicActivities;
-
+				LEFT JOIN attendance ON activity.id=attendance.id_actividad AND  attendance.id_usuario = $1 WHERE es_aprobado IS true AND es_privada IS false`,
+			[id],
+		)) as (Activity & { attendance: boolean; favorite: boolean })[];
+		return publicActivities;
 	}
-		
 
 	async findCategory(nombre_categoria: string) {
 		if (typeof nombre_categoria != "string" || nombre_categoria == "") {
@@ -226,20 +236,6 @@ class ActivityService {
 			id_actividad,
 		});
 		return foundFavorite === null ? true : false;
-	}
-
-	checkAccess(activity: Activity, userId:number, isAdmin:boolean) {
-		// checks if event is private
-		if (activity.es_privada) {
-			// checks if user is the owner of the event
-			if (activity.id_usuario !== userId)
-			throw new ServerError("You don't have access to this activity", STATUS_CODES.FORBIDDEN);
-		} else {
-			// checks if user is admin
-			if (!isAdmin){
-				throw new ServerError("You don't have access to this activity", STATUS_CODES.FORBIDDEN);
-			}
-		}
 	}
 }
 export default new ActivityService();

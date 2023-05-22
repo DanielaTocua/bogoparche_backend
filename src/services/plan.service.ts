@@ -18,7 +18,10 @@ class PlanService {
 			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
 		}
 		try {
-			const plan = await Plan.findOneOrFail({ where: { id: id }, relations:["activity"] });
+			const plan = await Plan.findOneOrFail({
+				where: { id: id },
+				relations: ["activity"],
+			});
 			const planWithEsPlan = { ...plan, es_plan: true };
 			return planWithEsPlan;
 		} catch {
@@ -38,24 +41,21 @@ class PlanService {
 		);
 		return await appDataSource.manager.transaction(
 			async (transactionalEntityManager) => {
-				const newActivity = Activity.create(
-					instanceToPlain(newActivityEntry),
-				);
-				console.log(newActivity)
+				const newActivity = Activity.create(instanceToPlain(newActivityEntry));
+				console.log(newActivity);
 				const createdActivity = await transactionalEntityManager.save(
 					newActivity,
 				);
-				
+
 				const newPlan = Plan.create({
 					id: createdActivity.id,
 					horario_plan: newPlanEntry.horario_plan,
 				});
-				
+
 				const createdPlan = await transactionalEntityManager.save(newPlan);
 				return createdPlan;
 			},
 		);
-		
 	}
 
 	// Edits Plan
@@ -73,17 +73,16 @@ class PlanService {
 			excludeExtraneousValues: true,
 		});
 
-		
-			await Activity.update(id, instanceToPlain(activityEntry));
-			const planUpdateEntry = { horario_plan: planEntry.horario_plan };
+		await Activity.update(id, instanceToPlain(activityEntry));
+		const planUpdateEntry = { horario_plan: planEntry.horario_plan };
 
-			if (!Object.values(planUpdateEntry).every((el) => el === undefined)) {
-				await Plan.update(id, planUpdateEntry);
-			}
+		if (!Object.values(planUpdateEntry).every((el) => el === undefined)) {
+			await Plan.update(id, planUpdateEntry);
+		}
 
-			// commit transaction
-			await queryRunner.commitTransaction();
-		
+		// commit transaction
+		await queryRunner.commitTransaction();
+
 		// release query runner
 		await queryRunner.release();
 

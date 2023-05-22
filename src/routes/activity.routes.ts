@@ -1,12 +1,11 @@
 import express from "express"; //ESModules
+
 import activityController from "../controllers/activity.controller";
-import commentController from "../controllers/comment.controller";
-import { CommentDTO } from "../dtos/comment.dto";
 import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 import authMiddleware from "../middlewares/auth.middleware";
-import dtoValidationMiddleware from "../middlewares/dtoValidation.middleware";
+import checkAccessMiddleware from "../middlewares/checkAccess.middleware";
 import idNumberValidationMiddleware from "../middlewares/idNumberValidation.middleware";
-import validateAdminMiddleware from "../middlewares/validateAdmin.middleware";
+
 // import toNewActivityEntry from '../utils/utils_activity'
 
 // Crea router
@@ -19,23 +18,19 @@ router
 	.get(asyncErrorMiddleware(activityController.getAllNotApproved));
 router
 	.route("/all-private")
-	.get([authMiddleware],asyncErrorMiddleware(activityController.getUserPrivate));
+	.get(
+		[authMiddleware],
+		asyncErrorMiddleware(activityController.getUserPrivate),
+	);
 
 // Deletes activities
 router
 	.route("/:id")
 	.delete(
-		[authMiddleware, validateAdminMiddleware, idNumberValidationMiddleware],
+		[authMiddleware, idNumberValidationMiddleware, checkAccessMiddleware],
 		asyncErrorMiddleware(activityController.deleteActivity),
 	);
 
-router
-.route("/private/:id")
-.delete(
-	[authMiddleware, idNumberValidationMiddleware],
-	asyncErrorMiddleware(activityController.deletePrivateActivity),
-);
-	
 // Gets activities
 router
 	.route("/:id")
@@ -43,8 +38,6 @@ router
 		[idNumberValidationMiddleware],
 		asyncErrorMiddleware(activityController.getActivity),
 	);
-
-
 
 // router
 // 	.route("/get-favorites")

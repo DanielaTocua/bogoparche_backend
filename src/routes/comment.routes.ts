@@ -20,7 +20,7 @@ router
 	);
 
 // Get Comments
-router 
+router
 	.route("/:id")
 	.get(
 		[optionalAuthMiddleware, idNumberValidationMiddleware],

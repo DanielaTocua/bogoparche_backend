@@ -15,7 +15,10 @@ class EventService {
 	// Find Event by Id
 	async findEventById(id: number): Promise<any> {
 		try {
-			const event = await Event.findOneOrFail({ where: { id: id } , relations:["activity"]});
+			const event = await Event.findOneOrFail({
+				where: { id: id },
+				relations: ["activity"],
+			});
 			const eventWithEsPlan = { ...event, es_plan: false };
 			return eventWithEsPlan;
 		} catch {
@@ -40,20 +43,20 @@ class EventService {
 			excludeExtraneousValues: true,
 		});
 
-			await Activity.update(id, instanceToPlain(activityEntry));
-			const eventUpdateEntry = {
-				fecha_inicio: eventEntry.fecha_inicio,
-				fecha_fin: eventEntry.fecha_fin,
-				hora_inicio: eventEntry.hora_inicio,
-				hora_fin: eventEntry.hora_fin,
-			};
+		await Activity.update(id, instanceToPlain(activityEntry));
+		const eventUpdateEntry = {
+			fecha_inicio: eventEntry.fecha_inicio,
+			fecha_fin: eventEntry.fecha_fin,
+			hora_inicio: eventEntry.hora_inicio,
+			hora_fin: eventEntry.hora_fin,
+		};
 
-			if (!Object.values(eventUpdateEntry).every((el) => el === undefined)) {
-				await Event.update(id, eventUpdateEntry);
-			}
+		if (!Object.values(eventUpdateEntry).every((el) => el === undefined)) {
+			await Event.update(id, eventUpdateEntry);
+		}
 
-			// commit transaction
-			await queryRunner.commitTransaction();
+		// commit transaction
+		await queryRunner.commitTransaction();
 		// release query runner
 		await queryRunner.release();
 
@@ -67,25 +70,23 @@ class EventService {
 			newEventEntry,
 			{ excludeExtraneousValues: true },
 		);
-			return await appDataSource.manager.transaction(
-				async (transactionalEntityManager) => {
-					const newActivity = Activity.create(
-						instanceToPlain(newActivityEntry),
-					);
-					const createdActivity = await transactionalEntityManager.save(
-						newActivity,
-					);
-					const newEvent = Event.create({
-						id: createdActivity.id,
-						fecha_inicio: newEventEntry.fecha_inicio,
-						fecha_fin: newEventEntry.fecha_fin,
-						hora_inicio: newEventEntry.hora_inicio,
-						hora_fin: newEventEntry.hora_fin,
-					});
-					const createdEvent = await transactionalEntityManager.save(newEvent);
-					return createdEvent;
-				},
-			);
+		return await appDataSource.manager.transaction(
+			async (transactionalEntityManager) => {
+				const newActivity = Activity.create(instanceToPlain(newActivityEntry));
+				const createdActivity = await transactionalEntityManager.save(
+					newActivity,
+				);
+				const newEvent = Event.create({
+					id: createdActivity.id,
+					fecha_inicio: newEventEntry.fecha_inicio,
+					fecha_fin: newEventEntry.fecha_fin,
+					hora_inicio: newEventEntry.hora_inicio,
+					hora_fin: newEventEntry.hora_fin,
+				});
+				const createdEvent = await transactionalEntityManager.save(newEvent);
+				return createdEvent;
+			},
+		);
 	}
 }
 export default new EventService();

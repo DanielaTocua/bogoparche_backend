@@ -10,7 +10,6 @@ function dtoValidationMiddleware<T>(
 	skipMissingProperties = false,
 ): RequestHandler {
 	return (req, res, next) => {
-		
 		const dtoObj = plainToInstance(dtoType, req.body, {
 			excludeExtraneousValues: true,
 		});
