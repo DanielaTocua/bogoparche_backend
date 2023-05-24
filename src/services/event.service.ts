@@ -8,6 +8,7 @@ import {
 } from "../dtos/activity.dto";
 import { Activity } from "../entity/Activity";
 import { Event } from "../entity/Event";
+import { Visibility } from "../entity/Visibility";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
 
@@ -83,6 +84,11 @@ class EventService {
 					hora_fin: newEventEntry.hora_fin,
 				});
 				const createdEvent = await transactionalEntityManager.save(newEvent);
+				if (newEventEntry.es_privada) {
+					const newVisibility = Visibility.create({id_actividad: createdActivity.id, id_usuario: newActivityEntry.id_usuario})
+					await transactionalEntityManager.save(newVisibility);
+				}
+				
 				return createdEvent;
 			},
 		);

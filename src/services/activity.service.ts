@@ -3,6 +3,7 @@ import { Activity } from "../entity/Activity";
 import { Category } from "../entity/Category";
 import { Favorite } from "../entity/Favorite";
 import { ServerError } from "../errors/server.error";
+import visibilityFacade from "../facades/visibility.facade";
 import { STATUS_CODES } from "../utils/constants";
 
 class ActivityService {
@@ -256,6 +257,22 @@ class ActivityService {
 			id_actividad,
 		});
 		return foundFavorite === null ? true : false;
+	}
+	async checkVisibility(id_usuario: number |null , activity:Activity): Promise<void> {
+		if (activity.es_privada){
+			if (id_usuario == null){
+				throw new ServerError( "This activity is private", STATUS_CODES.BAD_REQUEST);
+			}
+			const visibility = await visibilityFacade.getVisibilityGroup(activity.id);
+			const visibilityIds = visibility.map((visibility) => visibility.id_usuario);
+			if (!visibilityIds.includes(id_usuario)) {
+				throw new ServerError(
+					"This activity is private",
+					STATUS_CODES.BAD_REQUEST,
+				);
+			}
+
+		}
 	}
 
 }

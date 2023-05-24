@@ -179,3 +179,9 @@ export class PlanUpdateDTO extends ActivityUpdateDTO {
 	@IsOptional()
 	horario_plan: string;
 }
+
+export class UserListDTO {
+	@IsNumber({},{each: true})
+	@Expose()
+	users: number[];
+}

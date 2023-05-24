@@ -1,6 +1,6 @@
-import commentService from "../services/comment.service";
 import { Activity } from "../entity/Activity";
 import activityService from "../services/activity.service";
+import commentService from "../services/comment.service";
 import eventService from "../services/event.service";
 import planService from "../services/plan.service";
 
@@ -21,7 +21,9 @@ class ActivityFacade {
 
 	async getActivity(id: number, userId:number|null): Promise<any> {
 		
+		
 		const activity = await activityService.findActivityDetailsById(id,userId);
+		await activityService.checkVisibility(userId, activity)
 		const comments = await commentService.getComments(id, userId);
 		if (activity.es_plan) {
 			const plan = await planService.findPlanById(id);

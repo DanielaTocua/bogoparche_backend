@@ -8,6 +8,7 @@ import {
 } from "../dtos/activity.dto";
 import { Activity } from "../entity/Activity";
 import { Plan } from "../entity/Plan";
+import { Visibility } from "../entity/Visibility";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
 
@@ -52,6 +53,11 @@ class PlanService {
 				});
 
 				const createdPlan = await transactionalEntityManager.save(newPlan);
+
+				if (newPlanEntry.es_privada) {
+					const newVisibility = Visibility.create({id_actividad: createdActivity.id, id_usuario: newActivityEntry.id_usuario})
+					await transactionalEntityManager.save(newVisibility);
+				}
 				return createdPlan;
 			},
 		);
