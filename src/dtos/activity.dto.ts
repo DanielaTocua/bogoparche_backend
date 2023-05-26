@@ -58,6 +58,10 @@ export class NewActivityEntryDTO {
 
 	@Expose()
 	es_aprobado: boolean;
+
+	@Expose()
+	@IsOptional()
+	id_related_public_activity: number;
 }
 
 export class ActivityUpdateDTO {

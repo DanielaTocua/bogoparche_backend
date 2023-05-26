@@ -10,6 +10,7 @@ import { Activity } from "../entity/Activity";
 import { Plan } from "../entity/Plan";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
+import { RelatedActivity } from "../entity/RelatedActivity";
 
 class PlanService {
 	// Find Plan by Id
@@ -47,12 +48,24 @@ class PlanService {
 					newActivity,
 				);
 
+				if (createdActivity.es_privada){
+					if (typeof(newActivityEntry.id_related_public_activity)!="undefined"){
+						const newRelation = RelatedActivity.create({
+							id_actividad_privada: createdActivity.id,
+							id_actividad_publica: newActivityEntry.id_related_public_activity
+						});
+						const createdRelation = await transactionalEntityManager.save(newRelation)
+					}
+				}
+
 				const newPlan = Plan.create({
 					id: createdActivity.id,
 					horario_plan: newPlanEntry.horario_plan,
 				});
 
 				const createdPlan = await transactionalEntityManager.save(newPlan);
+
+				
 				return createdPlan;
 			},
 		);
