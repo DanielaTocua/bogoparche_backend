@@ -1,68 +1,92 @@
-import { QueryResult } from "pg";
+import { instanceToPlain, plainToInstance } from "class-transformer";
 
-import pool from "../database/pool";
-import { NewPlanEntry, PlanEntry } from "../dtos/activityTypes.dto";
+import { appDataSource } from "../dataSource";
+import {
+	NewActivityEntryDTO,
+	NewPlanEntryDTO,
+	PlanUpdateDTO,
+} from "../dtos/activity.dto";
+import { Activity } from "../entity/Activity";
+import { Plan } from "../entity/Plan";
+import { ServerError } from "../errors/server.error";
+import { STATUS_CODES } from "../utils/constants";
 
-// Find Plan by Id
-export const findPlanById = async (id: string): Promise<QueryResult<any>> => {
-	// Connects to the DB
-	const client = await pool.connect();
-	const result = await client.query(
-		`SELECT * FROM plan WHERE id_actividad = $1`,
-		[id],
-	);
-	client.release();
-	if (result.rowCount === 0) {
-		throw new Error(`No hay planes con el id ${id}`);
+class PlanService {
+	// Find Plan by Id
+	async findPlanById(id: number): Promise<any> {
+		if (typeof id != "number") {
+			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
+		}
+		try {
+			const plan = await Plan.findOneOrFail({
+				where: { id: id },
+			});
+			const planWithEsPlan = { ...plan, es_plan: true };
+			return planWithEsPlan;
+		} catch {
+			throw new ServerError(
+				`The plan id: ${id} does not exist`,
+				STATUS_CODES.BAD_REQUEST,
+			);
+		}
 	}
-	return result;
-};
 
-export const findPlanByTitulo = async (id: string): Promise<QueryResult<any>> => {
-	// Connects to the DB
-	const client = await pool.connect();
-	const result = await client.query(
-		`SELECT * FROM plan WHERE titulo_actividad= $1`,
-		[id],
-	);
-	client.release();
-	if (result.rowCount === 0) {
-		throw new Error(`No hay planes con el id ${id}`);
+	// Adds the id to the json
+	async addPlan(newPlanEntry: NewPlanEntryDTO): Promise<Plan> {
+		const newActivityEntry = plainToInstance(
+			NewActivityEntryDTO,
+			newPlanEntry,
+			{ excludeExtraneousValues: true },
+		);
+		return await appDataSource.manager.transaction(
+			async (transactionalEntityManager) => {
+				const newActivity = Activity.create(instanceToPlain(newActivityEntry));
+				console.log(newActivity);
+				const createdActivity = await transactionalEntityManager.save(
+					newActivity,
+				);
+
+				const newPlan = Plan.create({
+					id: createdActivity.id,
+					horario_plan: newPlanEntry.horario_plan,
+				});
+
+				const createdPlan = await transactionalEntityManager.save(newPlan);
+				return createdPlan;
+			},
+		);
 	}
-	return result;
-};
 
-// Adds the id to the json
-export const addPlan = async (
-    newPlanEntry: NewPlanEntry): Promise<QueryResult<any>> => {
-        // Connects to the DB
-        const client = await pool.connect();
-        // Inserts Plan
-        const result = await client.query(
-            `INSERT INTO plan (titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto, es_privada, horario_plan, es_plan, id_categoria, es_aprobado) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id_actividad`,
-            [newPlanEntry.titulo_actividad, newPlanEntry.ubicacion, newPlanEntry.rango_precio, newPlanEntry.description, newPlanEntry.restriccion_edad, newPlanEntry.medio_contacto, newPlanEntry.es_privada, 
-            newPlanEntry.horario_plan, newPlanEntry.es_plan, newPlanEntry.id_categoria, newPlanEntry.es_aprobado],
-        );
-        client.release();
-    return result
+	// Edits Plan
+	async editPlan(id: number, planEntry: PlanUpdateDTO): Promise<Plan> {
+		// create a new query runner
+		const queryRunner = appDataSource.createQueryRunner();
+
+		// establish real database connection
+		await queryRunner.connect();
+
+		// open a new transaction:
+		await queryRunner.startTransaction();
+
+		const activityEntry = plainToInstance(NewActivityEntryDTO, planEntry, {
+			excludeExtraneousValues: true,
+		});
+
+		await Activity.update(id, instanceToPlain(activityEntry));
+		const planUpdateEntry = { horario_plan: planEntry.horario_plan };
+
+		if (!Object.values(planUpdateEntry).every((el) => el === undefined)) {
+			await Plan.update(id, planUpdateEntry);
+		}
+
+		// commit transaction
+		await queryRunner.commitTransaction();
+
+		// release query runner
+		await queryRunner.release();
+
+		return await Plan.findOneOrFail({ where: { id } });
+	}
 }
 
-export const editPlan = async (planEntry: PlanEntry): Promise<QueryResult<any>> => {
-        // Connects to the DB
-    const client = await pool.connect();
-        // Inserts Plan
-	const result = await client.query(
-            `UPDATE plan SET ubicacion=$2, rango_precio=$3, descripcion=$4, restriccion_edad=$5, medio_contacto=$6, es_privada=$7, horario_plan=$8, es_plan=$9, id_categoria=$10, es_aprobado=$11 WHERE id_actividad= $1`,
-            [planEntry.id_actividad, planEntry.ubicacion, planEntry.rango_precio, planEntry.description, planEntry.restriccion_edad, planEntry.medio_contacto, planEntry.es_privada, 
-				planEntry.horario_plan, planEntry.es_plan, planEntry.id_categoria, planEntry.es_aprobado]);
-			client.release();
-    return result;
-}
-
-// Deletes plan
-export const deletePlan = async (id: string): Promise<void> => {
-	const client = await pool.connect();
-	await client.query("DELETE FROM plan WHERE id_actividad = $1", [id]);
-	client.release();
-	return;
-};
+export default new PlanService();

@@ -1,22 +1,25 @@
 import express from "express";
 
-import loginController from "../controllers/login.controller";
-import registerController from "../controllers/register.controller";
+import AuthController from "../controllers/auth.controller";
+import { UserLoginDTO } from "../dtos/user.dto";
 import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
+import dtoValidationMiddleware from "../middlewares/dtoValidation.middleware";
+import refreshMiddleware from "../middlewares/refresh.middleware";
 
 const router = express.Router();
 // Routes for database
 // Configurar rutas
-router.post("/signup", asyncErrorMiddleware(registerController.registerUser));
 
-router.post("/login", asyncErrorMiddleware(loginController.loginUser));
+router.post(
+	"/login",
+	dtoValidationMiddleware(UserLoginDTO),
+	asyncErrorMiddleware(AuthController.login),
+);
 
-router.get("/login-success", (req, res) => {
-	res.send("Login successful");
-});
-
-router.get("/login-failure", (req, res) => {
-	res.send("Incorrect username or password");
-});
+router.post(
+	"/refresh",
+	refreshMiddleware,
+	asyncErrorMiddleware(AuthController.refreshToken),
+);
 
 export default router;
