@@ -21,7 +21,6 @@ class PlanService {
 		try {
 			const plan = await Plan.findOneOrFail({
 				where: { id: id },
-				relations: ["activity"],
 			});
 			const planWithEsPlan = { ...plan, es_plan: true };
 			return planWithEsPlan;

@@ -42,7 +42,8 @@ class ActivityController {
 	}
 
 	async getActivity(req: Request, res: Response): Promise<void> {
-		const result = await activityFacade.getActivity(parseInt(req.params.id));
+		const userId = req.userId ? req.userId : null;
+		const result = await activityFacade.getActivity(parseInt(req.params.id), userId);
 		res.json(result);
 	}
 

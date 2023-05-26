@@ -5,6 +5,8 @@ import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 import authMiddleware from "../middlewares/auth.middleware";
 import checkAccessMiddleware from "../middlewares/checkAccess.middleware";
 import idNumberValidationMiddleware from "../middlewares/idNumberValidation.middleware";
+import optionalAuthMiddleware from "../middlewares/optionalAuth.middleware";
+import validateAdminMiddleware from "../middlewares/validateAdmin.middleware";
 
 // import toNewActivityEntry from '../utils/utils_activity'
 
@@ -35,8 +37,16 @@ router
 router
 	.route("/:id")
 	.get(
-		[idNumberValidationMiddleware],
+		[optionalAuthMiddleware,  idNumberValidationMiddleware],
 		asyncErrorMiddleware(activityController.getActivity),
+	);
+
+
+router
+	.route("/approve/:id")
+	.put(
+		[authMiddleware, validateAdminMiddleware],
+		asyncErrorMiddleware(activityController.editApproved),
 	);
 
 // router

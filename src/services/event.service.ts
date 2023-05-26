@@ -18,7 +18,6 @@ class EventService {
 		try {
 			const event = await Event.findOneOrFail({
 				where: { id: id },
-				relations: ["activity"],
 			});
 			const eventWithEsPlan = { ...event, es_plan: false };
 			return eventWithEsPlan;
