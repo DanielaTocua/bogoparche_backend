@@ -5,6 +5,7 @@ export interface ActivityEntry {
 	id_actividad: number;
 	titulo_actividad: string;
 	ubicacion: string;
+	image: String;
 	rango_precio: RANGE_PRICES;
 	descripcion: string;
 	restriccion_edad: boolean;

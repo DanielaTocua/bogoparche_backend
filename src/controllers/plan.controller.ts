@@ -10,6 +10,9 @@ class PlanController {
 			{ ...req.body, es_plan: true, id_usuario: user_id },
 			req.isAdmin as boolean,
 		);
+		const relatedActivity = req.body.relatedActivity
+		if (typeof(relatedActivity)!="undefined"){
+		}
 		res.json({ id: result.id }).status(STATUS_CODES.OK);
 	}
 

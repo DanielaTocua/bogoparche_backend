@@ -11,6 +11,7 @@ import { Plan } from "../entity/Plan";
 import { Visibility } from "../entity/Visibility";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
+import { RelatedActivity } from "../entity/RelatedActivity";
 
 class PlanService {
 	// Find Plan by Id
@@ -46,6 +47,16 @@ class PlanService {
 				const createdActivity = await transactionalEntityManager.save(
 					newActivity,
 				);
+
+				if (createdActivity.es_privada){
+					if (typeof(newActivityEntry.id_related_public_activity)!="undefined"){
+						const newRelation = RelatedActivity.create({
+							id_actividad_privada: createdActivity.id,
+							id_actividad_publica: newActivityEntry.id_related_public_activity
+						});
+						const createdRelation = await transactionalEntityManager.save(newRelation)
+					}
+				}
 
 				const newPlan = Plan.create({
 					id: createdActivity.id,

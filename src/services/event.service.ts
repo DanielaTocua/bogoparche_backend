@@ -11,6 +11,7 @@ import { Event } from "../entity/Event";
 import { Visibility } from "../entity/Visibility";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
+import { RelatedActivity } from "../entity/RelatedActivity";
 
 class EventService {
 	// Find Event by Id
@@ -76,6 +77,17 @@ class EventService {
 				const createdActivity = await transactionalEntityManager.save(
 					newActivity,
 				);
+
+				if (createdActivity.es_privada){
+					if (typeof(newActivityEntry.id_related_public_activity)!="undefined"){
+						const newRelation = RelatedActivity.create({
+							id_actividad_privada: createdActivity.id,
+							id_actividad_publica: newActivityEntry.id_related_public_activity
+						}); 
+						const createdRelation = await transactionalEntityManager.save(newRelation)
+					}
+				}
+
 				const newEvent = Event.create({
 					id: createdActivity.id,
 					fecha_inicio: newEventEntry.fecha_inicio,
