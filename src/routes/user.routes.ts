@@ -14,4 +14,5 @@ router.post(
 	asyncErrorMiddleware(UserController.registerUser),
 );
 
+router.get("/usernames", asyncErrorMiddleware(UserController.getUsernames));
 export default router;

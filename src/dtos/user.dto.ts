@@ -35,3 +35,4 @@ export class UserRegisterDTO extends UserPublicDTO {
 	@Expose({ toClassOnly: true })
 	password: string;
 }
+

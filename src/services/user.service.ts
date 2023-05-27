@@ -35,5 +35,11 @@ class UserService {
 			excludeExtraneousValues: true,
 		});
 	}
+
+	async getUsernames(): Promise<string[]> {
+		const users = await User.find({select: ["username"]})
+		const usernames = users.map(user => user.username)
+		return usernames
+	}
 }
 export default new UserService();

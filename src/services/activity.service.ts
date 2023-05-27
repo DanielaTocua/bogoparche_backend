@@ -3,6 +3,7 @@ import { Activity } from "../entity/Activity";
 import { Category } from "../entity/Category";
 import { Favorite } from "../entity/Favorite";
 import { ServerError } from "../errors/server.error";
+import visibilityFacade from "../facades/visibility.facade";
 import { STATUS_CODES } from "../utils/constants";
 
 class ActivityService {
@@ -21,24 +22,31 @@ class ActivityService {
 		}
 	}
 
-	async findActivityDetailsById(id: number, userId:number|null): Promise<(Activity & { attendance: boolean; favorite: boolean })> {
+	async findActivityDetailsById(
+		id: number,
+		userId: number | null,
+	): Promise<Activity & { attendance: boolean; favorite: boolean }> {
 		if (typeof id != "number") {
 			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
 		}
-			const activity = (await appDataSource.manager.query(`SELECT activity.id,
+		const activity = await appDataSource.manager.query(
+			`SELECT activity.id,
 			CASE WHEN favorite.id_usuario IS NULL THEN false ELSE true END AS favorite,
 			CASE WHEN attendance.id_usuario IS NULL THEN false  ELSE true   END AS attendance,
 			titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad,
 			medio_contacto,id_categoria, activity.es_plan, es_privada
 			FROM activity LEFT JOIN favorite ON activity.id=favorite.id_actividad AND  favorite.id_usuario = $1
-			LEFT JOIN attendance ON activity.id=attendance.id_actividad AND  attendance.id_usuario = $1 WHERE activity.id = $2`,[userId,id])
-			) ;
-			if (activity.length == 0) {
-				throw new ServerError( "the activity does not exist", STATUS_CODES.BAD_REQUEST);
-			} else {
-				return activity[0];
-			}
-		
+			LEFT JOIN attendance ON activity.id=attendance.id_actividad AND  attendance.id_usuario = $1 WHERE activity.id = $2`,
+			[userId, id],
+		);
+		if (activity.length == 0) {
+			throw new ServerError(
+				"the activity does not exist",
+				STATUS_CODES.BAD_REQUEST,
+			);
+		} else {
+			return activity[0];
+		}
 	}
 
 	async findActivityByIdPrivate(
@@ -257,6 +265,28 @@ class ActivityService {
 		});
 		return foundFavorite === null ? true : false;
 	}
-
+	async checkVisibility(
+		id_usuario: number | null,
+		activity: Activity,
+	): Promise<void> {
+		if (activity.es_privada) {
+			if (id_usuario == null) {
+				throw new ServerError(
+					"This activity is private",
+					STATUS_CODES.BAD_REQUEST,
+				);
+			}
+			const visibility = await visibilityFacade.getVisibilityGroup(activity.id);
+			const visibilityIds = visibility.map(
+				(visibility) => visibility.id_usuario,
+			);
+			if (!visibilityIds.includes(id_usuario)) {
+				throw new ServerError(
+					"This activity is private",
+					STATUS_CODES.BAD_REQUEST,
+				);
+			}
+		}
+	}
 }
 export default new ActivityService();
