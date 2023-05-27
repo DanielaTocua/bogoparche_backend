@@ -21,6 +21,11 @@ export class NewActivityEntryDTO {
 	@Expose()
 	titulo_actividad: string;
 
+	@IsString()
+	@Expose()
+	@IsOptional()
+	image:string;
+
 	@IsNotEmpty()
 	@IsString()
 	@Expose()
@@ -74,6 +79,11 @@ export class ActivityUpdateDTO {
 	@Expose()
 	@IsOptional()
 	ubicacion: string;
+
+	@IsString()
+	@Expose()
+	@IsOptional()
+	image:string;
 
 	@IsEnum(RANGE_PRICES)
 	@Expose()
