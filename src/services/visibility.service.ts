@@ -12,8 +12,8 @@ class VisibilityService {
 	}
 
 	async findVisibilityGroup(id_actividad: number) {
-		const visibilityList = await Visibility.findBy({id_actividad });
-		return visibilityList  ;
+		const visibilityList = await Visibility.findBy({ id_actividad });
+		return visibilityList;
 	}
 
 	async deleteVisibility(visibility: Visibility): Promise<void> {

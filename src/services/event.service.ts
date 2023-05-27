@@ -85,10 +85,13 @@ class EventService {
 				});
 				const createdEvent = await transactionalEntityManager.save(newEvent);
 				if (newEventEntry.es_privada) {
-					const newVisibility = Visibility.create({id_actividad: createdActivity.id, id_usuario: newActivityEntry.id_usuario})
+					const newVisibility = Visibility.create({
+						id_actividad: createdActivity.id,
+						id_usuario: newActivityEntry.id_usuario,
+					});
 					await transactionalEntityManager.save(newVisibility);
 				}
-				
+
 				return createdEvent;
 			},
 		);

@@ -5,8 +5,6 @@ import eventService from "../services/event.service";
 import planService from "../services/plan.service";
 
 class ActivityFacade {
-
-	
 	async deleteActivity(id: number): Promise<Activity> {
 		const activity = await activityService.findActivityById(id);
 		const result = await activityService.deleteActivity(activity);
@@ -19,11 +17,9 @@ class ActivityFacade {
 		return result;
 	}
 
-	async getActivity(id: number, userId:number|null): Promise<any> {
-		
-		
-		const activity = await activityService.findActivityDetailsById(id,userId);
-		await activityService.checkVisibility(userId, activity)
+	async getActivity(id: number, userId: number | null): Promise<any> {
+		const activity = await activityService.findActivityDetailsById(id, userId);
+		await activityService.checkVisibility(userId, activity);
 		const comments = await commentService.getComments(id, userId);
 		if (activity.es_plan) {
 			const plan = await planService.findPlanById(id);

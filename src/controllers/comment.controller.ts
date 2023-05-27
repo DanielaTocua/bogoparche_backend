@@ -20,10 +20,7 @@ class CommentController {
 
 	async deleteComment(req: Request, res: Response): Promise<void> {
 		const id_comentario = parseInt(req.params.id);
-		await commentFacade.deleteComment(
-			id_comentario,
-			req.userId as number,
-		);
+		await commentFacade.deleteComment(id_comentario, req.userId as number);
 		res.json({ msg: "Comment succesfully deleted" });
 	}
 }

@@ -6,19 +6,22 @@ import { STATUS_CODES } from "../utils/constants";
 
 class VisibilityFacade {
 	async addVisibility(
-		id_usuario: number,
+		username: string,
 		id_actividad: number,
 	): Promise<{ msg: string }> {
-		const user = await User.findBy({ id: id_usuario });
+		const user = (await User.findBy({ username }))[0];
 
 		if (user === null) {
-			throw new ServerError( "This user does not exist", STATUS_CODES.BAD_REQUEST);
+			throw new ServerError(
+				"This user does not exist",
+				STATUS_CODES.BAD_REQUEST,
+			);
 		}
-				
-		if (await visibilityService.findVisibilityById(id_usuario, id_actividad)) {
+
+		if (await visibilityService.findVisibilityById(user.id, id_actividad)) {
 			return { msg: "This visibility already exists" };
 		}
-		visibilityService.addVisibility(id_usuario, id_actividad);
+		visibilityService.addVisibility(user.id, id_actividad);
 
 		return { msg: "Visibility succesfully added" };
 	}
@@ -40,14 +43,13 @@ class VisibilityFacade {
 		visibilityService.deleteVisibility(visibility);
 	}
 
-
-	async getVisibilityGroup(id_actividad: number){
+	async getVisibilityGroup(id_actividad: number) {
 		return await visibilityService.findVisibilityGroup(id_actividad);
 	}
 
-	async addVisibilityGroup(users: number[], id_actividad: number){
+	async addVisibilityGroup(users: string[], id_actividad: number) {
 		await activityService.findActivityById(id_actividad);
-		for(let i = 0; i < users.length; i++){
+		for (let i = 0; i < users.length; i++) {
 			await this.addVisibility(users[i], id_actividad);
 		}
 	}

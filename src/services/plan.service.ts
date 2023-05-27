@@ -55,7 +55,10 @@ class PlanService {
 				const createdPlan = await transactionalEntityManager.save(newPlan);
 
 				if (newPlanEntry.es_privada) {
-					const newVisibility = Visibility.create({id_actividad: createdActivity.id, id_usuario: newActivityEntry.id_usuario})
+					const newVisibility = Visibility.create({
+						id_actividad: createdActivity.id,
+						id_usuario: newActivityEntry.id_usuario,
+					});
 					await transactionalEntityManager.save(newVisibility);
 				}
 				return createdPlan;

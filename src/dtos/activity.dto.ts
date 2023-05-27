@@ -181,7 +181,7 @@ export class PlanUpdateDTO extends ActivityUpdateDTO {
 }
 
 export class UserListDTO {
-	@IsNumber({},{each: true})
+	@IsString({ each: true })
 	@Expose()
-	users: number[];
+	users: string[];
 }

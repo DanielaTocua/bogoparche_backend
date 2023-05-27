@@ -4,6 +4,9 @@ class UserFacade {
 	async registerUser(user: UserRegisterDTO): Promise<UserPublicDTO> {
 		return await UserService.registerUser(user);
 	}
+	async getUsernames(): Promise<string[]> {
+		return await UserService.getUsernames();
+	}
 }
 
 export default new UserFacade();
