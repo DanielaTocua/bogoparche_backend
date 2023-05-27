@@ -8,6 +8,7 @@ import {
 	IsNumber,
 	IsOptional,
 	IsString,
+	MaxLength,
 } from "class-validator";
 
 import { RANGE_PRICES } from "../utils/constants";
@@ -24,6 +25,7 @@ export class NewActivityEntryDTO {
 	@IsString()
 	@Expose()
 	@IsOptional()
+	@MaxLength(600000)
 	image:string;
 
 	@IsNotEmpty()
