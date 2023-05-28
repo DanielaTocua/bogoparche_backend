@@ -188,7 +188,7 @@ class ActivityService {
 	}
 
 	filterByPrices(rangePrices: string[], filtered: Activity[]) {
-		const filteredByPrice: any[] = [];
+		const filteredByPrice: Activity[] = [];
 		if (rangePrices.length != 0) {
 			for (let i = 0; i < rangePrices.length; i++) {
 				const filteredPriceI = filtered.filter(
