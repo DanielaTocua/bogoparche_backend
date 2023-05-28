@@ -29,9 +29,12 @@ class ActivityService {
 			CASE WHEN favorite.id_usuario IS NULL THEN false ELSE true END AS favorite,
 			CASE WHEN attendance.id_usuario IS NULL THEN false  ELSE true   END AS attendance,
 			titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad,
-			medio_contacto,id_categoria, activity.es_plan, es_privada
-			FROM activity LEFT JOIN favorite ON activity.id=favorite.id_actividad AND  favorite.id_usuario = $1
-			LEFT JOIN attendance ON activity.id=attendance.id_actividad AND  attendance.id_usuario = $1 WHERE activity.id = $2`,[userId,id])
+			medio_contacto,id_categoria, activity.es_plan, es_privada, id_actividad_publica
+			FROM activity 
+			LEFT JOIN favorite ON activity.id=favorite.id_actividad AND  favorite.id_usuario = $1
+			LEFT JOIN attendance ON activity.id=attendance.id_actividad AND attendance.id_usuario = $1 
+			LEFT JOIN relatedactivity ON activity.id=relatedactivity.id_actividad_privada
+			WHERE activity.id = $2`,[userId,id])
 			) ;
 			if (activity.length == 0) {
 				throw new ServerError( "the activity does not exist", STATUS_CODES.BAD_REQUEST);
@@ -98,7 +101,11 @@ class ActivityService {
 	async findUserPrivate(id: number): Promise<Activity[]> {
 		console.log("IN FIND USER PRIVATE");
 		const privateActivities = (await appDataSource.manager.query(
-			`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada FROM activity WHERE es_privada IS true AND id_usuario = $1`,
+			`SELECT id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada, id_actividad_publica 
+			FROM 
+			(SELECT * FROM activity WHERE es_privada IS true AND id_usuario = $1) AS activity
+			LEFT JOIN relatedactivity 
+			ON activity.id = relatedactivity.id_actividad_privada`,
 			[id],
 		)) as Activity[];
 		return privateActivities;

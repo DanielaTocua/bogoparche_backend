@@ -1,23 +1,20 @@
 import {
 	BaseEntity,
-	Column,
 	Entity,
 	JoinColumn,
 	ManyToOne,
-	PrimaryGeneratedColumn,
+	PrimaryColumn,
 } from "typeorm";
 
 import { Activity } from "./Activity";
 
 @Entity("relatedactivity")
 export class RelatedActivity extends BaseEntity {
-	@PrimaryGeneratedColumn()
-	id: number;
 
-	@Column({ name: "id_actividad_privada" })
+	@PrimaryColumn({ name: "id_actividad_privada" })
 	id_actividad_privada: number;
 
-	@Column({ name: "id_actividad_publica" })
+	@PrimaryColumn({ name: "id_actividad_publica" })
 	id_actividad_publica: number;
 
 	@ManyToOne((type) => Activity, { onDelete: "CASCADE" })
