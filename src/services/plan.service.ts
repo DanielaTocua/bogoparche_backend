@@ -10,12 +10,12 @@ import {
 import { Activity } from "../entity/Activity";
 import { Plan } from "../entity/Plan";
 import { RelatedActivity } from "../entity/RelatedActivity";
+import { User } from "../entity/User";
 import { Visibility } from "../entity/Visibility";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
-import imageService from "./image.service";
 import activityService from "./activity.service";
-import { User } from "../entity/User";
+import imageService from "./image.service";
 
 class PlanService {
 	// Find Plan by Id
@@ -137,6 +137,7 @@ class PlanService {
 						console.log(userID, visibilityExists  as unknown as boolean)
 					}
 				}
+				activityEntry.image = undefined;	
 			} else {
 				console.log("aaaa")
 				if (activityEntry.image) {

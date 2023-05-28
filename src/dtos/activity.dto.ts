@@ -89,7 +89,7 @@ export class ActivityUpdateDTO {
 	@IsString()
 	@Expose()
 	@IsOptional()
-	image: string;
+	image: string|undefined;
 
 	@IsEnum(RANGE_PRICES)
 	@Expose()

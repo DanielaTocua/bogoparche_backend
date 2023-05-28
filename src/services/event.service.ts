@@ -65,6 +65,7 @@ class EventService {
 						}
 					}
 				}
+				activityEntry.image = undefined;
 			} else {
 				if (eventEntry.image) {
 					const filePath = await imageService.uploadImage(eventEntry.image);
