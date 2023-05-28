@@ -12,6 +12,7 @@ import { Visibility } from "../entity/Visibility";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
 import { RelatedActivity } from "../entity/RelatedActivity";
+import imageService from "./image.service";
 
 class PlanService {
 	// Find Plan by Id
@@ -42,8 +43,11 @@ class PlanService {
 		);
 		return await appDataSource.manager.transaction(
 			async (transactionalEntityManager) => {
+				const filePath = await imageService.uploadImage(newActivityEntry.image);
+				newActivityEntry.image = filePath;
+
 				const newActivity = Activity.create(instanceToPlain(newActivityEntry));
-				console.log(newActivity);
+
 				const createdActivity = await transactionalEntityManager.save(
 					newActivity,
 				);
@@ -72,6 +76,8 @@ class PlanService {
 					});
 					await transactionalEntityManager.save(newVisibility);
 				}
+
+				await imageService.uploadImage(newActivityEntry.image);
 				return createdPlan;
 			},
 		);

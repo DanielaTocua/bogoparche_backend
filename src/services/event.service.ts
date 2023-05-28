@@ -12,6 +12,8 @@ import { Visibility } from "../entity/Visibility";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
 import { RelatedActivity } from "../entity/RelatedActivity";
+import imageService from "./image.service";
+
 
 class EventService {
 	// Find Event by Id
@@ -71,8 +73,15 @@ class EventService {
 			newEventEntry,
 			{ excludeExtraneousValues: true },
 		);
+
+
 		return await appDataSource.manager.transaction(
 			async (transactionalEntityManager) => {
+
+				const filePath = await imageService.uploadImage(newActivityEntry.image);
+				newActivityEntry.image = filePath;
+				
+
 				const newActivity = Activity.create(instanceToPlain(newActivityEntry));
 				const createdActivity = await transactionalEntityManager.save(
 					newActivity,
@@ -104,7 +113,12 @@ class EventService {
 					await transactionalEntityManager.save(newVisibility);
 				}
 
+				
+				
 				return createdEvent;
+
+
+
 			},
 		);
 	}

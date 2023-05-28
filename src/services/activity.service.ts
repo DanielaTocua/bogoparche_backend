@@ -5,6 +5,7 @@ import { Favorite } from "../entity/Favorite";
 import { ServerError } from "../errors/server.error";
 import visibilityFacade from "../facades/visibility.facade";
 import { STATUS_CODES } from "../utils/constants";
+import imageService from "./image.service";
 
 class ActivityService {
 	async findActivityById(id: number): Promise<Activity> {
@@ -29,7 +30,7 @@ class ActivityService {
 		if (typeof id != "number") {
 			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
 		}
-		const activity = await appDataSource.manager.query(
+		let foundActivity = await appDataSource.manager.query(
 			`SELECT activity.id,
 			CASE WHEN favorite.id_usuario IS NULL THEN false ELSE true END AS favorite,
 			CASE WHEN attendance.id_usuario IS NULL THEN false  ELSE true   END AS attendance,
@@ -39,13 +40,15 @@ class ActivityService {
 			LEFT JOIN attendance ON activity.id=attendance.id_actividad AND  attendance.id_usuario = $1 WHERE activity.id = $2`,
 			[userId, id],
 		);
-		if (activity.length == 0) {
+		if (foundActivity.length == 0) {
 			throw new ServerError(
 				"the activity does not exist",
 				STATUS_CODES.BAD_REQUEST,
 			);
 		} else {
-			return activity[0];
+			const activity = foundActivity[0];
+			activity.image = await imageService.getBase64Image(activity.image);
+			return activity;
 		}
 	}
 

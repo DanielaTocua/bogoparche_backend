@@ -22,7 +22,7 @@ export class Activity extends BaseEntity {
 	@Column("varchar", { length: 200 })
 	titulo_actividad: string;
 
-	@Column("varchar", {length: 600000})
+	@Column("varchar", {length: 200})
 	image: string;
 
 	@Column("varchar", { length: 200 })
