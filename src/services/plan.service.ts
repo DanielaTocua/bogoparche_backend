@@ -13,6 +13,7 @@ import { Visibility } from "../entity/Visibility";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
 import imageService from "./image.service";
+import activityService from "./activity.service";
 
 class PlanService {
 	// Find Plan by Id
@@ -105,6 +106,14 @@ class PlanService {
 		});
 
 		try {
+
+			const oldActivity = await activityService.findActivityById(id);
+			
+			if (activityEntry.image) {
+				const filePath = await imageService.uploadImage(activityEntry.image);
+				activityEntry.image = filePath;
+				imageService.deleteImage(oldActivity.image);
+			}
 			await Activity.update(id, instanceToPlain(activityEntry));
 			const planUpdateEntry = { horario_plan: planEntry.horario_plan };
 
