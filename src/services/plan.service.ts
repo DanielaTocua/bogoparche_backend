@@ -66,18 +66,21 @@ class PlanService {
 						id_usuario: newActivityEntry.id_usuario,
 					});
 					await transactionalEntityManager.save(newVisibility);
-					if (newPlanEntry.users.length > 0){
-						const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: newPlanEntry.users}).getMany()
-						for (const userID of userIDs){
-							const newVisibility = Visibility.create({
-								id_actividad: createdActivity.id,
-								id_usuario: userID.id,
-							});
-							console.log(newVisibility)
-							await transactionalEntityManager.save(newVisibility);
+					if (newPlanEntry.users){
+
+						if (newPlanEntry.users.length > 0){
+							const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: newPlanEntry.users}).getMany()
+							for (const userID of userIDs){
+								const newVisibility = Visibility.create({
+									id_actividad: createdActivity.id,
+									id_usuario: userID.id,
+								});
+								console.log(newVisibility)
+								await transactionalEntityManager.save(newVisibility);
+							}
 						}
 					}
-					if (
+						if (
 						typeof newActivityEntry.id_related_public_activity != "undefined"
 					) {
 						const newRelation = RelatedActivity.create({
