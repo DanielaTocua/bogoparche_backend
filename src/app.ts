@@ -15,6 +15,7 @@ import filterRoutes from "./routes/filter.routes";
 import helloRoutes from "./routes/hello.routes";
 import planRoutes from "./routes/plan.routes";
 import userRoutes from "./routes/user.routes";
+import visibilityRoutes from "./routes/visibility.routes";
 export class App {
 	private readonly _app: Application;
 
@@ -31,7 +32,7 @@ export class App {
 	private initMiddlewares() {
 		this._app.use(cors());
 		this._app.use(helmet());
-		this._app.use(express.json());
+		this._app.use(express.json({ limit: "50mb"}));
 		this._app.use(express.urlencoded({ extended: true }));
 
 		this._app.use("/api/activity", activitiesRoutes);
@@ -40,6 +41,7 @@ export class App {
 		this._app.use("/api/event", eventRoutes);
 		this._app.use("/api/favorite", favoriteRoutes);
 		this._app.use("/api/attendance", attendanceRoutes);
+		this._app.use("/api/visibility", visibilityRoutes);
 		this._app.use("/api/category", categoriesRoutes);
 		this._app.use("/api/comment", commentRoutes);
 		this._app.use("/api/auth", authRoutes);

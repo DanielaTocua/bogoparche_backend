@@ -8,6 +8,7 @@ import {
 	IsNumber,
 	IsOptional,
 	IsString,
+	MaxLength,
 } from "class-validator";
 
 import { RANGE_PRICES } from "../utils/constants";
@@ -20,6 +21,12 @@ export class NewActivityEntryDTO {
 	@IsString()
 	@Expose()
 	titulo_actividad: string;
+
+	@IsString()
+	@Expose()
+	@IsOptional()
+	@MaxLength(600000)
+	image: string|undefined;
 
 	@IsNotEmpty()
 	@IsString()
@@ -62,6 +69,10 @@ export class NewActivityEntryDTO {
 	@Expose()
 	@IsOptional()
 	id_related_public_activity: number;
+
+	@Expose()
+	@IsOptional()
+	users: string[] ;	
 }
 
 export class ActivityUpdateDTO {
@@ -74,6 +85,11 @@ export class ActivityUpdateDTO {
 	@Expose()
 	@IsOptional()
 	ubicacion: string;
+
+	@IsString()
+	@Expose()
+	@IsOptional()
+	image: string|undefined;
 
 	@IsEnum(RANGE_PRICES)
 	@Expose()
@@ -113,6 +129,11 @@ export class ActivityUpdateDTO {
 	@IsOptional()
 	@IsBoolean()
 	es_aprobado: boolean;
+
+	@IsString({each: true})
+	@Exclude({toPlainOnly: true})
+	@IsOptional()
+	users: string[];
 }
 
 export class NewEventEntryDTO extends NewActivityEntryDTO {
@@ -182,4 +203,10 @@ export class PlanUpdateDTO extends ActivityUpdateDTO {
 	@Expose()
 	@IsOptional()
 	horario_plan: string;
+}
+
+export class UserListDTO {
+	@IsString({ each: true })
+	@Expose()
+	users: string[];
 }

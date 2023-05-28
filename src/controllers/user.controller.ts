@@ -12,6 +12,11 @@ class UserController {
 		const userPublicData = await UserFacade.registerUser(req.body);
 		res.json(userPublicData).status(STATUS_CODES.OK);
 	}
+
+	async getUsernames(req: Request, res: Response): Promise<void> {
+		const usernames = await UserFacade.getUsernames();
+		res.json(usernames).status(STATUS_CODES.OK);
+	}
 }
 
 export default new UserController();

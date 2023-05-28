@@ -22,6 +22,9 @@ export class Activity extends BaseEntity {
 	@Column("varchar", { length: 200 })
 	titulo_actividad: string;
 
+	@Column("varchar", { length: 200, nullable: true })
+	image: string;
+
 	@Column("varchar", { length: 200 })
 	ubicacion: string;
 

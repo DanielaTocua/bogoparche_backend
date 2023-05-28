@@ -37,10 +37,9 @@ router
 router
 	.route("/:id")
 	.get(
-		[optionalAuthMiddleware,  idNumberValidationMiddleware],
+		[optionalAuthMiddleware, idNumberValidationMiddleware],
 		asyncErrorMiddleware(activityController.getActivity),
 	);
-
 
 router
 	.route("/approve/:id")

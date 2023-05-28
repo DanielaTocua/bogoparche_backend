@@ -2,15 +2,20 @@ import { instanceToPlain, plainToInstance } from "class-transformer";
 
 import { appDataSource } from "../dataSource";
 import {
+	ActivityUpdateDTO,
 	NewActivityEntryDTO,
 	NewPlanEntryDTO,
 	PlanUpdateDTO,
 } from "../dtos/activity.dto";
 import { Activity } from "../entity/Activity";
 import { Plan } from "../entity/Plan";
+import { RelatedActivity } from "../entity/RelatedActivity";
+import { User } from "../entity/User";
+import { Visibility } from "../entity/Visibility";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
-import { RelatedActivity } from "../entity/RelatedActivity";
+import activityService from "./activity.service";
+import imageService from "./image.service";
 
 class PlanService {
 	// Find Plan by Id
@@ -41,19 +46,50 @@ class PlanService {
 		);
 		return await appDataSource.manager.transaction(
 			async (transactionalEntityManager) => {
+				if (newActivityEntry.image && !newPlanEntry.es_privada ){
+					const filePath = await imageService.uploadImage(newActivityEntry.image);
+				newActivityEntry.image = filePath;
+
+				} else {
+					newActivityEntry.image = undefined;
+				}
+
 				const newActivity = Activity.create(instanceToPlain(newActivityEntry));
-				console.log(newActivity);
+
 				const createdActivity = await transactionalEntityManager.save(
 					newActivity,
 				);
 
-				if (createdActivity.es_privada){
-					if (typeof(newActivityEntry.id_related_public_activity)!="undefined"){
+				if (createdActivity.es_privada) {
+					const newVisibility = Visibility.create({
+						id_actividad: createdActivity.id,
+						id_usuario: newActivityEntry.id_usuario,
+					});
+					await transactionalEntityManager.save(newVisibility);
+					if (newPlanEntry.users){
+
+						if (newPlanEntry.users.length > 0){
+							const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: newPlanEntry.users}).getMany()
+							for (const userID of userIDs){
+								const newVisibility = Visibility.create({
+									id_actividad: createdActivity.id,
+									id_usuario: userID.id,
+								});
+								console.log(newVisibility)
+								await transactionalEntityManager.save(newVisibility);
+							}
+						}
+					}
+						if (
+						typeof newActivityEntry.id_related_public_activity != "undefined"
+					) {
 						const newRelation = RelatedActivity.create({
 							id_actividad_privada: createdActivity.id,
-							id_actividad_publica: newActivityEntry.id_related_public_activity
+							id_actividad_publica: newActivityEntry.id_related_public_activity,
 						});
-						const createdRelation = await transactionalEntityManager.save(newRelation)
+						const createdRelation = await transactionalEntityManager.save(
+							newRelation,
+						);
 					}
 				}
 
@@ -64,7 +100,6 @@ class PlanService {
 
 				const createdPlan = await transactionalEntityManager.save(newPlan);
 
-				
 				return createdPlan;
 			},
 		);
@@ -81,20 +116,60 @@ class PlanService {
 		// open a new transaction:
 		await queryRunner.startTransaction();
 
-		const activityEntry = plainToInstance(NewActivityEntryDTO, planEntry, {
+		const activityEntry = plainToInstance(ActivityUpdateDTO, planEntry, {
 			excludeExtraneousValues: true,
 		});
 
-		await Activity.update(id, instanceToPlain(activityEntry));
-		const planUpdateEntry = { horario_plan: planEntry.horario_plan };
+		try {
 
-		if (!Object.values(planUpdateEntry).every((el) => el === undefined)) {
-			await Plan.update(id, planUpdateEntry);
+			const oldActivity = await activityService.findActivityById(id);
+			
+			if (oldActivity.es_privada) {
+				
+				if (planEntry.users.length > 0){
+					const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select("user.id").where('user.username IN (:...usernames)', {usernames: planEntry.users}).getMany()
+					for (const userID of userIDs){
+						const visibilityExists = (await Visibility.find({where:{id_actividad: id, id_usuario: userID.id}}))
+						if (!visibilityExists[0]){
+							const newVisibility = Visibility.create({
+								id_actividad: id,
+								id_usuario: userID.id,
+							});
+							await newVisibility.save();
+						}
+						console.log(userID, visibilityExists  as unknown as boolean)
+					}
+				}
+				activityEntry.image = undefined;	
+			} else {
+				console.log("aaaa")
+				if (activityEntry.image) {
+					console.log("bbbb")
+					const filePath = await imageService.uploadImage(activityEntry.image);
+					activityEntry.image = filePath;
+					if (oldActivity.image){
+						imageService.deleteImage(oldActivity.image);
+					}
+				}
+			}
+			await Activity.update(id, instanceToPlain(activityEntry));
+			const planUpdateEntry = { horario_plan: planEntry.horario_plan };
+
+			if (!Object.values(planUpdateEntry).every((el) => el === undefined)) {
+				await Plan.update(id, planUpdateEntry);
+			}
+			
+			// commit transaction
+			await queryRunner.commitTransaction();
+		} catch (err) {
+			// rollback changes we made
+			await queryRunner.rollbackTransaction();
+			await queryRunner.release();
+			throw new ServerError(
+				"There's been an error, try again later",
+				STATUS_CODES.BAD_REQUEST,
+			);
 		}
-
-		// commit transaction
-		await queryRunner.commitTransaction();
-
 		// release query runner
 		await queryRunner.release();
 

@@ -2,15 +2,20 @@ import { instanceToPlain, plainToInstance } from "class-transformer";
 
 import { appDataSource } from "../dataSource";
 import {
+	ActivityUpdateDTO,
 	EventUpdateDTO,
 	NewActivityEntryDTO,
 	NewEventEntryDTO,
 } from "../dtos/activity.dto";
 import { Activity } from "../entity/Activity";
 import { Event } from "../entity/Event";
+import { RelatedActivity } from "../entity/RelatedActivity";
+import { Visibility } from "../entity/Visibility";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
-import { RelatedActivity } from "../entity/RelatedActivity";
+import activityService from "./activity.service";
+import imageService from "./image.service";
+import { User } from "../entity/User";
 
 class EventService {
 	// Find Event by Id
@@ -39,24 +44,60 @@ class EventService {
 		// open a new transaction:
 		await queryRunner.startTransaction();
 
-		const activityEntry = plainToInstance(NewActivityEntryDTO, eventEntry, {
+		const activityEntry = plainToInstance(ActivityUpdateDTO, eventEntry, {
 			excludeExtraneousValues: true,
 		});
+		try {
+			const oldActivity = await activityService.findActivityById(id);
+			if (oldActivity.es_privada) {
+				
+				
+				if (eventEntry.users.length > 0){
+					const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: eventEntry.users}).getMany()
+					for (const userID of userIDs){
+						const visibilityExists = (await Visibility.find({where:{id_actividad: id, id_usuario: userID.id}}))
+						if (!visibilityExists[0]){
+							const newVisibility = Visibility.create({
+								id_actividad: id,
+								id_usuario: userID.id,
+							});
+							await newVisibility.save();
+						}
+					}
+				}
+				activityEntry.image = undefined;
+			} else {
+				if (eventEntry.image) {
+					const filePath = await imageService.uploadImage(eventEntry.image);
+					activityEntry.image = filePath;
+					if (oldActivity.image){
+						imageService.deleteImage(oldActivity.image);
+					}
+				}
+			}
+			await Activity.update(id, instanceToPlain(activityEntry));
+			const eventUpdateEntry = {
+				fecha_inicio: eventEntry.fecha_inicio,
+				fecha_fin: eventEntry.fecha_fin,
+				hora_inicio: eventEntry.hora_inicio,
+				hora_fin: eventEntry.hora_fin,
+			};
 
-		await Activity.update(id, instanceToPlain(activityEntry));
-		const eventUpdateEntry = {
-			fecha_inicio: eventEntry.fecha_inicio,
-			fecha_fin: eventEntry.fecha_fin,
-			hora_inicio: eventEntry.hora_inicio,
-			hora_fin: eventEntry.hora_fin,
-		};
+			if (!Object.values(eventUpdateEntry).every((el) => el === undefined)) {
+				await Event.update(id, eventUpdateEntry);
+			}
 
-		if (!Object.values(eventUpdateEntry).every((el) => el === undefined)) {
-			await Event.update(id, eventUpdateEntry);
+			// commit transaction
+			await queryRunner.commitTransaction();
+		} catch (err) {
+			// rollback changes we made
+			await queryRunner.rollbackTransaction();
+			await queryRunner.release();
+			throw new ServerError(
+				"There's been an error, try again later",
+				STATUS_CODES.BAD_REQUEST,
+			);
 		}
-
-		// commit transaction
-		await queryRunner.commitTransaction();
 		// release query runner
 		await queryRunner.release();
 
@@ -70,20 +111,54 @@ class EventService {
 			newEventEntry,
 			{ excludeExtraneousValues: true },
 		);
+		
+		
+
 		return await appDataSource.manager.transaction(
 			async (transactionalEntityManager) => {
+				if (newActivityEntry.image && !newEventEntry.es_privada ){
+					const filePath = await imageService.uploadImage(newActivityEntry.image);
+				newActivityEntry.image = filePath;
+
+				} else {
+					newActivityEntry.image = undefined;
+				}
+				
 				const newActivity = Activity.create(instanceToPlain(newActivityEntry));
 				const createdActivity = await transactionalEntityManager.save(
 					newActivity,
-				);
+					);
+					
+				if (createdActivity.es_privada) {
+					const newVisibility = Visibility.create({
+						id_actividad: createdActivity.id,
+						id_usuario: newActivityEntry.id_usuario,
+					});
+					await transactionalEntityManager.save(newVisibility);
+					if (newEventEntry.users){
+					
 
-				if (createdActivity.es_privada){
-					if (typeof(newActivityEntry.id_related_public_activity)!="undefined"){
+					if (newEventEntry.users.length > 0){
+						const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: newEventEntry.users}).getMany()
+						for (const userID of userIDs){
+							const newVisibility = Visibility.create({
+								id_actividad: createdActivity.id,
+								id_usuario: userID.id,
+							});
+							await transactionalEntityManager.save(newVisibility);
+						}
+					}
+				}
+					if (
+						typeof newActivityEntry.id_related_public_activity != "undefined"
+					) {
 						const newRelation = RelatedActivity.create({
 							id_actividad_privada: createdActivity.id,
-							id_actividad_publica: newActivityEntry.id_related_public_activity
-						}); 
-						const createdRelation = await transactionalEntityManager.save(newRelation)
+							id_actividad_publica: newActivityEntry.id_related_public_activity,
+						});
+						const createdRelation = await transactionalEntityManager.save(
+							newRelation,
+						);
 					}
 				}
 
@@ -95,6 +170,7 @@ class EventService {
 					hora_fin: newEventEntry.hora_fin,
 				});
 				const createdEvent = await transactionalEntityManager.save(newEvent);
+
 				return createdEvent;
 			},
 		);

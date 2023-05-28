@@ -24,5 +24,4 @@ export class RelatedActivity extends BaseEntity {
 	@ManyToOne((type) => Activity, { onDelete: "CASCADE" })
 	@JoinColumn({ name: "id_actividad_publica", referencedColumnName: "id" })
 	activity_public: Activity;
-
 }

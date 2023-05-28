@@ -5,15 +5,8 @@ import { NextFunction, Request, Response } from "express";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
 
-
-
-
-
-export default <T> (
-	dtoType: new () => T,
-	skipMissingProperties = false,
-) => {
-	return (req:Request, res:Response, next:NextFunction) => {
+export default <T>(dtoType: new () => T, skipMissingProperties = false) => {
+	return (req: Request, res: Response, next: NextFunction) => {
 		const dtoObj = plainToInstance(dtoType, req.body, {
 			excludeExtraneousValues: true,
 		});
