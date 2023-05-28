@@ -22,7 +22,6 @@ class EventFacade {
 		isAdmin: boolean,
 	): Promise<Event> {
 		// Creates an event
-		
 
 		let result: Event;
 		if (isAdmin) {

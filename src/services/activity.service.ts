@@ -30,7 +30,7 @@ class ActivityService {
 		if (typeof id != "number") {
 			throw new ServerError("Invalid id", STATUS_CODES.BAD_REQUEST);
 		}
-		let foundActivity = await appDataSource.manager.query(
+		const foundActivity = await appDataSource.manager.query(
 			`SELECT activity.id,
 			CASE WHEN favorite.id_usuario IS NULL THEN false ELSE true END AS favorite,
 			CASE WHEN attendance.id_usuario IS NULL THEN false  ELSE true   END AS attendance,

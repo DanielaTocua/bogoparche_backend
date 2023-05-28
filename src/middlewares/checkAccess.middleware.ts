@@ -5,11 +5,19 @@ import activityService from "../services/activity.service";
 import { STATUS_CODES } from "../utils/constants";
 
 export default async (req: Request, res: Response, next: NextFunction) => {
-	const activity = await activityService.findActivityById(
-		parseInt(req.params.id),
-	);
+	let activity
+	try{
+
+		activity = await activityService.findActivityById(
+			parseInt(req.params.id),
+		);
+	} catch (err){
+		next(err)
+		return
+	}
 
 	// checks if event is private
+
 	if (activity.es_privada) {
 		// checks if user is the owner of the event
 		if (activity.id_usuario !== req.userId)

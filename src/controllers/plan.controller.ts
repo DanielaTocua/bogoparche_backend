@@ -2,15 +2,17 @@ import { Request, Response } from "express";
 
 import planFacade from "../facades/plan.facade";
 import { STATUS_CODES } from "../utils/constants";
+import { SimpleConsoleLogger } from "typeorm";
 
 class PlanController {
 	async addPlan(req: Request, res: Response): Promise<void> {
+		console.log("a")
 		const user_id = req.userId;
 		const result = await planFacade.addPlan(
 			{ ...req.body, es_plan: true, id_usuario: user_id },
 			req.isAdmin as boolean,
 		);
-		const relatedActivity = req.body.relatedActivity
+		const relatedActivity = req.body.relatedActivity;
 		res.json({ id: result.id }).status(STATUS_CODES.OK);
 	}
 

@@ -26,7 +26,7 @@ export class NewActivityEntryDTO {
 	@Expose()
 	@IsOptional()
 	@MaxLength(600000)
-	image:string;
+	image: string;
 
 	@IsNotEmpty()
 	@IsString()
@@ -85,7 +85,7 @@ export class ActivityUpdateDTO {
 	@IsString()
 	@Expose()
 	@IsOptional()
-	image:string;
+	image: string;
 
 	@IsEnum(RANGE_PRICES)
 	@Expose()

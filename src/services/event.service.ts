@@ -8,12 +8,12 @@ import {
 } from "../dtos/activity.dto";
 import { Activity } from "../entity/Activity";
 import { Event } from "../entity/Event";
+import { RelatedActivity } from "../entity/RelatedActivity";
 import { Visibility } from "../entity/Visibility";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
-import { RelatedActivity } from "../entity/RelatedActivity";
+import activityService from "./activity.service";
 import imageService from "./image.service";
-
 
 class EventService {
 	// Find Event by Id
@@ -45,21 +45,39 @@ class EventService {
 		const activityEntry = plainToInstance(NewActivityEntryDTO, eventEntry, {
 			excludeExtraneousValues: true,
 		});
+		try {
+			const oldActivity = await activityService.findActivityById(id);
+			
+			if (activityEntry.image) {
+				
+				
+				const filePath = await imageService.uploadImage(activityEntry.image);
+				activityEntry.image = filePath;
+				imageService.deleteImage(oldActivity.image);
+			}
+			await Activity.update(id, instanceToPlain(activityEntry));
+			const eventUpdateEntry = {
+				fecha_inicio: eventEntry.fecha_inicio,
+				fecha_fin: eventEntry.fecha_fin,
+				hora_inicio: eventEntry.hora_inicio,
+				hora_fin: eventEntry.hora_fin,
+			};
 
-		await Activity.update(id, instanceToPlain(activityEntry));
-		const eventUpdateEntry = {
-			fecha_inicio: eventEntry.fecha_inicio,
-			fecha_fin: eventEntry.fecha_fin,
-			hora_inicio: eventEntry.hora_inicio,
-			hora_fin: eventEntry.hora_fin,
-		};
+			if (!Object.values(eventUpdateEntry).every((el) => el === undefined)) {
+				await Event.update(id, eventUpdateEntry);
+			}
 
-		if (!Object.values(eventUpdateEntry).every((el) => el === undefined)) {
-			await Event.update(id, eventUpdateEntry);
+			// commit transaction
+			await queryRunner.commitTransaction();
+		} catch (err) {
+			// rollback changes we made
+			await queryRunner.rollbackTransaction();
+			await queryRunner.release();
+			throw new ServerError(
+				"There's been an error, try again later",
+				STATUS_CODES.BAD_REQUEST,
+			);
 		}
-
-		// commit transaction
-		await queryRunner.commitTransaction();
 		// release query runner
 		await queryRunner.release();
 
@@ -74,12 +92,13 @@ class EventService {
 			{ excludeExtraneousValues: true },
 		);
 
-
 		return await appDataSource.manager.transaction(
 			async (transactionalEntityManager) => {
-
-				const filePath = await imageService.uploadImage(newActivityEntry.image);
+				if (newActivityEntry.image){
+					const filePath = await imageService.uploadImage(newActivityEntry.image);
 				newActivityEntry.image = filePath;
+
+				}
 				
 
 				const newActivity = Activity.create(instanceToPlain(newActivityEntry));
@@ -87,13 +106,17 @@ class EventService {
 					newActivity,
 				);
 
-				if (createdActivity.es_privada){
-					if (typeof(newActivityEntry.id_related_public_activity)!="undefined"){
+				if (createdActivity.es_privada) {
+					if (
+						typeof newActivityEntry.id_related_public_activity != "undefined"
+					) {
 						const newRelation = RelatedActivity.create({
 							id_actividad_privada: createdActivity.id,
-							id_actividad_publica: newActivityEntry.id_related_public_activity
-						}); 
-						const createdRelation = await transactionalEntityManager.save(newRelation)
+							id_actividad_publica: newActivityEntry.id_related_public_activity,
+						});
+						const createdRelation = await transactionalEntityManager.save(
+							newRelation,
+						);
 					}
 				}
 
@@ -113,12 +136,7 @@ class EventService {
 					await transactionalEntityManager.save(newVisibility);
 				}
 
-				
-				
 				return createdEvent;
-
-
-
 			},
 		);
 	}
