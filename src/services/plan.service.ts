@@ -122,13 +122,7 @@ class PlanService {
 			const oldActivity = await activityService.findActivityById(id);
 			
 			if (oldActivity.es_privada) {
-				if (planEntry.image) {
-					const filePath = await imageService.uploadImage(planEntry.image);
-					planEntry.image = filePath;
-					if (oldActivity.image){
-						imageService.deleteImage(oldActivity.image);
-					}
-				}
+				
 				if (planEntry.users.length > 0){
 					const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select("user.id").where('user.username IN (:...usernames)', {usernames: planEntry.users}).getMany()
 					for (const userID of userIDs){
@@ -143,7 +137,15 @@ class PlanService {
 						console.log(userID, visibilityExists  as unknown as boolean)
 					}
 				}
-			} 
+			} else {
+				if (planEntry.image) {
+					const filePath = await imageService.uploadImage(planEntry.image);
+					planEntry.image = filePath;
+					if (oldActivity.image){
+						imageService.deleteImage(oldActivity.image);
+					}
+				}
+			}
 			await Activity.update(id, instanceToPlain(activityEntry));
 			const planUpdateEntry = { horario_plan: planEntry.horario_plan };
 

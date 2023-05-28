@@ -111,7 +111,7 @@ class ActivityService {
 	async findUserPrivate(id: number): Promise<Activity[]> {
 		console.log("IN FIND USER PRIVATE");
 		const privateActivities = (await appDataSource.manager.query(
-			`SELECT  id, titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada FROM activity WHERE es_privada IS true AND id_usuario = $1`,
+			`SELECT  activity.id, titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada FROM activity WHERE es_privada IS true AND id_usuario = $1 LEFT JOIN visibility ON activity.id=visibility.id_actividad AND  visibility.id_usuario = $1`,
 			[id],
 		)) as Activity[];
 		return privateActivities;

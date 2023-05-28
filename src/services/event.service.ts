@@ -51,13 +51,7 @@ class EventService {
 			const oldActivity = await activityService.findActivityById(id);
 			if (oldActivity.es_privada) {
 				
-				if (eventEntry.image) {
-					const filePath = await imageService.uploadImage(eventEntry.image);
-					eventEntry.image = filePath;
-					if (oldActivity.image){
-						imageService.deleteImage(oldActivity.image);
-					}
-				}
+				
 				if (eventEntry.users.length > 0){
 					const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: eventEntry.users}).getMany()
 					for (const userID of userIDs){
@@ -69,6 +63,14 @@ class EventService {
 							});
 							await newVisibility.save();
 						}
+					}
+				}
+			} else {
+				if (eventEntry.image) {
+					const filePath = await imageService.uploadImage(eventEntry.image);
+					eventEntry.image = filePath;
+					if (oldActivity.image){
+						imageService.deleteImage(oldActivity.image);
 					}
 				}
 			}
