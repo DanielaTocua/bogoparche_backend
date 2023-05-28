@@ -2,6 +2,7 @@ import { instanceToPlain, plainToInstance } from "class-transformer";
 
 import { appDataSource } from "../dataSource";
 import {
+	ActivityUpdateDTO,
 	EventUpdateDTO,
 	NewActivityEntryDTO,
 	NewEventEntryDTO,
@@ -43,16 +44,33 @@ class EventService {
 		// open a new transaction:
 		await queryRunner.startTransaction();
 
-		const activityEntry = plainToInstance(NewActivityEntryDTO, eventEntry, {
+		const activityEntry = plainToInstance(ActivityUpdateDTO, eventEntry, {
 			excludeExtraneousValues: true,
 		});
 		try {
 			const oldActivity = await activityService.findActivityById(id);
-			
-			if (activityEntry.image && !oldActivity.es_privada) {
-				const filePath = await imageService.uploadImage(activityEntry.image);
-				activityEntry.image = filePath;
-				imageService.deleteImage(oldActivity.image);
+			if (oldActivity.es_privada) {
+				
+				if (eventEntry.image) {
+					const filePath = await imageService.uploadImage(eventEntry.image);
+					eventEntry.image = filePath;
+					if (oldActivity.image){
+						imageService.deleteImage(oldActivity.image);
+					}
+				}
+				if (eventEntry.users.length > 0){
+					const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: eventEntry.users}).getMany()
+					for (const userID of userIDs){
+						const visibilityExists = (await Visibility.find({where:{id_actividad: id, id_usuario: userID.id}}))
+						if (!visibilityExists[0]){
+							const newVisibility = Visibility.create({
+								id_actividad: id,
+								id_usuario: userID.id,
+							});
+							await newVisibility.save();
+						}
+					}
+				}
 			}
 			await Activity.update(id, instanceToPlain(activityEntry));
 			const eventUpdateEntry = {
@@ -113,15 +131,13 @@ class EventService {
 						id_usuario: newActivityEntry.id_usuario,
 					});
 					await transactionalEntityManager.save(newVisibility);
-					if (newEventEntry.users){
+					if (newEventEntry.users.length > 0){
 						const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: newEventEntry.users}).getMany()
 						for (const userID of userIDs){
 							const newVisibility = Visibility.create({
 								id_actividad: createdActivity.id,
 								id_usuario: userID.id,
 							});
-							console.log("AAA")
-							console.log(newVisibility)
 							await transactionalEntityManager.save(newVisibility);
 						}
 					}

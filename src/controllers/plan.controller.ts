@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 
 import planFacade from "../facades/plan.facade";
 import { STATUS_CODES } from "../utils/constants";
-import { SimpleConsoleLogger } from "typeorm";
 
 class PlanController {
 	async addPlan(req: Request, res: Response): Promise<void> {

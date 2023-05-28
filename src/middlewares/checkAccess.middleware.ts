@@ -12,6 +12,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 			parseInt(req.params.id),
 		);
 	} catch (err){
+		
 		next(err)
 		return
 	}
@@ -21,6 +22,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 	if (activity.es_privada) {
 		// checks if user is the owner of the event
 		if (activity.id_usuario !== req.userId)
+
 			next(
 				new ServerError(
 					"You don't have access to this activity",

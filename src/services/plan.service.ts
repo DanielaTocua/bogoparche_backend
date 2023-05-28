@@ -2,6 +2,7 @@ import { instanceToPlain, plainToInstance } from "class-transformer";
 
 import { appDataSource } from "../dataSource";
 import {
+	ActivityUpdateDTO,
 	NewActivityEntryDTO,
 	NewPlanEntryDTO,
 	PlanUpdateDTO,
@@ -65,7 +66,7 @@ class PlanService {
 						id_usuario: newActivityEntry.id_usuario,
 					});
 					await transactionalEntityManager.save(newVisibility);
-					if (newPlanEntry.users){
+					if (newPlanEntry.users.length > 0){
 						const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: newPlanEntry.users}).getMany()
 						for (const userID of userIDs){
 							const newVisibility = Visibility.create({
@@ -112,7 +113,7 @@ class PlanService {
 		// open a new transaction:
 		await queryRunner.startTransaction();
 
-		const activityEntry = plainToInstance(NewActivityEntryDTO, planEntry, {
+		const activityEntry = plainToInstance(ActivityUpdateDTO, planEntry, {
 			excludeExtraneousValues: true,
 		});
 
@@ -120,18 +121,36 @@ class PlanService {
 
 			const oldActivity = await activityService.findActivityById(id);
 			
-			if (activityEntry.image && !oldActivity.es_privada) {
-				const filePath = await imageService.uploadImage(activityEntry.image);
-				activityEntry.image = filePath;
-				imageService.deleteImage(oldActivity.image);
-			}
+			if (oldActivity.es_privada) {
+				if (planEntry.image) {
+					const filePath = await imageService.uploadImage(planEntry.image);
+					planEntry.image = filePath;
+					if (oldActivity.image){
+						imageService.deleteImage(oldActivity.image);
+					}
+				}
+				if (planEntry.users.length > 0){
+					const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select("user.id").where('user.username IN (:...usernames)', {usernames: planEntry.users}).getMany()
+					for (const userID of userIDs){
+						const visibilityExists = (await Visibility.find({where:{id_actividad: id, id_usuario: userID.id}}))
+						if (!visibilityExists[0]){
+							const newVisibility = Visibility.create({
+								id_actividad: id,
+								id_usuario: userID.id,
+							});
+							await newVisibility.save();
+						}
+						console.log(userID, visibilityExists  as unknown as boolean)
+					}
+				}
+			} 
 			await Activity.update(id, instanceToPlain(activityEntry));
 			const planUpdateEntry = { horario_plan: planEntry.horario_plan };
 
 			if (!Object.values(planUpdateEntry).every((el) => el === undefined)) {
 				await Plan.update(id, planUpdateEntry);
 			}
-
+			
 			// commit transaction
 			await queryRunner.commitTransaction();
 		} catch (err) {

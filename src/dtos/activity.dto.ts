@@ -72,7 +72,7 @@ export class NewActivityEntryDTO {
 
 	@Expose()
 	@IsOptional()
-	users: string[];	
+	users: string[] ;	
 }
 
 export class ActivityUpdateDTO {
@@ -87,7 +87,7 @@ export class ActivityUpdateDTO {
 	ubicacion: string;
 
 	@IsString()
-	@Expose()
+	@Exclude({toPlainOnly: true})
 	@IsOptional()
 	image: string;
 
@@ -130,7 +130,8 @@ export class ActivityUpdateDTO {
 	@IsBoolean()
 	es_aprobado: boolean;
 
-	@Expose()
+	@IsString({each: true})
+	@Exclude({toPlainOnly: true})
 	@IsOptional()
 	users: string[];
 }
