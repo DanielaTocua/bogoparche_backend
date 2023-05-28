@@ -14,6 +14,7 @@ import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
 import imageService from "./image.service";
 import activityService from "./activity.service";
+import { User } from "../entity/User";
 
 class PlanService {
 	// Find Plan by Id
@@ -37,7 +38,6 @@ class PlanService {
 
 	// Adds the id to the json
 	async addPlan(newPlanEntry: NewPlanEntryDTO): Promise<Plan> {
-		console.log(newPlanEntry);
 		const newActivityEntry = plainToInstance(
 			NewActivityEntryDTO,
 			newPlanEntry,
@@ -45,10 +45,12 @@ class PlanService {
 		);
 		return await appDataSource.manager.transaction(
 			async (transactionalEntityManager) => {
-				if (newActivityEntry.image){
+				if (newActivityEntry.image && !newPlanEntry.es_privada ){
 					const filePath = await imageService.uploadImage(newActivityEntry.image);
 				newActivityEntry.image = filePath;
 
+				} else {
+					newActivityEntry.image = undefined;
 				}
 
 				const newActivity = Activity.create(instanceToPlain(newActivityEntry));
@@ -58,6 +60,22 @@ class PlanService {
 				);
 
 				if (createdActivity.es_privada) {
+					const newVisibility = Visibility.create({
+						id_actividad: createdActivity.id,
+						id_usuario: newActivityEntry.id_usuario,
+					});
+					await transactionalEntityManager.save(newVisibility);
+					if (newPlanEntry.users){
+						const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: newPlanEntry.users}).getMany()
+						for (const userID of userIDs){
+							const newVisibility = Visibility.create({
+								id_actividad: createdActivity.id,
+								id_usuario: userID.id,
+							});
+							console.log(newVisibility)
+							await transactionalEntityManager.save(newVisibility);
+						}
+					}
 					if (
 						typeof newActivityEntry.id_related_public_activity != "undefined"
 					) {
@@ -78,13 +96,6 @@ class PlanService {
 
 				const createdPlan = await transactionalEntityManager.save(newPlan);
 
-				if (newPlanEntry.es_privada) {
-					const newVisibility = Visibility.create({
-						id_actividad: createdActivity.id,
-						id_usuario: newActivityEntry.id_usuario,
-					});
-					await transactionalEntityManager.save(newVisibility);
-				}
 				return createdPlan;
 			},
 		);
@@ -109,7 +120,7 @@ class PlanService {
 
 			const oldActivity = await activityService.findActivityById(id);
 			
-			if (activityEntry.image) {
+			if (activityEntry.image && !oldActivity.es_privada) {
 				const filePath = await imageService.uploadImage(activityEntry.image);
 				activityEntry.image = filePath;
 				imageService.deleteImage(oldActivity.image);

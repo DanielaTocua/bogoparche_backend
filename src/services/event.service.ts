@@ -14,6 +14,7 @@ import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
 import activityService from "./activity.service";
 import imageService from "./image.service";
+import { User } from "../entity/User";
 
 class EventService {
 	// Find Event by Id
@@ -48,7 +49,7 @@ class EventService {
 		try {
 			const oldActivity = await activityService.findActivityById(id);
 			
-			if (activityEntry.image) {
+			if (activityEntry.image && !oldActivity.es_privada) {
 				const filePath = await imageService.uploadImage(activityEntry.image);
 				activityEntry.image = filePath;
 				imageService.deleteImage(oldActivity.image);
@@ -92,10 +93,12 @@ class EventService {
 
 		return await appDataSource.manager.transaction(
 			async (transactionalEntityManager) => {
-				if (newActivityEntry.image){
+				if (newActivityEntry.image && !newEventEntry.es_privada ){
 					const filePath = await imageService.uploadImage(newActivityEntry.image);
 				newActivityEntry.image = filePath;
 
+				} else {
+					newActivityEntry.image = undefined;
 				}
 				
 
@@ -105,6 +108,23 @@ class EventService {
 				);
 
 				if (createdActivity.es_privada) {
+					const newVisibility = Visibility.create({
+						id_actividad: createdActivity.id,
+						id_usuario: newActivityEntry.id_usuario,
+					});
+					await transactionalEntityManager.save(newVisibility);
+					if (newEventEntry.users){
+						const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: newEventEntry.users}).getMany()
+						for (const userID of userIDs){
+							const newVisibility = Visibility.create({
+								id_actividad: createdActivity.id,
+								id_usuario: userID.id,
+							});
+							console.log("AAA")
+							console.log(newVisibility)
+							await transactionalEntityManager.save(newVisibility);
+						}
+					}
 					if (
 						typeof newActivityEntry.id_related_public_activity != "undefined"
 					) {
@@ -126,13 +146,6 @@ class EventService {
 					hora_fin: newEventEntry.hora_fin,
 				});
 				const createdEvent = await transactionalEntityManager.save(newEvent);
-				if (newEventEntry.es_privada) {
-					const newVisibility = Visibility.create({
-						id_actividad: createdActivity.id,
-						id_usuario: newActivityEntry.id_usuario,
-					});
-					await transactionalEntityManager.save(newVisibility);
-				}
 
 				return createdEvent;
 			},

@@ -6,7 +6,6 @@ import { SimpleConsoleLogger } from "typeorm";
 
 class PlanController {
 	async addPlan(req: Request, res: Response): Promise<void> {
-		console.log("a")
 		const user_id = req.userId;
 		const result = await planFacade.addPlan(
 			{ ...req.body, es_plan: true, id_usuario: user_id },

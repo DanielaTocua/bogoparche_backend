@@ -26,7 +26,7 @@ export class NewActivityEntryDTO {
 	@Expose()
 	@IsOptional()
 	@MaxLength(600000)
-	image: string;
+	image: string|undefined;
 
 	@IsNotEmpty()
 	@IsString()
@@ -69,6 +69,10 @@ export class NewActivityEntryDTO {
 	@Expose()
 	@IsOptional()
 	id_related_public_activity: number;
+
+	@Expose()
+	@IsOptional()
+	users: string[];	
 }
 
 export class ActivityUpdateDTO {
@@ -125,6 +129,10 @@ export class ActivityUpdateDTO {
 	@IsOptional()
 	@IsBoolean()
 	es_aprobado: boolean;
+
+	@Expose()
+	@IsOptional()
+	users: string[];
 }
 
 export class NewEventEntryDTO extends NewActivityEntryDTO {
