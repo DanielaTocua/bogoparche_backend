@@ -37,19 +37,19 @@ class VisibilityService {
 		newEvent_PlanEntry: NewPlanEntryDTO|NewEventEntryDTO)
 		:Promise<void>{
 		if (createdActivity.es_privada) {
-			const newVisibility = Visibility.create({
-				id_actividad: createdActivity.id,
-				id_usuario: newActivityEntry.id_usuario,
-			});
+			const newVisibility = this.addVisibility(
+				createdActivity.id,
+				newActivityEntry.id_usuario,
+			);
 			await transactionalEntityManager.save(newVisibility);
 			if (newEvent_PlanEntry.users){
 				if (newEvent_PlanEntry.users.length > 0){
 					const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: newEvent_PlanEntry.users}).getMany()
 					for (const userID of userIDs){
-						const newVisibility = Visibility.create({
-							id_actividad: createdActivity.id,
-							id_usuario: userID.id,
-						});
+						const newVisibility = this.addVisibility(
+							createdActivity.id,
+							userID.id,
+						);
 						await transactionalEntityManager.save(newVisibility);
 					}
 				}
