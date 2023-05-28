@@ -3,6 +3,7 @@ import activityService from "../services/activity.service";
 import commentService from "../services/comment.service";
 import eventService from "../services/event.service";
 import planService from "../services/plan.service";
+import visibilityService from "../services/visibility.service";
 
 class ActivityFacade {
 	async deleteActivity(id: number): Promise<Activity> {
@@ -21,12 +22,17 @@ class ActivityFacade {
 		const activity = await activityService.findActivityDetailsById(id, userId);
 		await activityService.checkVisibility(userId, activity);
 		const comments = await commentService.getComments(id, userId);
+		let users
+		if (activity.es_privada){
+			const visibility = await visibilityService.findVisibilityGroup(id);
+			users = visibility.map((visibility) => visibility.username);
+		}
 		if (activity.es_plan) {
 			const plan = await planService.findPlanById(id);
-			return { ...activity, ...plan, comments };
+			return { ...activity, ...plan, comments , users};
 		} else {
 			const event = await eventService.findEventById(id);
-			return { ...activity, ...event, comments };
+			return { ...activity, ...event, comments, users };
 		}
 	}
 

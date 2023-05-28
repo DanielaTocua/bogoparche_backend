@@ -17,7 +17,12 @@ class VisibilityService {
 	}
 
 	async findVisibilityGroup(id_actividad: number) {
-		const visibilityList = await Visibility.findBy({ id_actividad });
+		const visibilityList = await appDataSource.manager.query(`SELECT bgp_user.username, bgp_user.id as id_usuario
+		FROM activity INNER JOIN visibility ON activity.id=visibility.id_actividad
+		RIGHT JOIN bgp_user ON visibility.id_usuario=bgp_user.id  WHERE activity.id = $1`,
+		[id_actividad],) as {username: string, id_usuario:number}[];
+
+
 		return visibilityList;
 	}
 

@@ -163,6 +163,12 @@ class ActivityService {
 				LEFT JOIN attendance ON activity.id=attendance.id_actividad AND  attendance.id_usuario = $1 WHERE es_aprobado IS true AND es_privada IS false`,
 			[id],
 		)) as (Activity & { attendance: boolean; favorite: boolean })[];
+		for (const activity of publicActivities){
+			if(activity.image){
+				activity.image = await imageService.getBase64Image(activity.image);
+			}
+		}
+		
 		return publicActivities;
 	}
 
