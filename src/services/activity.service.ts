@@ -105,6 +105,11 @@ class ActivityService {
 		const publicActivities = (await appDataSource.manager.query(
 			`SELECT  id, titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada FROM activity WHERE es_aprobado IS true AND es_privada IS false`,
 		)) as Activity[];
+		for (const activity of publicActivities){
+			if(activity.image){
+				activity.image = await imageService.getBase64Image(activity.image);
+			}
+		}
 		return publicActivities;
 	}
 
