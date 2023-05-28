@@ -16,6 +16,7 @@ import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
 import activityService from "./activity.service";
 import imageService from "./image.service";
+import visibilityService from "./visibility.service";
 
 class PlanService {
 	// Find Plan by Id
@@ -46,52 +47,17 @@ class PlanService {
 		);
 		return await appDataSource.manager.transaction(
 			async (transactionalEntityManager) => {
-				if (newActivityEntry.image && !newPlanEntry.es_privada ){
-					const filePath = await imageService.uploadImage(newActivityEntry.image);
-				newActivityEntry.image = filePath;
-
-				} else {
-					newActivityEntry.image = undefined;
-				}
-
-				const newActivity = Activity.create(instanceToPlain(newActivityEntry));
-
-				const createdActivity = await transactionalEntityManager.save(
-					newActivity,
-				);
-
-				if (createdActivity.es_privada) {
-					const newVisibility = Visibility.create({
-						id_actividad: createdActivity.id,
-						id_usuario: newActivityEntry.id_usuario,
-					});
-					await transactionalEntityManager.save(newVisibility);
-					if (newPlanEntry.users){
-
-						if (newPlanEntry.users.length > 0){
-							const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: newPlanEntry.users}).getMany()
-							for (const userID of userIDs){
-								const newVisibility = Visibility.create({
-									id_actividad: createdActivity.id,
-									id_usuario: userID.id,
-								});
-								console.log(newVisibility)
-								await transactionalEntityManager.save(newVisibility);
-							}
-						}
-					}
-						if (
-						typeof newActivityEntry.id_related_public_activity != "undefined"
-					) {
-						const newRelation = RelatedActivity.create({
-							id_actividad_privada: createdActivity.id,
-							id_actividad_publica: newActivityEntry.id_related_public_activity,
-						});
-						const createdRelation = await transactionalEntityManager.save(
-							newRelation,
-						);
-					}
-				}
+				// Image
+				const newActivityEntryWithImage = await activityService.defineImageInActivityEntry(newActivityEntry,newPlanEntry)
+				
+				// Creates Activity
+				const createdActivity = await activityService.addActivity(transactionalEntityManager, newActivityEntryWithImage)
+					
+				// Creates Visibility
+				visibilityService.addVisibilityUsers(transactionalEntityManager,createdActivity,newActivityEntryWithImage,newPlanEntry)
+			
+				// Creates Related Activities
+				activityService.addRelatedActivity(transactionalEntityManager,createdActivity, newActivityEntryWithImage)
 
 				const newPlan = Plan.create({
 					id: createdActivity.id,

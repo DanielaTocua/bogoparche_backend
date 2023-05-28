@@ -1,3 +1,4 @@
+import { NewActivityEntryDTO, NewEventEntryDTO, NewPlanEntryDTO } from "../dtos/activity.dto";
 import { appDataSource } from "../dataSource";
 import { Activity } from "../entity/Activity";
 import { Category } from "../entity/Category";
@@ -6,6 +7,11 @@ import { ServerError } from "../errors/server.error";
 import visibilityFacade from "../facades/visibility.facade";
 import { STATUS_CODES } from "../utils/constants";
 import imageService from "./image.service";
+import { instanceToPlain, plainToInstance } from "class-transformer";
+import { EntityManager } from "typeorm";
+import { Visibility } from "../entity/Visibility";
+import { User } from "../entity/User";
+import { RelatedActivity } from "../entity/RelatedActivity";
 
 class ActivityService {
 	async findActivityById(id: number): Promise<Activity> {
@@ -208,21 +214,6 @@ class ActivityService {
 		return filtered;
 	}
 
-	/*
-	filterByFavorites(filtered: any[]) {
-		const filteredByCateg: any[] = [];
-				const id_categoria = (await this.findCategory(categories[i])).id;
-				const filteredCategI = filtered.filter(
-					(activity) => activity.id_categoria === id_categoria,
-				);
-				for (let n = 0; n < filteredCategI.length; n++) {
-					filteredByCateg.push(filteredCategI[n]);
-				}
-			filtered = filteredByCateg;
-		return filtered;
-	}
-	*/
-
 	searchByWords(search: string[], filtered: any[]) {
 		if (search.length != 0) {
 			for (let i = 0; i < search.length; i++) {
@@ -275,6 +266,7 @@ class ActivityService {
 		});
 		return foundFavorite === null ? true : false;
 	}
+
 	async checkVisibility(
 		id_usuario: number | null,
 		activity: Activity,
@@ -298,5 +290,52 @@ class ActivityService {
 			}
 		}
 	}
-}
+
+	async defineImageInActivityEntry(
+		newActivityEntry: NewActivityEntryDTO, 
+		newEvent_PlanEntry: NewPlanEntryDTO|NewEventEntryDTO)
+		:Promise<NewActivityEntryDTO>{
+		if (newActivityEntry.image && !newEvent_PlanEntry.es_privada ){
+			const filePath = await imageService.uploadImage(newActivityEntry.image);
+			newActivityEntry.image = filePath;
+		} else {
+			newActivityEntry.image = undefined;
+		}
+		return newActivityEntry
+	}
+
+	async addActivity(
+		transactionalEntityManager: EntityManager,
+		newActivityEntry: NewActivityEntryDTO)
+		:Promise<Activity>{
+
+		const newActivity = Activity.create(instanceToPlain(newActivityEntry));
+		const createdActivity = await transactionalEntityManager.save(
+			newActivity,
+			);
+		return createdActivity
+		}
+
+	async addRelatedActivity(
+		transactionalEntityManager: EntityManager,
+		createdActivity:Activity,
+		newActivityEntry: NewActivityEntryDTO,
+	){
+		if (createdActivity.es_privada) {
+			if (
+				typeof newActivityEntry.id_related_public_activity != "undefined"
+			) {
+				const newRelation = RelatedActivity.create({
+					id_actividad_privada: createdActivity.id,
+					id_actividad_publica: newActivityEntry.id_related_public_activity,
+				});
+				const createdRelation = await transactionalEntityManager.save(
+					newRelation,
+				);
+			}
+
+		}
+	}
+	
+	}
 export default new ActivityService();
