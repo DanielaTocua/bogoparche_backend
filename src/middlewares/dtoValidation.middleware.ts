@@ -21,7 +21,6 @@ export default <T>(dtoType: new () => T, skipMissingProperties = false) => {
 					next(new ServerError(dtoErrors, STATUS_CODES.BAD_REQUEST));
 				} else {
 					req.body = dtoObj;
-					console.log(req.body)
 					next();
 				}
 			},

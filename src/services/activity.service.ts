@@ -47,7 +47,9 @@ class ActivityService {
 			);
 		} else {
 			const activity = foundActivity[0];
-			activity.image = await imageService.getBase64Image(activity.image);
+			if(activity.image){
+				activity.image = await imageService.getBase64Image(activity.image);
+			}
 			return activity;
 		}
 	}
