@@ -68,7 +68,7 @@ class EventService {
 			} else {
 				if (eventEntry.image) {
 					const filePath = await imageService.uploadImage(eventEntry.image);
-					eventEntry.image = filePath;
+					activityEntry.image = filePath;
 					if (oldActivity.image){
 						imageService.deleteImage(oldActivity.image);
 					}

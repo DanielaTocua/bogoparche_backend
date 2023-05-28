@@ -138,9 +138,11 @@ class PlanService {
 					}
 				}
 			} else {
-				if (planEntry.image) {
-					const filePath = await imageService.uploadImage(planEntry.image);
-					planEntry.image = filePath;
+				console.log("aaaa")
+				if (activityEntry.image) {
+					console.log("bbbb")
+					const filePath = await imageService.uploadImage(activityEntry.image);
+					activityEntry.image = filePath;
 					if (oldActivity.image){
 						imageService.deleteImage(oldActivity.image);
 					}

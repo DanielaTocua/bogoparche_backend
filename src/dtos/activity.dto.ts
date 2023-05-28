@@ -87,7 +87,7 @@ export class ActivityUpdateDTO {
 	ubicacion: string;
 
 	@IsString()
-	@Exclude({toPlainOnly: true})
+	@Expose()
 	@IsOptional()
 	image: string;
 
