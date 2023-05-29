@@ -29,7 +29,7 @@ router
 router
 	.route("/:id")
 	.delete(
-		[authMiddleware, checkAccessMiddleware, idNumberValidationMiddleware],
+		[authMiddleware, idNumberValidationMiddleware],
 		asyncErrorMiddleware(visibilityController.deleteVisibility),
 	);
 

@@ -16,7 +16,7 @@ class VisibilityController {
 
 	async deleteVisibility(req: Request, res: Response): Promise<void> {
 		await visibilityFacade.deleteVisibility(
-			req.body.id_usuario as number,
+			req.userId as number,
 			parseInt(req.params.id),
 		);
 		res.json({ msg: "Visibility succesfully deleted" });
