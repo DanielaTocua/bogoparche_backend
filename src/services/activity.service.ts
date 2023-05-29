@@ -187,8 +187,8 @@ class ActivityService {
 		}
 	}
 
-	filterByPrices(rangePrices: string[], filtered: any[]) {
-		const filteredByPrice: any[] = [];
+	filterByPrices(rangePrices: string[], filtered: Activity[]) {
+		const filteredByPrice: Activity[] = [];
 		if (rangePrices.length != 0) {
 			for (let i = 0; i < rangePrices.length; i++) {
 				const filteredPriceI = filtered.filter(
@@ -203,7 +203,7 @@ class ActivityService {
 		return filtered;
 	}
 
-	async filterByCategory(categories: string[], filtered: any[]) {
+	async filterByCategory(categories: string[], filtered: Activity[]) {
 		const filteredByCateg: any[] = [];
 		if (categories.length != 0) {
 			for (let i = 0; i < categories.length; i++) {
@@ -220,7 +220,7 @@ class ActivityService {
 		return filtered;
 	}
 
-	searchByWords(search: string[], filtered: any[]) {
+	searchByWords(search: string[], filtered: Activity[]) {
 		if (search.length != 0) {
 			for (let i = 0; i < search.length; i++) {
 				filtered = filtered.filter(

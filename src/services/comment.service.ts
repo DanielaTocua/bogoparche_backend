@@ -6,7 +6,7 @@ import { STATUS_CODES } from "../utils/constants";
 
 class CommentPlanService {
 	// Find Plan by Id
-	async getComments(id_actividad: number, userId: number | null): Promise<any> {
+	async getComments(id_actividad: number, userId: number | null): Promise<Comment[]> {
 		const comments = await appDataSource.manager.query(
 			`SELECT id_comentario, texto_comentario, created_at, calificacion, bgp_user.username,
 		CASE WHEN bgp_user.id = $1 THEN true ELSE false END AS owned
