@@ -4,6 +4,8 @@ import { appDataSource } from "../dataSource";
 import { NewActivityEntryDTO, NewPlanEntryDTO, NewEventEntryDTO } from "../dtos/activity.dto";
 import { Activity } from "../entity/Activity";
 import { User } from "../entity/User";
+import { ServerError } from "../errors/server.error";
+import { STATUS_CODES } from "../utils/constants";
 
 class VisibilityService {
 	async addVisibility(id_usuario: number, id_actividad: number): Promise<void> {
@@ -13,6 +15,9 @@ class VisibilityService {
 
 	async findVisibilityById(id_usuario: number, id_actividad: number) {
 		const visibility = await Visibility.findOneBy({ id_usuario, id_actividad });
+		if (visibility === null) {
+			throw new ServerError("This visibility does not exist", STATUS_CODES.BAD_REQUEST);
+		}
 		return visibility;
 	}
 

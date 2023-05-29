@@ -48,23 +48,40 @@ class EventService {
 		const activityEntry = plainToInstance(ActivityUpdateDTO, eventEntry, {
 			excludeExtraneousValues: true,
 		});
+		const oldActivity = await activityService.findActivityById(id);
 		try {
-			const oldActivity = await activityService.findActivityById(id);
 			if (oldActivity.es_privada) {
 				
 				
+				const visibilityList = (await visibilityService.findVisibilityGroup(id)).map((visibility) => visibility.id_usuario);
+				let userIDs: number[] = [];
 				if (eventEntry.users.length > 0){
-					const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: eventEntry.users}).getMany()
-					for (const userID of userIDs){
-						const visibilityExists = (await Visibility.find({where:{id_actividad: id, id_usuario: userID.id}}))
-						if (!visibilityExists[0]){
-							const newVisibility = Visibility.create({
-								id_actividad: id,
-								id_usuario: userID.id,
-							});
-							await newVisibility.save();
-						}
+					userIDs = (await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: eventEntry.users}).getMany()).map((user) => user.id)
+				}
+				userIDs.push(oldActivity.id_usuario);
+
+							
+
+				const visibilityIDsToAdd = userIDs.filter((userID) => !visibilityList.includes(userID))
+
+				const visibilityIDsToDelete = visibilityList.filter((userID) => !userIDs.includes(userID)).filter( function (el) {
+					return el != oldActivity.id_usuario;
+				});
+
+
+				
+				for (const userID of visibilityIDsToAdd){
+					const visibilityExists = (await Visibility.find({where:{id_actividad: id, id_usuario: userID}}))
+					if (!visibilityExists[0]){
+						const newVisibility = Visibility.create({
+							id_actividad: id,
+							id_usuario: userID,
+						});
+						await newVisibility.save();
 					}
+				}
+				if (visibilityIDsToDelete.length > 0){
+					await appDataSource.createQueryBuilder().delete().from(Visibility).where("id_actividad = :id AND id_usuario IN (:...userIDs)", {id, userIDs: visibilityIDsToDelete}).execute();
 				}
 				activityEntry.image = undefined;
 			} else {
