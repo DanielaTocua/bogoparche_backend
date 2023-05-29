@@ -1,17 +1,19 @@
-import { NewActivityEntryDTO, NewEventEntryDTO, NewPlanEntryDTO } from "../dtos/activity.dto";
+import { instanceToPlain } from "class-transformer";
+
 import { appDataSource } from "../dataSource";
+import {
+	NewActivityEntryDTO,
+	NewEventEntryDTO,
+	NewPlanEntryDTO,
+} from "../dtos/activity.dto";
 import { Activity } from "../entity/Activity";
 import { Category } from "../entity/Category";
 import { Favorite } from "../entity/Favorite";
+import { RelatedActivity } from "../entity/RelatedActivity";
 import { ServerError } from "../errors/server.error";
 import visibilityFacade from "../facades/visibility.facade";
 import { STATUS_CODES } from "../utils/constants";
 import imageService from "./image.service";
-import { instanceToPlain, plainToInstance } from "class-transformer";
-import { EntityManager } from "typeorm";
-import { Visibility } from "../entity/Visibility";
-import { User } from "../entity/User";
-import { RelatedActivity } from "../entity/RelatedActivity";
 
 class ActivityService {
 	async findActivityById(id: number): Promise<Activity> {
@@ -40,6 +42,7 @@ class ActivityService {
 			`SELECT activity.id,
 			CASE WHEN favorite.id_usuario IS NULL THEN false ELSE true END AS favorite,
 			CASE WHEN attendance.id_usuario IS NULL THEN false  ELSE true   END AS attendance,
+			CASE WHEN activity.id_usuario  = $1 THEN true  ELSE false  END AS owned, 
 			titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad,
 			medio_contacto,id_categoria, activity.es_plan, es_privada, image
 			FROM activity LEFT JOIN favorite ON activity.id=favorite.id_actividad AND  favorite.id_usuario = $1
@@ -53,7 +56,7 @@ class ActivityService {
 			);
 		} else {
 			const activity = foundActivity[0];
-			if(activity.image){
+			if (activity.image) {
 				activity.image = await imageService.getBase64Image(activity.image);
 			}
 			return activity;
@@ -111,8 +114,8 @@ class ActivityService {
 		const publicActivities = (await appDataSource.manager.query(
 			`SELECT  id, titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada FROM activity WHERE es_aprobado IS true AND es_privada IS false`,
 		)) as Activity[];
-		for (const activity of publicActivities){
-			if(activity.image){
+		for (const activity of publicActivities) {
+			if (activity.image) {
 				activity.image = await imageService.getBase64Image(activity.image);
 			}
 		}
@@ -163,12 +166,12 @@ class ActivityService {
 				LEFT JOIN attendance ON activity.id=attendance.id_actividad AND  attendance.id_usuario = $1 WHERE es_aprobado IS true AND es_privada IS false`,
 			[id],
 		)) as (Activity & { attendance: boolean; favorite: boolean })[];
-		for (const activity of publicActivities){
-			if(activity.image){
+		for (const activity of publicActivities) {
+			if (activity.image) {
 				activity.image = await imageService.getBase64Image(activity.image);
 			}
 		}
-		
+
 		return publicActivities;
 	}
 
@@ -298,24 +301,22 @@ class ActivityService {
 	}
 
 	async defineImageInActivityEntry(
-		newActivityEntry: NewActivityEntryDTO, 
-		newEvent_PlanEntry: NewPlanEntryDTO|NewEventEntryDTO)
-		:Promise<NewActivityEntryDTO>{
-		if (newActivityEntry.image && !newEvent_PlanEntry.es_privada ){
+		newActivityEntry: NewActivityEntryDTO,
+		newEvent_PlanEntry: NewPlanEntryDTO | NewEventEntryDTO,
+	): Promise<NewActivityEntryDTO> {
+		if (newActivityEntry.image && !newEvent_PlanEntry.es_privada) {
 			const filePath = await imageService.uploadImage(newActivityEntry.image);
 			newActivityEntry.image = filePath;
 		} else {
 			newActivityEntry.image = undefined;
 		}
-		return newActivityEntry
+		return newActivityEntry;
 	}
 
-	async addActivity(
-		newActivityEntry: NewActivityEntryDTO)
-		:Promise<Activity>{
+	async addActivity(newActivityEntry: NewActivityEntryDTO): Promise<Activity> {
 		const newActivity = Activity.create(instanceToPlain(newActivityEntry));
-		return newActivity
-		}
+		return newActivity;
+	}
 
 	async addRelatedActivity(
 		createdActivity:Activity,

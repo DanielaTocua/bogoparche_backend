@@ -9,13 +9,12 @@ import {
 } from "../dtos/activity.dto";
 import { Activity } from "../entity/Activity";
 import { Event } from "../entity/Event";
-import { RelatedActivity } from "../entity/RelatedActivity";
+import { User } from "../entity/User";
 import { Visibility } from "../entity/Visibility";
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
 import activityService from "./activity.service";
 import imageService from "./image.service";
-import { User } from "../entity/User";
 import visibilityService from "./visibility.service";
 
 class EventService {
@@ -51,28 +50,39 @@ class EventService {
 		const oldActivity = await activityService.findActivityById(id);
 		try {
 			if (oldActivity.es_privada) {
-				
-				
-				const visibilityList = (await visibilityService.findVisibilityGroup(id)).map((visibility) => visibility.id_usuario);
+				const visibilityList = (
+					await visibilityService.findVisibilityGroup(id)
+				).map((visibility) => visibility.id_usuario);
 				let userIDs: number[] = [];
-				if (eventEntry.users.length > 0){
-					userIDs = (await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: eventEntry.users}).getMany()).map((user) => user.id)
+				if (eventEntry.users.length > 0) {
+					userIDs = (
+						await appDataSource
+							.getRepository(User)
+							.createQueryBuilder("user")
+							.select("user.id")
+							.where("user.username IN (:...usernames)", {
+								usernames: eventEntry.users,
+							})
+							.getMany()
+					).map((user) => user.id);
 				}
 				userIDs.push(oldActivity.id_usuario);
 
-							
+				const visibilityIDsToAdd = userIDs.filter(
+					(userID) => !visibilityList.includes(userID),
+				);
 
-				const visibilityIDsToAdd = userIDs.filter((userID) => !visibilityList.includes(userID))
+				const visibilityIDsToDelete = visibilityList
+					.filter((userID) => !userIDs.includes(userID))
+					.filter(function (el) {
+						return el != oldActivity.id_usuario;
+					});
 
-				const visibilityIDsToDelete = visibilityList.filter((userID) => !userIDs.includes(userID)).filter( function (el) {
-					return el != oldActivity.id_usuario;
-				});
-
-
-				
-				for (const userID of visibilityIDsToAdd){
-					const visibilityExists = (await Visibility.find({where:{id_actividad: id, id_usuario: userID}}))
-					if (!visibilityExists[0]){
+				for (const userID of visibilityIDsToAdd) {
+					const visibilityExists = await Visibility.find({
+						where: { id_actividad: id, id_usuario: userID },
+					});
+					if (!visibilityExists[0]) {
 						const newVisibility = Visibility.create({
 							id_actividad: id,
 							id_usuario: userID,
@@ -80,15 +90,23 @@ class EventService {
 						await newVisibility.save();
 					}
 				}
-				if (visibilityIDsToDelete.length > 0){
-					await appDataSource.createQueryBuilder().delete().from(Visibility).where("id_actividad = :id AND id_usuario IN (:...userIDs)", {id, userIDs: visibilityIDsToDelete}).execute();
+				if (visibilityIDsToDelete.length > 0) {
+					await appDataSource
+						.createQueryBuilder()
+						.delete()
+						.from(Visibility)
+						.where("id_actividad = :id AND id_usuario IN (:...userIDs)", {
+							id,
+							userIDs: visibilityIDsToDelete,
+						})
+						.execute();
 				}
 				activityEntry.image = undefined;
 			} else {
 				if (eventEntry.image) {
 					const filePath = await imageService.uploadImage(eventEntry.image);
 					activityEntry.image = filePath;
-					if (oldActivity.image){
+					if (oldActivity.image) {
 						imageService.deleteImage(oldActivity.image);
 					}
 				}
@@ -132,20 +150,38 @@ class EventService {
 		return await appDataSource.manager.transaction(
 			async (transactionalEntityManager) => {
 				// Image
-				const newActivityEntryWithImage = await activityService.defineImageInActivityEntry(newActivityEntry,newEventEntry)
-				
+				const newActivityEntryWithImage =
+					await activityService.defineImageInActivityEntry(
+						newActivityEntry,
+						newEventEntry,
+					);
+
 				// Creates Activity
-				const newActivity = await activityService.addActivity(newActivityEntryWithImage)
-				const createdActivity = await transactionalEntityManager.save(newActivity);
-					
+				const newActivity = await activityService.addActivity(
+					newActivityEntryWithImage,
+				);
+				const createdActivity = await transactionalEntityManager.save(
+					newActivity,
+				);
+
 				if (createdActivity.es_privada) {
 					// Creates Visibility
-					const newVisibility = await visibilityService.addVisibilityUser(createdActivity,newActivityEntryWithImage)
-					await transactionalEntityManager.save(newVisibility)
-					if (newEventEntry.users){
-						if (newEventEntry.users.length > 0){
-							const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: newEventEntry.users}).getMany()
-							for (const userID of userIDs){
+					const newVisibility = await visibilityService.addVisibilityUser(
+						createdActivity,
+						newActivityEntryWithImage,
+					);
+					await transactionalEntityManager.save(newVisibility);
+					if (newEventEntry.users) {
+						if (newEventEntry.users.length > 0) {
+							const userIDs = await appDataSource
+								.getRepository(User)
+								.createQueryBuilder("user")
+								.select("user.id")
+								.where("user.username IN (:...usernames)", {
+									usernames: newEventEntry.users,
+								})
+								.getMany();
+							for (const userID of userIDs) {
 								const newVisibility = Visibility.create({
 									id_actividad: createdActivity.id,
 									id_usuario: userID.id,

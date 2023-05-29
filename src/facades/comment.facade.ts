@@ -6,7 +6,10 @@ import commentService from "../services/comment.service";
 import { STATUS_CODES } from "../utils/constants";
 
 class CommentFacade {
-	async getComments(id_actividad: number, userId: number | null): Promise<Comment[]> {
+	async getComments(
+		id_actividad: number,
+		userId: number | null,
+	): Promise<Comment[]> {
 		await activityService.findActivityById(id_actividad);
 		const commentsPlan = await commentService.getComments(id_actividad, userId);
 		return commentsPlan;

@@ -22,14 +22,14 @@ class ActivityFacade {
 		const activity = await activityService.findActivityDetailsById(id, userId);
 		await activityService.checkVisibility(userId, activity);
 		const comments = await commentService.getComments(id, userId);
-		let users
-		if (activity.es_privada){
+		let users;
+		if (activity.es_privada) {
 			const visibility = await visibilityService.findVisibilityGroup(id);
 			users = visibility.map((visibility) => visibility.username);
 		}
 		if (activity.es_plan) {
 			const plan = await planService.findPlanById(id);
-			return { ...activity, ...plan, comments , users};
+			return { ...activity, ...plan, comments, users };
 		} else {
 			const event = await eventService.findEventById(id);
 			return { ...activity, ...event, comments, users };

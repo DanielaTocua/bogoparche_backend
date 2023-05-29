@@ -10,7 +10,6 @@ import { Activity } from "./Activity";
 
 @Entity("relatedactivity")
 export class RelatedActivity extends BaseEntity {
-
 	@PrimaryColumn({ name: "id_actividad_privada" })
 	id_actividad_privada: number;
 

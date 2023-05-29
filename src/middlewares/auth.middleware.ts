@@ -8,7 +8,7 @@ import { STATUS_CODES } from "../utils/constants";
 export default async (req: Request, res: Response, next: NextFunction) => {
 	if (req.headers.authorization) {
 		const fullToken = req.headers.authorization as string;
-		
+
 		const [bearerToken, token] = fullToken.split(" ");
 		if (bearerToken === "Bearer") {
 			try {

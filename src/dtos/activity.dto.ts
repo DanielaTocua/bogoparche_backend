@@ -26,7 +26,7 @@ export class NewActivityEntryDTO {
 	@Expose()
 	@IsOptional()
 	@MaxLength(600000)
-	image: string|undefined;
+	image: string | undefined;
 
 	@IsNotEmpty()
 	@IsString()
@@ -72,7 +72,7 @@ export class NewActivityEntryDTO {
 
 	@Expose()
 	@IsOptional()
-	users: string[] ;	
+	users: string[];
 }
 
 export class ActivityUpdateDTO {
@@ -89,7 +89,7 @@ export class ActivityUpdateDTO {
 	@IsString()
 	@Expose()
 	@IsOptional()
-	image: string|undefined;
+	image: string | undefined;
 
 	@IsEnum(RANGE_PRICES)
 	@Expose()
@@ -130,8 +130,8 @@ export class ActivityUpdateDTO {
 	@IsBoolean()
 	es_aprobado: boolean;
 
-	@IsString({each: true})
-	@Exclude({toPlainOnly: true})
+	@IsString({ each: true })
+	@Exclude({ toPlainOnly: true })
 	@IsOptional()
 	users: string[];
 }
