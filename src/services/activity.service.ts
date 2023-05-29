@@ -160,12 +160,16 @@ class ActivityService {
 
 		const publicActivities = (await appDataSource.manager.query(
 			`SELECT activity.id,
-				CASE WHEN favorite.id_usuario IS NULL THEN false ELSE true END AS favorite,
-				CASE WHEN attendance.id_usuario IS NULL THEN false  ELSE true   END AS attendance,
-				titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad,
-				medio_contacto,id_categoria, activity.es_plan, es_privada
-				FROM activity LEFT JOIN favorite ON activity.id=favorite.id_actividad AND  favorite.id_usuario = $1
-				LEFT JOIN attendance ON activity.id=attendance.id_actividad AND  attendance.id_usuario = $1 WHERE es_aprobado IS true AND es_privada IS false`,
+			CASE WHEN favorite.id_usuario IS NULL THEN false ELSE true END AS favorite,
+			CASE WHEN attendance.id_usuario IS NULL THEN false  ELSE true   END AS attendance,
+			titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad,
+			medio_contacto,id_categoria, activity.es_plan, es_privada
+			FROM activity LEFT JOIN favorite ON activity.id=favorite.id_actividad AND  favorite.id_usuario = $1
+			LEFT JOIN attendance ON activity.id=attendance.id_actividad AND  attendance.id_usuario = $1 WHERE es_aprobado IS true AND es_privada IS false
+			UNION
+			(SELECT  activity.id, titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada FROM activity WHERE es_privada IS true AND id_usuario = $1)
+		UNION
+		(SELECT activity.id, titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada FROM visibility LEFT JOIN activity ON visibility.id_actividad = activity.id where visibility.id_usuario = $1)`,
 			[id],
 		)) as (Activity & { attendance: boolean; favorite: boolean })[];
 		for (const activity of publicActivities) {
