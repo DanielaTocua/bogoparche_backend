@@ -14,5 +14,5 @@ export enum RANGE_PRICES {
 	Range_10_50 = "10k - 50k",
 	Range_50_100 = "50k - 100k",
 	Range_100_150 = "100k - 150k",
-	Range_more_150 = "+ 150k",
+	Range_more_150 = "> 150k",
 }
