@@ -53,6 +53,7 @@ class PlanService {
 				// Creates Activity
 				const newActivity = await activityService.addActivity(newActivityEntryWithImage)
 				const createdActivity = await transactionalEntityManager.save(newActivity);
+
 					
 				if (createdActivity.es_privada) {
 					// Creates Visibility
@@ -71,6 +72,7 @@ class PlanService {
 						}
 					}
 					// Creates Related Activities
+					
 					const newRelation = await activityService.addRelatedActivity(createdActivity, newActivityEntryWithImage)
 					await transactionalEntityManager.save(newRelation);
 				}
@@ -102,26 +104,48 @@ class PlanService {
 			excludeExtraneousValues: true,
 		});
 
+		const oldActivity = await activityService.findActivityById(id);
+
+
+			
+
 		try {
 
-			const oldActivity = await activityService.findActivityById(id);
 			
 			if (oldActivity.es_privada) {
+
+
+				const visibilityList = (await visibilityService.findVisibilityGroup(id)).map((visibility) => visibility.id_usuario);		
+	
 				
+				let userIDs: number[] = [];
 				if (planEntry.users.length > 0){
-					const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select("user.id").where('user.username IN (:...usernames)', {usernames: planEntry.users}).getMany()
-					for (const userID of userIDs){
-						const visibilityExists = (await Visibility.find({where:{id_actividad: id, id_usuario: userID.id}}))
-						if (!visibilityExists[0]){
-							const newVisibility = Visibility.create({
-								id_actividad: id,
-								id_usuario: userID.id,
-							});
-							await newVisibility.save();
-						}
-						console.log(userID, visibilityExists  as unknown as boolean)
-					}
+					userIDs = (await appDataSource.getRepository(User).createQueryBuilder('user').select("user.id").where('user.username IN (:...usernames)', { usernames: planEntry.users }).getMany()).map((user) => user.id) 
 				}
+				userIDs.push(oldActivity.id_usuario);
+
+				const visibilityIDsToAdd = userIDs.filter((userID) => !visibilityList.includes(userID))
+
+				const visibilityIDsToDelete = visibilityList.filter((userID) => !userIDs.includes(userID)).filter( function (el) {
+					return el != oldActivity.id_usuario;
+				});
+
+				for (const userID of  visibilityIDsToAdd){
+					const visibilityExists = (await Visibility.find({where:{id_actividad: id, id_usuario: userID}}))
+					if (!visibilityExists[0]){
+						const newVisibility = Visibility.create({
+							id_actividad: id,
+							id_usuario: userID,
+						});
+						await newVisibility.save();
+					}
+				
+				}
+				if (visibilityIDsToDelete.length > 0){
+
+					await appDataSource.createQueryBuilder().delete().from(Visibility).where("id_actividad = :id AND id_usuario IN (:...userIDs)", {id, userIDs: visibilityIDsToDelete}).execute();
+				}
+				
 				activityEntry.image = undefined;	
 			} else {
 				console.log("aaaa")
@@ -147,6 +171,7 @@ class PlanService {
 			// rollback changes we made
 			await queryRunner.rollbackTransaction();
 			await queryRunner.release();
+			console.log(err)
 			throw new ServerError(
 				"There's been an error, try again later",
 				STATUS_CODES.BAD_REQUEST,
