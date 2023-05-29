@@ -311,37 +311,23 @@ class ActivityService {
 	}
 
 	async addActivity(
-		transactionalEntityManager: EntityManager,
 		newActivityEntry: NewActivityEntryDTO)
 		:Promise<Activity>{
-
 		const newActivity = Activity.create(instanceToPlain(newActivityEntry));
-		const createdActivity = await transactionalEntityManager.save(
-			newActivity,
-			);
-		return createdActivity
+		return newActivity
 		}
 
 	async addRelatedActivity(
-		transactionalEntityManager: EntityManager,
 		createdActivity:Activity,
-		newActivityEntry: NewActivityEntryDTO,
-	){
-		if (createdActivity.es_privada) {
-			if (
-				typeof newActivityEntry.id_related_public_activity != "undefined"
-			) {
+		newActivityEntry: NewActivityEntryDTO)
+		:Promise<RelatedActivity|undefined>{
+			if (typeof newActivityEntry.id_related_public_activity != "undefined") {
 				const newRelation = RelatedActivity.create({
 					id_actividad_privada: createdActivity.id,
 					id_actividad_publica: newActivityEntry.id_related_public_activity,
 				});
-				const createdRelation = await transactionalEntityManager.save(
-					newRelation,
-				);
+				return newRelation
 			}
-
 		}
-	}
-	
 	}
 export default new ActivityService();

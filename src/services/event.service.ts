@@ -112,22 +112,35 @@ class EventService {
 			newEventEntry,
 			{ excludeExtraneousValues: true },
 		);
-		
-		
-
 		return await appDataSource.manager.transaction(
 			async (transactionalEntityManager) => {
 				// Image
 				const newActivityEntryWithImage = await activityService.defineImageInActivityEntry(newActivityEntry,newEventEntry)
 				
 				// Creates Activity
-				const createdActivity = await activityService.addActivity(transactionalEntityManager, newActivityEntryWithImage)
+				const newActivity = await activityService.addActivity(newActivityEntryWithImage)
+				const createdActivity = await transactionalEntityManager.save(newActivity);
 					
-				// Creates Visibility
-				visibilityService.addVisibilityUsers(transactionalEntityManager,createdActivity,newActivityEntryWithImage,newEventEntry)
-			
-				// Creates Related Activities
-				activityService.addRelatedActivity(transactionalEntityManager,createdActivity, newActivityEntryWithImage)
+				if (createdActivity.es_privada) {
+					// Creates Visibility
+					const newVisibility = await visibilityService.addVisibilityUser(createdActivity,newActivityEntryWithImage)
+					await transactionalEntityManager.save(newVisibility)
+					if (newEventEntry.users){
+						if (newEventEntry.users.length > 0){
+							const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: newEventEntry.users}).getMany()
+							for (const userID of userIDs){
+								const newVisibility = Visibility.create({
+									id_actividad: createdActivity.id,
+									id_usuario: userID.id,
+								});
+								await transactionalEntityManager.save(newVisibility);
+							}
+						}
+					}
+					// Creates Related Activities
+					const newRelation = await activityService.addRelatedActivity(createdActivity, newActivityEntryWithImage)
+					await transactionalEntityManager.save(newRelation);
+				}
 
 				// Creates Event
 				const newEvent = Event.create({

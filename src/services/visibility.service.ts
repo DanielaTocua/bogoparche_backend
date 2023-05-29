@@ -30,31 +30,15 @@ class VisibilityService {
 		await Visibility.remove(visibility);
 	}
 
-	async addVisibilityUsers(
-		transactionalEntityManager: EntityManager,
+	async addVisibilityUser(
 		createdActivity:Activity,
-		newActivityEntry: NewActivityEntryDTO,
-		newEvent_PlanEntry: NewPlanEntryDTO|NewEventEntryDTO)
-		:Promise<void>{
-		if (createdActivity.es_privada) {
+		newActivityEntry: NewActivityEntryDTO)
+		:Promise<Visibility>{
 			const newVisibility = Visibility.create({
 					id_actividad:createdActivity.id,
 					id_usuario: newActivityEntry.id_usuario,
 				});
-			await transactionalEntityManager.save(newVisibility);
-			if (newEvent_PlanEntry.users){
-				if (newEvent_PlanEntry.users.length > 0){
-					const userIDs = await appDataSource.getRepository(User).createQueryBuilder('user').select('user.id').where('user.username IN (:...usernames)', {usernames: newEvent_PlanEntry.users}).getMany()
-					for (const userID of userIDs){
-						const newVisibility = Visibility.create({
-							id_actividad: createdActivity.id,
-							id_usuario: userID.id,
-						});
-						await transactionalEntityManager.save(newVisibility);
-					}
-				}
-		}
+			return newVisibility
 	}
-}
 }
 export default new VisibilityService();
