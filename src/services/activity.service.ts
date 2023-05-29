@@ -320,8 +320,7 @@ class ActivityService {
 	async addRelatedActivity(
 		createdActivity:Activity,
 		newActivityEntry: NewActivityEntryDTO)
-		:Promise<RelatedActivity|undefined>{
-			if (typeof newActivityEntry.id_related_public_activity != "undefined") {
+		:Promise<RelatedActivity>{
 				const newRelation = RelatedActivity.create({
 					id_actividad_privada: createdActivity.id,
 					id_actividad_publica: newActivityEntry.id_related_public_activity,
@@ -329,5 +328,4 @@ class ActivityService {
 				return newRelation
 			}
 		}
-	}
 export default new ActivityService();

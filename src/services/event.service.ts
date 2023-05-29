@@ -138,8 +138,11 @@ class EventService {
 						}
 					}
 					// Creates Related Activities
-					const newRelation = await activityService.addRelatedActivity(createdActivity, newActivityEntryWithImage)
-					await transactionalEntityManager.save(newRelation);
+					if (typeof newActivityEntry.id_related_public_activity != "undefined") {
+						const newRelation = await activityService.addRelatedActivity(createdActivity, newActivityEntryWithImage)
+						await transactionalEntityManager.save(newRelation);
+					}
+					
 				}
 
 				// Creates Event
