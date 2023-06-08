@@ -18,7 +18,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 			'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
 		}
 	});
-	const data = await response.json();
+	const data = await response.json() as any;
 	if (!data.success) {
 		next(new ServerError( "Captcha error", STATUS_CODES.BAD_REQUEST));
 	}
