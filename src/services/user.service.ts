@@ -41,5 +41,20 @@ class UserService {
 		const usernames = users.map((user) => user.username);
 		return usernames;
 	}
+
+	async checkCaptcha(token: string): Promise<boolean> {
+		const secret = process.env.RECAPTCHA_SECRET_KEY;
+		const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${token}`;
+
+		const response = await fetch(url, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+			},
+		});
+
+		const data = await response.json();
+		return data.success;
+	}
 }
 export default new UserService();

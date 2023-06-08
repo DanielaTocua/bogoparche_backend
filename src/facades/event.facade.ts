@@ -1,6 +1,7 @@
 import { EventUpdateDTO, NewEventEntryDTO } from "../dtos/activity.dto";
 import { Event } from "../entity/Event";
 import eventService from "../services/event.service";
+import userService from "../services/user.service";
 
 class EventFacade {
 	async getEvent(id: number): Promise<Event> {
@@ -21,6 +22,9 @@ class EventFacade {
 		newEventEntry: NewEventEntryDTO,
 		isAdmin: boolean,
 	): Promise<Event> {
+		// Check captcha
+		userService.checkCaptcha(newEventEntry.captchaToken);
+
 		// Creates an event
 
 		let result: Event;

@@ -55,6 +55,10 @@ export class NewActivityEntryDTO {
 	@Expose()
 	es_privada: boolean;
 
+	@Expose()
+	@IsNotEmpty()
+	captchaToken: string;
+
 	@IsNumber()
 	@IsNotEmpty()
 	@Expose()
