@@ -1,7 +1,6 @@
 import { NewPlanEntryDTO, PlanUpdateDTO } from "../dtos/activity.dto";
 import { Plan } from "../entity/Plan";
 import planService from "../services/plan.service";
-import userService from "../services/user.service";
 
 class PlanFacade {
 	async getPlan(id: number): Promise<Plan> {
@@ -23,9 +22,6 @@ class PlanFacade {
 		newPlanEntry: NewPlanEntryDTO,
 		isAdmin: boolean,
 	): Promise<Plan> {
-
-		// Check captcha
-		 await userService.checkCaptcha(newPlanEntry.captchaToken);
 
 		// Creates new plan
 		let result: Plan;
