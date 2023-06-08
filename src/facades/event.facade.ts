@@ -23,7 +23,7 @@ class EventFacade {
 		isAdmin: boolean,
 	): Promise<Event> {
 		// Check captcha
-		userService.checkCaptcha(newEventEntry.captchaToken);
+		await userService.checkCaptcha(newEventEntry.captchaToken);
 
 		// Creates an event
 

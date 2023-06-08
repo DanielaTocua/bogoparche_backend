@@ -25,7 +25,8 @@ class PlanFacade {
 	): Promise<Plan> {
 
 		// Check captcha
-		userService.checkCaptcha(newPlanEntry.captchaToken);
+		 await userService.checkCaptcha(newPlanEntry.captchaToken);
+
 		// Creates new plan
 		let result: Plan;
 		if (isAdmin) {
