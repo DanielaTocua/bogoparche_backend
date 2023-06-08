@@ -1,5 +1,5 @@
 import { Exclude, Expose } from "class-transformer";
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, MinLength } from "class-validator";
 
 export class UserEmailDTO {
 	@IsNotEmpty()
@@ -32,6 +32,7 @@ export class UserPublicDTO extends UserEmailDTO {
 export class UserRegisterDTO extends UserPublicDTO {
 	@IsNotEmpty()
 	@IsString()
+	@MinLength(8)
 	@Expose({ toClassOnly: true })
 	password: string;
 }
