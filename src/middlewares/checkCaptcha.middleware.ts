@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import fetch from "node-fetch";
 
 import { ServerError } from "../errors/server.error";
 import { STATUS_CODES } from "../utils/constants";
