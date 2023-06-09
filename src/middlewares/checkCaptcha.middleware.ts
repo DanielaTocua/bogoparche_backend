@@ -11,14 +11,16 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 	}
 	
 	// check captcha token
-	const secretKey = process.env.CAPTCHA_SECRET_KEY;
-	const response = await fetch(`https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${captchaToken}`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
-		}
-	});
-	const data = await response.json() as any;
+	const secret = process.env.RECAPTCHA_SECRET_KEY;
+	const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${captchaToken}`;
+
+		const response = await fetch(url, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+			},
+		});
+	const data = await response.json() ;
 	if (!data.success) {
 		next(new ServerError( "Captcha error", STATUS_CODES.BAD_REQUEST));
 	}

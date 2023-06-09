@@ -42,21 +42,5 @@ class UserService {
 		return usernames;
 	}
 
-	async checkCaptcha(token: string): Promise<void> {
-		const secret = process.env.RECAPTCHA_SECRET_KEY;
-		const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${token}`;
-
-		const response = await fetch(url, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-			},
-		});
-
-		const data = await response.json();
-		if (data.success === false) {
-			throw new ServerError("Captcha error", STATUS_CODES.BAD_REQUEST);
-		}
-	}
 }
 export default new UserService();
