@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --files src/index.ts",
-    "build": "npm run format && tsc",
+    "dev": "npm run format && ts-node-dev --files src/index.ts",
+    "build": "tsc",
     "prestart": "npm run build",
     "start": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
