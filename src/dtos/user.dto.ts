@@ -25,7 +25,7 @@ export class UserPublicDTO extends UserEmailDTO {
 	@Expose()
 	username: string;
 
-	@Expose()
+	@Exclude({ toClassOnly: true })
 	isAdmin: boolean;
 }
 
