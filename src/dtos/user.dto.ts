@@ -25,11 +25,16 @@ export class UserPublicDTO extends UserEmailDTO {
 	@Expose()
 	username: string;
 
-	@Exclude({ toClassOnly: true })
+	@Expose()
 	isAdmin: boolean;
 }
 
-export class UserRegisterDTO extends UserPublicDTO {
+export class UserRegisterDTO extends UserEmailDTO {
+	@IsNotEmpty()
+	@IsString()
+	@Expose()
+	username: string;
+
 	@IsNotEmpty()
 	@IsString()
 	@Expose({ toClassOnly: true })
