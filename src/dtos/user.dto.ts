@@ -29,7 +29,12 @@ export class UserPublicDTO extends UserEmailDTO {
 	isAdmin: boolean;
 }
 
-export class UserRegisterDTO extends UserPublicDTO {
+export class UserRegisterDTO extends UserEmailDTO {
+	@IsNotEmpty()
+	@IsString()
+	@Expose()
+	username: string;
+
 	@IsNotEmpty()
 	@IsString()
 	@MinLength(8)

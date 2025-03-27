@@ -30,7 +30,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 				);
 			}
 			req.email = decoded.sub;
-			req.username = decoded.name;
+			req.username = decoded.username;
 			return next();
 		} catch (err) {
 			next(new ServerError("Invalid jwt token", STATUS_CODES.UNAUTHORIZED));

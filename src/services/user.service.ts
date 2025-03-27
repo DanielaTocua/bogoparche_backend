@@ -28,7 +28,7 @@ class UserService {
 			username: user.username,
 			email: user.email,
 			password: hashedPassword,
-			isAdmin: user.isAdmin,
+			isAdmin: false,
 		});
 
 		return plainToInstance(UserPublicDTO, await newUser.save(), {

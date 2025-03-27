@@ -4,6 +4,7 @@ import UserController from "../controllers/user.controller";
 import { UserRegisterDTO } from "../dtos/user.dto";
 import asyncErrorMiddleware from "../middlewares/asyncError.middleware";
 import dtoValidationMiddleware from "../middlewares/dtoValidation.middleware";
+import authMiddleware from "../middlewares/auth.middleware";
 
 const router = express.Router();
 // Routes for database
@@ -15,4 +16,8 @@ router.post(
 );
 
 router.get("/usernames", asyncErrorMiddleware(UserController.getUsernames));
+router.get("/me", 
+	authMiddleware,
+	asyncErrorMiddleware(UserController.getUserFromToken));
+
 export default router;

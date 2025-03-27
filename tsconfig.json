@@ -2,8 +2,8 @@
   "compilerOptions": {
     "baseUrl": "src",
     "rootDir": "src",
-    "outDir": "dist",
-    "target": "es6" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */ /* Specify what JSX code is generated. */,
+    "outDir": "./dist",
+    "target": "ES6" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */ /* Specify what JSX code is generated. */,
     "experimentalDecorators": true /* Enable experimental support for TC39 stage 2 draft decorators. */,
     "emitDecoratorMetadata": true /* Emit design-type metadata for decorated declarations in source files. */,
     "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
@@ -11,7 +11,7 @@
     "skipLibCheck": false /* Skip type checking all .d.ts files. */,
     "sourceMap": true,
     "moduleResolution": "Node",
-    "module": "commonjs",
+    "module": "CommonJS",
     "esModuleInterop": true,
     "strictPropertyInitialization": false,
     "typeRoots": ["@types", "./node_modules/@types", "./src/types"],
@@ -20,6 +20,6 @@
     },
     "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts", "src/controllers/login.controller.ts", "src/dataSource.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }
