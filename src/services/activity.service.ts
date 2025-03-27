@@ -333,18 +333,15 @@ class ActivityService {
 	}
 
 	async addRelatedActivity(
-		createdActivity:Activity,
-		newActivityEntry: NewActivityEntryDTO)
-		:Promise<RelatedActivity>{
-				const newRelation = RelatedActivity.create({
-					id_actividad_privada: createdActivity.id,
-					id_actividad_publica: newActivityEntry.id_related_public_activity,
-				});
-				return newRelation
-			}
-	
-
-		
+		createdActivity: Activity,
+		newActivityEntry: NewActivityEntryDTO,
+	): Promise<RelatedActivity> {
+		const newRelation = RelatedActivity.create({
+			id_actividad_privada: createdActivity.id,
+			id_actividad_publica: newActivityEntry.id_related_public_activity,
+		});
+		return newRelation;
+	}
 }
-	
+
 export default new ActivityService();

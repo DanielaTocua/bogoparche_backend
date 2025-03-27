@@ -41,6 +41,5 @@ class UserService {
 		const usernames = users.map((user) => user.username);
 		return usernames;
 	}
-
 }
 export default new UserService();

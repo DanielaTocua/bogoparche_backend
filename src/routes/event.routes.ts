@@ -25,7 +25,12 @@ router
 router
 	.route("/:id")
 	.put(
-		[authMiddleware, checkCaptchaMiddleware, idNumberValidationMiddleware, checkAccessMiddleware],
+		[
+			authMiddleware,
+			checkCaptchaMiddleware,
+			idNumberValidationMiddleware,
+			checkAccessMiddleware,
+		],
 		asyncErrorMiddleware(eventController.editEvent),
 	);
 

@@ -1,7 +1,5 @@
 import { appDataSource } from "../dataSource";
-import {
-	NewActivityEntryDTO,
-} from "../dtos/activity.dto";
+import { NewActivityEntryDTO } from "../dtos/activity.dto";
 import { Activity } from "../entity/Activity";
 import { Visibility } from "../entity/Visibility";
 import { ServerError } from "../errors/server.error";

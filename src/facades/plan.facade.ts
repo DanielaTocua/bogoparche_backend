@@ -22,7 +22,6 @@ class PlanFacade {
 		newPlanEntry: NewPlanEntryDTO,
 		isAdmin: boolean,
 	): Promise<Plan> {
-
 		// Creates new plan
 		let result: Plan;
 		if (isAdmin) {

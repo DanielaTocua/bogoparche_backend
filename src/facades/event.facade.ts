@@ -21,8 +21,6 @@ class EventFacade {
 		newEventEntry: NewEventEntryDTO,
 		isAdmin: boolean,
 	): Promise<Event> {
-	
-
 		// Creates an event
 
 		let result: Event;

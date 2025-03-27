@@ -55,7 +55,6 @@ export class NewActivityEntryDTO {
 	@Expose()
 	es_privada: boolean;
 
-
 	@IsNumber()
 	@IsNotEmpty()
 	@Expose()

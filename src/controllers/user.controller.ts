@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 
 import { UserPublicDTO } from "../dtos/user.dto";
 import { ServerError } from "../errors/server.error";
-
 import UserFacade from "../facades/user.facade";
 import { STATUS_CODES } from "../utils/constants";
 
@@ -20,7 +19,7 @@ class UserController {
 		const usernames = await UserFacade.getUsernames();
 		res.json(usernames).status(STATUS_CODES.OK);
 	}
-	
+
 	async getUserFromToken(
 		req: Request,
 		res: Response,
