@@ -93,8 +93,13 @@ class ActivityService {
 	async findAllNotApproved(): Promise<Activity[]> {
 		console.log("IN FIND ALL NOT APPROVED");
 		const notApprovedActivities = (await appDataSource.manager.query(
-			`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada FROM activity WHERE es_aprobado IS false AND es_privada IS false`,
+			`SELECT  id, titulo_actividad, ubicacion, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada, image FROM activity WHERE es_aprobado IS false AND es_privada IS false`,
 		)) as Activity[];
+		for (const activity of notApprovedActivities) {
+			if (activity.image) {
+				activity.image = await imageService.getBase64Image(activity.image);
+			}
+		}
 		return notApprovedActivities;
 	}
 
