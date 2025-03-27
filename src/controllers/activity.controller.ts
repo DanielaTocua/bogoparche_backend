@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import activityFacade from "../facades/activity.facade";
 import activityService from "../services/activity.service";
-import { STATUS_CODES } from "../utils/constants";
+import { STATUS_CODES, VisibilityFilter } from "../utils/constants";
 
 class ActivityController {
 	async getUserPrivate(req: Request, res: Response): Promise<void> {
@@ -73,6 +73,10 @@ class ActivityController {
 			(req.query.favorite + "").toLowerCase() === "true" ? true : false;
 		const attendance: boolean =
 			(req.query.attendance + "").toLowerCase() === "true" ? true : false;
+		// Get filter private attribute
+		const visibilityFilter: VisibilityFilter = req.query.visibility
+			? (req.query.visibility as VisibilityFilter)
+			: VisibilityFilter.ALL;
 		const search: string[] = req.query.search
 			? (req.query.search as string).split(" ")
 			: [];
@@ -82,6 +86,7 @@ class ActivityController {
 		const categories: string[] = req.query.categories
 			? (req.query.categories as string).split(",")
 			: [];
+
 		const result = await activityFacade.privateFilter(
 			req.userId as number,
 			favorite,
@@ -89,6 +94,7 @@ class ActivityController {
 			search,
 			rangePrices,
 			categories,
+			visibilityFilter,
 		);
 		res.send(result);
 	}

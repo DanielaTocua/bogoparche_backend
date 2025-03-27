@@ -4,6 +4,7 @@ import commentService from "../services/comment.service";
 import eventService from "../services/event.service";
 import planService from "../services/plan.service";
 import visibilityService from "../services/visibility.service";
+import { VisibilityFilter } from "../utils/constants";
 
 class ActivityFacade {
 	async deleteActivity(id: number): Promise<Activity> {
@@ -75,6 +76,7 @@ class ActivityFacade {
 		search: string[],
 		rangePrices: string[],
 		categories: string[],
+		visibilityFilter: VisibilityFilter,
 	): Promise<(Activity & { attendance: boolean; favorite: boolean })[]> {
 		let filtered = await activityService.findAllPublicAuthenticated(id);
 		if (favorites) {
@@ -84,6 +86,18 @@ class ActivityFacade {
 		}
 		if (attendance) {
 			filtered = filtered.filter((activity) => activity.attendance === true);
+		}
+		switch (visibilityFilter) {
+			case VisibilityFilter.ALL:
+				break;
+			case VisibilityFilter.PRIVATE:
+				filtered = filtered.filter((activity) => activity.es_privada);
+				break;
+			case VisibilityFilter.PUBLIC:
+				filtered = filtered.filter((activity) => !activity.es_privada);
+				break;
+			default:
+				break;
 		}
 		return (await this.publicAtributtesFilter(
 			filtered,

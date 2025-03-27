@@ -16,3 +16,9 @@ export enum RANGE_PRICES {
 	Range_100_150 = "100k - 150k",
 	Range_more_150 = "Más de 150k",
 }
+
+export enum VisibilityFilter {
+	ALL = "all",
+	PUBLIC = "public",
+	PRIVATE = "private",
+}
