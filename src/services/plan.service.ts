@@ -129,7 +129,7 @@ class PlanService {
 		const oldActivity = await activityService.findActivityById(id);
 
 		try {
-			if (oldActivity.es_privada) {
+			if (oldActivity.es_privada && planEntry.users) {
 				const visibilityList = (
 					await visibilityService.findVisibilityGroup(id)
 				).map((visibility) => visibility.id_usuario);
@@ -185,9 +185,7 @@ class PlanService {
 
 				activityEntry.image = undefined;
 			} else {
-				console.log("aaaa");
 				if (activityEntry.image) {
-					console.log("bbbb");
 					const filePath = await imageService.uploadImage(activityEntry.image);
 					activityEntry.image = filePath;
 					if (oldActivity.image) {

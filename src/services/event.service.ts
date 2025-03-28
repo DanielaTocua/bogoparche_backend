@@ -49,7 +49,7 @@ class EventService {
 		});
 		const oldActivity = await activityService.findActivityById(id);
 		try {
-			if (oldActivity.es_privada) {
+			if (oldActivity.es_privada && eventEntry.users) {
 				const visibilityList = (
 					await visibilityService.findVisibilityGroup(id)
 				).map((visibility) => visibility.id_usuario);
