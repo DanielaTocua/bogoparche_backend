@@ -16,10 +16,7 @@ const router = express.Router();
 router
 	.route("")
 	.post(
-		[
-			authMiddleware,
-			dtoValidationMiddleware(NewPlanEntryDTO),
-		],
+		[authMiddleware, dtoValidationMiddleware(NewPlanEntryDTO)],
 		asyncErrorMiddleware(planController.addPlan),
 	);
 
