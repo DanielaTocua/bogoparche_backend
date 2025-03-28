@@ -160,7 +160,7 @@ class ActivityService {
 
 	async findAllPublicAuthenticated(
 		id: number,
-	): Promise<(Activity & { attendance: boolean; favorite: boolean })[]> {
+	): Promise<(Activity & { attendance: boolean; favorite: boolean, owned:boolean })[]> {
 		// Puede cambiarse a raw queries
 
 		const publicActivities = (await appDataSource.manager.query(
@@ -168,15 +168,15 @@ class ActivityService {
 			CASE WHEN favorite.id_usuario IS NULL THEN false ELSE true END AS favorite,
 			CASE WHEN attendance.id_usuario IS NULL THEN false  ELSE true   END AS attendance,
 			titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad,
-			medio_contacto,id_categoria, activities.es_plan, activities.es_privada
+			medio_contacto,id_categoria, activities.es_plan, activities.es_privada, owned
 			 FROM
-			((SELECT  activity.id, titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada, es_aprobado  FROM activity WHERE es_privada IS true AND id_usuario = $1 ) 
+			((SELECT  activity.id, titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada, es_aprobado, true as owned  FROM activity WHERE es_privada IS true AND id_usuario = $1 ) 
 			UNION
-			(SELECT activity.id, titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada, es_aprobado FROM visibility LEFT JOIN activity ON visibility.id_actividad = activity.id where visibility.id_usuario = $1)
+			(SELECT activity.id, titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad, medio_contacto,id_categoria, es_plan, es_privada, es_aprobado, activity.id_usuario = $1 as owned FROM visibility LEFT JOIN activity ON visibility.id_actividad = activity.id where visibility.id_usuario = $1)
 			UNION
 			(SELECT activity.id,
 			titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad,
-			medio_contacto,id_categoria, activity.es_plan, es_privada, es_aprobado as three
+			medio_contacto,id_categoria, activity.es_plan, es_privada, es_aprobado as three, false as owned
 			FROM activity WHERE es_aprobado IS true AND es_privada IS false)) as activities
 			
 			
@@ -184,7 +184,7 @@ class ActivityService {
 			LEFT JOIN attendance ON activities.id=attendance.id_actividad AND  attendance.id_usuario = $1 
 			`,
 			[id],
-		)) as (Activity & { attendance: boolean; favorite: boolean })[];
+		)) as (Activity & { attendance: boolean; favorite: boolean, owned: boolean })[];
 		for (const activity of publicActivities) {
 			if (activity.image) {
 				activity.image = await imageService.getBase64Image(activity.image);
