@@ -160,7 +160,9 @@ class ActivityService {
 
 	async findAllPublicAuthenticated(
 		id: number,
-	): Promise<(Activity & { attendance: boolean; favorite: boolean, owned:boolean })[]> {
+	): Promise<
+		(Activity & { attendance: boolean; favorite: boolean; owned: boolean })[]
+	> {
 		// Puede cambiarse a raw queries
 
 		const publicActivities = (await appDataSource.manager.query(
@@ -184,7 +186,11 @@ class ActivityService {
 			LEFT JOIN attendance ON activities.id=attendance.id_actividad AND  attendance.id_usuario = $1 
 			`,
 			[id],
-		)) as (Activity & { attendance: boolean; favorite: boolean, owned: boolean })[];
+		)) as (Activity & {
+			attendance: boolean;
+			favorite: boolean;
+			owned: boolean;
+		})[];
 		for (const activity of publicActivities) {
 			if (activity.image) {
 				activity.image = await imageService.getBase64Image(activity.image);
@@ -323,7 +329,7 @@ class ActivityService {
 		newActivityEntry: NewActivityEntryDTO,
 		newEvent_PlanEntry: NewPlanEntryDTO | NewEventEntryDTO,
 	): Promise<NewActivityEntryDTO> {
-		if (newActivityEntry.image && !newEvent_PlanEntry.es_privada) {
+		if (newActivityEntry.image) {
 			const filePath = await imageService.uploadImage(newActivityEntry.image);
 			newActivityEntry.image = filePath;
 		} else {
