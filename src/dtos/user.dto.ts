@@ -1,5 +1,12 @@
 import { Exclude, Expose } from "class-transformer";
-import { IsEmail, IsNotEmpty, IsString, MinLength } from "class-validator";
+import {
+	IsEmail,
+	IsNotEmpty,
+	IsOptional,
+	IsString,
+	MinLength,
+	ValidateIf,
+} from "class-validator";
 
 export class UserEmailDTO {
 	@IsNotEmpty()
@@ -7,12 +14,26 @@ export class UserEmailDTO {
 	@Expose()
 	email: string;
 }
-export class UserLoginDTO extends UserEmailDTO {
+
+export class UserLoginDTO {
+	@IsOptional()
+	@Expose()
+	@ValidateIf((o) => o.email && !o.username)
+	@IsEmail()
+	email: string;
+
+	@IsOptional()
+	@IsString()
+	@Expose()
+	@ValidateIf((o) => !o.email && o.username)
+	username: string;
+
 	@IsNotEmpty()
 	@IsString()
 	@Expose()
 	password: string;
 }
+
 export class UserAuthDTO extends UserEmailDTO {
 	@IsNotEmpty()
 	@IsString()

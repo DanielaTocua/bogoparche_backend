@@ -8,10 +8,20 @@ import jwtService from "./jwt.service";
 
 class AuthService {
 	async login(userLoginForm: UserLoginDTO): Promise<UserAndTokenDTO> {
-		const user = await User.findOneBy({ email: userLoginForm.email });
+		let user;
+		if (userLoginForm.email) {
+			user = await User.findOneBy({
+				email: userLoginForm.email,
+			});
+		} else {
+			user = await User.findOneBy({
+				username: userLoginForm.username,
+			});
+		}
+		// Check if user exists
 		if (user == null) {
 			throw new ServerError(
-				"this email is not registered",
+				"this user is not registered",
 				STATUS_CODES.BAD_REQUEST,
 			);
 		}
