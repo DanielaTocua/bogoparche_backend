@@ -17,7 +17,10 @@ const router = express.Router();
 router.route("/all").get(asyncErrorMiddleware(activityController.getAll));
 router
 	.route("/all-not-approved")
-	.get(asyncErrorMiddleware(activityController.getAllNotApproved));
+	.get(
+		[authMiddleware, validateAdminMiddleware],
+		asyncErrorMiddleware(activityController.getAllNotApproved),
+	);
 router
 	.route("/all-private")
 	.get(

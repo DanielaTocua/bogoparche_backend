@@ -44,7 +44,7 @@ class ActivityService {
 			CASE WHEN attendance.id_usuario IS NULL THEN false  ELSE true   END AS attendance,
 			CASE WHEN activity.id_usuario  = $1 THEN true  ELSE false  END AS owned, 
 			titulo_actividad, ubicacion, image, rango_precio, descripcion, restriccion_edad,
-			medio_contacto,id_categoria, activity.es_plan, es_privada, image
+			medio_contacto,id_categoria, activity.es_plan, es_privada,es_aprobado, image
 			FROM activity LEFT JOIN favorite ON activity.id=favorite.id_actividad AND  favorite.id_usuario = $1
 			LEFT JOIN attendance ON activity.id=attendance.id_actividad AND  attendance.id_usuario = $1 WHERE activity.id = $2`,
 			[userId, id],

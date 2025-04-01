@@ -1,10 +1,11 @@
 import { Activity } from "../entity/Activity";
+import { ServerError } from "../errors/server.error";
 import activityService from "../services/activity.service";
 import commentService from "../services/comment.service";
 import eventService from "../services/event.service";
 import planService from "../services/plan.service";
 import visibilityService from "../services/visibility.service";
-import { VisibilityFilter } from "../utils/constants";
+import { STATUS_CODES, VisibilityFilter } from "../utils/constants";
 
 class ActivityFacade {
 	async deleteActivity(id: number): Promise<Activity> {
@@ -19,7 +20,11 @@ class ActivityFacade {
 		return result;
 	}
 
-	async getActivity(id: number, userId: number | null): Promise<any> {
+	async getActivity(
+		id: number,
+		userId: number | null,
+		isAdmin: boolean,
+	): Promise<any> {
 		const activity = await activityService.findActivityDetailsById(id, userId);
 		await activityService.checkVisibility(userId, activity);
 		const comments = await commentService.getComments(id, userId);
@@ -27,6 +32,12 @@ class ActivityFacade {
 		if (activity.es_privada) {
 			const visibility = await visibilityService.findVisibilityGroup(id);
 			users = visibility.map((visibility) => visibility.username);
+		}
+		if (activity.es_aprobado === false && !isAdmin) {
+			throw new ServerError(
+				"You cannot see this activity",
+				STATUS_CODES.FORBIDDEN,
+			);
 		}
 		if (activity.es_plan) {
 			const plan = await planService.findPlanById(id);
